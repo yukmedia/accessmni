@@ -16,8 +16,13 @@ app/     the source — see app/README.md
 docs/    the built demo, served by GitHub Pages
 ```
 
-`docs/index.html` is the web app. `docs/phone-and-web.html` shows the phone app
-and web app side by side, sharing one state.
+Three pages are published:
+
+| Page | What it is |
+|---|---|
+| `index.html` | the web app — fills the browser window |
+| `phone.html` | the phone app — fills the screen on a real phone |
+| `phone-and-web.html` | both side by side, sharing one state |
 
 ## Building
 

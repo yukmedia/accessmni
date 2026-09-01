@@ -47,15 +47,19 @@ function bundle(entry, outName) {
 // The web app on its own — the one to send a client who wants "the website".
 bundle('web.html', 'emerald-marketplace-web.html');
 
+// The phone app on its own — fills the screen on a real phone.
+bundle('phone.html', 'emerald-marketplace-phone.html');
+
 // Phone and web side by side, for showing both platforms at once.
 bundle('index.html', 'emerald-marketplace-demo.html');
 
-// Same two files under docs/, laid out the way GitHub Pages expects: point
-// Pages at the docs/ folder and index.html becomes the site's front page.
+// Same files under docs/, laid out the way GitHub Pages expects: point Pages
+// at the docs/ folder and index.html becomes the site's front page.
 const DOCS = path.resolve(ROOT, '..', 'docs');
 fs.mkdirSync(DOCS, { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-web.html'), path.join(DOCS, 'index.html'));
+fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-phone.html'), path.join(DOCS, 'phone.html'));
 fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-demo.html'), path.join(DOCS, 'phone-and-web.html'));
 // Stops GitHub Pages running the files through Jekyll, which ignores some paths.
 fs.writeFileSync(path.join(DOCS, '.nojekyll'), '');
-console.log('Wrote docs/index.html and docs/phone-and-web.html (for GitHub Pages)');
+console.log('Wrote docs/index.html, docs/phone.html and docs/phone-and-web.html (for GitHub Pages)');

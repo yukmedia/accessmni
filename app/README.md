@@ -16,6 +16,9 @@ any static host:
 - **`dist/emerald-marketplace-web.html`** — the web app on its own. Fills the
   browser window, no phone beside it, no browser-window mock around it. This is
   the one to send someone who wants to see "the website".
+- **`dist/emerald-marketplace-phone.html`** — the phone app on its own. On a
+  phone it drops the device frame and fills the screen, so it reads as the app
+  rather than a picture of one; on a desktop it sits in the usual frame.
 - **`dist/emerald-marketplace-demo.html`** — phone and web side by side, sharing
   one state, for showing both platforms at once.
 
@@ -54,6 +57,7 @@ across titles, categories and locations, and cart maths recalculates.
 
 ```
 web.html            entry for the web app on its own
+phone.html          entry for the phone app on its own
 index.html          entry for phone + web side by side
 css/app.css         stage, device frames, global resets
 js/data.js          all demo content (listings, wanted, jobs, shops, travel, cart)

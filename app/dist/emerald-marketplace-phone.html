@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E3F80">
+<title>Emerald Marketplace — Montserrat, West Indies</title>
+<meta name="description" content="Buy, sell, find work and book travel across Montserrat.">
+<!-- Lets someone "Add to Home Screen" and get a chrome-free app-like window. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Emerald Marketplace — page chrome only.
+   Everything inside the two frames is styled inline by the screen modules, so
+   this file stays limited to the stage, the device frames and global resets. */
+
+body {
+  margin: 0;
+  background: #EDEAE3;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #16233A;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: #0E3F80; text-decoration: none; }
+
+/* Scrollbars are hidden throughout — the frames still scroll, they just don't
+   show a track that would break the illusion of a real device. */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Inputs inherit the page family so the search fields match everything else. */
+input, button, textarea { font-family: inherit; }
+
+.em-stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 20px 60px;
+  box-sizing: border-box;
+}
+
+/* ---------- phone ---------- */
+
+.em-phone {
+  width: 390px;
+  height: 844px;
+  flex-shrink: 0;
+  background: #FBF8F1;
+  border-radius: 38px;
+  box-shadow: 0 30px 60px -20px rgba(23, 35, 29, 0.35), 0 0 0 1px rgba(23, 35, 29, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* anchors the sort sheets and modal overlays */
+}
+
+/* ---------- desktop web app ---------- */
+
+.em-web {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.em-web-label {
+  font-size: 13px;
+  color: #7C8697;
+  font-weight: 700;
+}
+
+.em-web-clip {
+  width: 900px;
+  max-width: 92vw;
+  display: flex;
+  justify-content: center;
+}
+
+.em-web-frame {
+  width: 1440px;
+  flex-shrink: 0;
+  /* `zoom` scales the box AND its layout size, so the 1440px design shrinks to
+     fit the 900px column without being clipped or leaving dead space. */
+  zoom: 0.625;
+  background: #FFFFFF;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -24px rgba(23, 35, 29, 0.35), 0 0 0 1px rgba(23, 35, 29, 0.08);
+}
+
+/* Firefox has no `zoom`; fall back to a transform, accepting that the parent
+   reserves untransformed height (a little extra space below the mock). */
+@supports not (zoom: 1) {
+  .em-web-frame {
+    transform: scale(0.625);
+    transform-origin: top center;
+  }
+  .em-web-clip { height: 1150px; overflow: hidden; }
+}
+
+/* On a narrow screen the desktop mock is the thing to drop first. */
+@media (max-width: 700px) {
+  .em-stage { padding: 16px 0 40px; gap: 10px; }
+  .em-phone { width: 100%; max-width: 390px; border-radius: 0; box-shadow: none; }
+}
+</style>
+<style>
+  /* Phone-only build. On a desktop it sits in the usual device frame; on an
+     actual phone it drops the frame and fills the screen, so it reads as the
+     app rather than a picture of one. */
+  .em-stage { padding: 30px 20px; }
+
+  @media (max-width: 700px) {
+    body { background: #FBF8F1; }
+    .em-stage { padding: 0; min-height: 100dvh; }
+    .em-phone {
+      width: 100vw;
+      max-width: none;
+      /* dvh tracks the browser's collapsing address bar; vh is the fallback. */
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<section class="em-stage">
+  <div class="em-phone" id="phone"></div>
+</section>
+
+<!-- No desktop module: this build never renders the web app. -->
+<script>
+/* Emerald Marketplace — demo data.
+   Every list the prototype renders lives here so a real backend can replace
+   this one file later. No network calls, no persistence: this is a demo. */
+
+(function (global) {
+  'use strict';
+
+  // Unsplash URL builder. Photos are remote; each usage pairs the URL with a
+  // fallback colour (see ui.bg) so a blocked/failed image degrades to a tinted
+  // block rather than an empty white box.
+  function u(id, w, h) {
+    return 'https://images.unsplash.com/photo-' + id + '?w=' + w + '&h=' + h + '&fit=crop&auto=format';
+  }
+
+  var IMG = {
+    vehicle:      u('1519641471654-76ce0107ad1b', 400, 300),
+    vehicleBig:   u('1519641471654-76ce0107ad1b', 800, 600),
+    vehicleWide:  u('1519641471654-76ce0107ad1b', 800, 560),
+    vehicleCard:  u('1519641471654-76ce0107ad1b', 500, 350),
+    vehicleThumb: u('1519641471654-76ce0107ad1b', 200, 200),
+    car1:         u('1506794778202-cad84cf45f1d', 800, 600),
+    car2:         u('1547038577-da80abbc4f19', 800, 600),
+    car3:         u('1533473359331-0135ef1b58bf', 800, 600),
+    car1Thumb:    u('1506794778202-cad84cf45f1d', 200, 200),
+    car2Thumb:    u('1547038577-da80abbc4f19', 200, 200),
+    car3Thumb:    u('1533473359331-0135ef1b58bf', 200, 200),
+    home:         u('1555041469-a586c61ea9bc', 400, 300),
+    mango:        u('1553279768-865429fa0078', 400, 300),
+    mangoCard:    u('1553279768-865429fa0078', 500, 350),
+    mangoSquare:  u('1553279768-865429fa0078', 300, 300),
+    bed:          u('1586105251261-72a756497a11', 400, 300),
+    bedCard:      u('1586105251261-72a756497a11', 500, 350),
+    diningTable:  u('1617806118233-18e1de247200', 400, 300),
+    diningCard:   u('1617806118233-18e1de247200', 500, 350),
+    generator:    u('1558618666-fcd25c85cd64', 400, 300),
+    carParts:     u('1449965408869-eaa3f722e40d', 300, 200),
+    grocery:      u('1509440159596-0249088772ff', 120, 120),
+    groceryTall:  u('1509440159596-0249088772ff', 200, 260),
+    cafe:         u('1495474472287-4d71bcdd2085', 120, 120),
+    cafeTall:     u('1495474472287-4d71bcdd2085', 200, 260),
+    bank:         u('1495474472287-4d71bcdd2085', 800, 300),
+    momentos:     u('1610701596007-11502861dcfa', 120, 120),
+    momentosWide: u('1610701596007-11502861dcfa', 800, 500),
+    momentosHero: u('1610701596007-11502861dcfa', 1200, 500),
+    momentosMark: u('1610701596007-11502861dcfa', 160, 160),
+    jcouture:     u('1590874103328-eac38a683ce7', 120, 120),
+    amelda:       u('1587049352846-4a222e784d38', 120, 120),
+    liburd:       u('1544816155-12df9643f363', 120, 120),
+    realty:       u('1568084680786-a84f91d1153c', 120, 120),
+    realtyWide:   u('1568084680786-a84f91d1153c', 800, 500),
+    realtyCard:   u('1568084680786-a84f91d1153c', 300, 300),
+    realtyBig:    u('1568084680786-a84f91d1153c', 500, 350),
+    villa:        u('1568605114967-8130f3a36994', 300, 300),
+    apartment:    u('1600585154340-be6161a56a0c', 300, 300),
+    lot:          u('1570129477492-45c003edd2be', 300, 300),
+    necklace:     u('1611652022419-a9419f74343d', 300, 300),
+    necklaceBig:  u('1611652022419-a9419f74343d', 400, 400),
+    cards:        u('1600857062241-98e5dba7f214', 300, 300),
+    cardsBig:     u('1600857062241-98e5dba7f214', 400, 400),
+    basket:       u('1513519245088-0e12902e5a38', 300, 300),
+    basketBig:    u('1513519245088-0e12902e5a38', 400, 400),
+    hotelTropical:      u('1571896349842-33c89424de2d', 300, 300),
+    hotelTropicalCard:  u('1602343168117-bb8ffe3e2e9f', 500, 350),
+    hotelTropicalBig:   u('1571896349842-33c89424de2d', 500, 350),
+    hotelCottage:       u('1602343168117-bb8ffe3e2e9f', 300, 300),
+    hotelCottageBig:    u('1602343168117-bb8ffe3e2e9f', 500, 350),
+    hotelVilla:         u('1613490493576-7fde63acd811', 500, 350),
+    tourHeli:     u('1608889825205-eebdb9fc5806', 300, 300),
+    tourHeliBig:  u('1608889825205-eebdb9fc5806', 500, 350),
+    tourBoat:     u('1544551763-8dd44758c2dd', 300, 300),
+    tourBoatBig:  u('1544551763-8dd44758c2dd', 500, 350),
+    tourIsland:   u('1519681393784-d120267933ba', 500, 350),
+    wantedWasher: u('1626806787461-102c1bfaaea1', 800, 600),
+    loginHero:    u('1590523278191-995cbcda646b', 700, 900)
+  };
+
+  // Fallback tints, keyed loosely by subject, used behind every photo.
+  var TINT = {
+    vehicle: '#C9CFD6', home: '#DED8C9', produce: '#D8DEC4', bed: '#DED6CB',
+    shop: '#DED8C9', craft: '#E0D6CC', hotel: '#CFD9DC', tour: '#C6D3D8',
+    realty: '#D5DBE3', neutral: '#E0DAC9', dark: '#123763'
+  };
+
+  /* ---------- Listings (Browse › Listings, desktop grid, search) ---------- */
+
+  var LISTINGS = [
+    {
+      id: 'landcruiser', cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#A8483A',
+      img: IMG.vehicle, tint: TINT.vehicle, sponsored: true,
+      price: 'EC$68,500', priceNum: 68500, title: 'Toyota Land Cruiser, 2018',
+      seller: 'Courtney W.', location: 'Look Out', timeAgo: '1h', hoursAgo: 1,
+      views: 41, delivery: false,
+      badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E'
+    },
+    {
+      id: 'diningtable', cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80',
+      img: IMG.home, tint: TINT.home,
+      price: 'EC$2,200', priceNum: 2200, title: 'Dining table & 6 chairs',
+      seller: 'Merle J.', location: 'Brades', timeAgo: '1d', hoursAgo: 24,
+      views: 96, delivery: false,
+      badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E',
+      urgency: 'MOVING SALE'
+    },
+    {
+      id: 'mango', cat: 'farm', catLabel: 'FARM & PRODUCE', catColor: '#2E7F8C',
+      img: IMG.mango, tint: TINT.produce,
+      price: 'EC$25', priceNum: 25, title: 'Fresh mango crate',
+      seller: 'Kenrick B.', location: 'Cudjoe Head', timeAgo: '5h', hoursAgo: 5,
+      views: 18, delivery: true,
+      badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80'
+    },
+    {
+      id: 'bedset', cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80',
+      img: IMG.bed, tint: TINT.bed,
+      price: 'EC$3,800', priceNum: 3800, title: 'King bed set, solid wood',
+      seller: 'Alvira R.', location: 'Salem', timeAgo: '3d', hoursAgo: 72,
+      views: 112, delivery: true,
+      badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80'
+    },
+    {
+      id: 'room', cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA',
+      img: IMG.bed, tint: TINT.bed, tag: 'FOR RENT',
+      price: 'EC$1,500/mo', priceNum: 1500, title: 'Private room, Salem',
+      seller: 'Marcus T.', location: 'Salem', timeAgo: '12h', hoursAgo: 12,
+      views: 63, delivery: false
+    },
+    {
+      id: 'yaris', cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA',
+      img: IMG.vehicle, tint: TINT.vehicle, tag: 'FOR HIRE',
+      price: 'EC$180/day', priceNum: 180, title: 'Toyota Yaris — car hire',
+      seller: 'Janice R.', location: 'Brades', timeAgo: '2d', hoursAgo: 48,
+      views: 29, delivery: false
+    }
+  ];
+
+  /* ---------- Wanted board ---------- */
+
+  var WANTED = [
+    {
+      id: 'wm', icon: '🧊', title: 'Washing machine, working',
+      catLabel: 'EQUIPMENT', cat: 'equipment',
+      budgetLabel: 'Up to EC$600', budget: 600,
+      location: "St. Peter's", timeAgo: '1h', hoursAgo: 1,
+      views: 52, offers: 3, gated: false, screen: 'wantedDetail'
+    },
+    {
+      id: 'yard', icon: '🌿', title: 'Someone to cut a yard, Salem',
+      catLabel: 'SERVICES', cat: 'services',
+      budgetLabel: 'Cash', budget: 0,
+      location: 'Salem', timeAgo: 'yesterday', hoursAgo: 24,
+      views: 19, offers: 1, gated: true, screen: 'yardDetail'
+    },
+    {
+      id: 'plantain', icon: '🍌', title: 'Ripe plantain, a dozen',
+      catLabel: 'FOOD', cat: 'food',
+      budgetLabel: null, budget: 0,
+      location: 'Brades', timeAgo: '4h', hoursAgo: 4,
+      views: 28, offers: 0, gated: true, screen: null
+    },
+    {
+      id: 'caterer', icon: '🍽️', title: 'Caterer for 40th birthday, Salem',
+      catLabel: 'SERVICES', cat: 'services',
+      budgetLabel: 'Up to EC$1,200', budget: 1200,
+      location: 'Salem', timeAgo: '3h', hoursAgo: 3,
+      views: 37, offers: 2, gated: true, screen: null
+    }
+  ];
+
+  /* ---------- Jobs ---------- */
+
+  var JOBS = [
+    {
+      id: 'cashier', icon: '🛒', title: 'Cashier, part-time', typeLabel: 'PART-TIME',
+      cat: 'retail', payLabel: 'EC$18/hr', pay: 18,
+      employer: "Ram's Supermarket", location: 'Salem', views: 34, applied: 5
+    },
+    {
+      id: 'landscape', icon: '🌿', title: 'Landscaper / groundskeeper', typeLabel: 'CASUAL',
+      cat: 'trades', payLabel: 'Negotiable', pay: 0,
+      employer: 'Olveston House', location: 'Olveston', views: 12, applied: 1
+    },
+    {
+      id: 'driver', icon: '🚚', title: 'Delivery driver', typeLabel: 'FULL-TIME',
+      cat: 'delivery', payLabel: 'EC$20/hr', pay: 20,
+      employer: 'Emerald Marketplace', location: 'island-wide', views: 41, applied: 8
+    }
+  ];
+
+  /* ---------- Shops ---------- */
+  // `pattern` replaces `img` where the prototype used a woven-stripe block.
+
+  var SHOP_SECTIONS = [
+    {
+      heading: 'MADE IN MONTSERRAT · PRIME',
+      shops: [
+        { id: 'momentos', name: 'Island Momentos', meta: 'Little Bay · crafts, souvenirs, jewelry', cat: 'prime', img: IMG.momentos, tint: TINT.craft, status: 'OPEN', screen: 'shopDetail' },
+        { id: 'jcouture', name: "J'Couture", meta: 'Salem · crocheted designer bags', cat: 'prime', img: IMG.jcouture, tint: TINT.craft, status: 'OPEN' },
+        { id: 'amelda', name: "Amelda's Crafts & Confectioneries", meta: 'Brades · baked goods, handmade crafts', cat: 'prime', img: IMG.amelda, tint: TINT.craft, status: 'OPEN' },
+        { id: 'liburd', name: "Liburd's Unique Gift Shop", meta: 'Brades · gifts, cards, novelties', cat: 'prime', img: IMG.liburd, tint: TINT.craft, status: 'OPEN' }
+      ]
+    },
+    {
+      heading: 'SUPERMARKETS & SHOPS',
+      shops: [
+        { id: 'rams', name: "Ram's Supermarket", meta: 'Salem · grocery, wines, snacks', cat: 'grocery', img: IMG.grocery, tint: TINT.shop, status: 'OPEN', delivers: true, screen: 'collect' },
+        { id: 'ashoks', name: "Ashok's Supermarket", meta: 'Brades · local veg, ground provisions', cat: 'grocery', img: IMG.grocery, tint: TINT.shop, status: 'OPEN' },
+        { id: 'victors', name: "Victor's Supermarket", meta: 'Davy Hill · local, Caribbean, international', cat: 'grocery', img: IMG.grocery, tint: TINT.shop, status: 'OPEN', delivers: true },
+        { id: 'umpire', name: 'The Umpire', meta: 'Brades · American imports, frozen, desserts', cat: 'grocery', img: IMG.cafe, tint: TINT.shop, status: 'OPEN' },
+        { id: 'hilltop', name: 'Hilltop Coffee House', meta: "St Peter's · coffee, cinnamon rolls, pastries", cat: 'eats', img: IMG.cafe, tint: TINT.shop, status: '8AM', statusStyle: 'closed' },
+        { id: 'aravins', name: 'Aravins Enterprises', meta: "St. John's · wholesale & retail, cheeses, wines", cat: 'grocery', img: IMG.cafe, tint: TINT.shop, status: '8AM', statusStyle: 'closed' },
+        { id: 'osborne', name: 'M.S. Osborne Ltd', meta: 'Brades · hardware, building materials, appliances', cat: 'hardware', pattern: 'repeating-linear-gradient(135deg, #E0DAC9 0 7px, #D6CFBB 7px 14px)', status: 'OPEN' },
+        { id: 'bbc', name: 'BBC Radio & TV Ltd', meta: 'Brades Main Road · electronics, appliances', cat: 'hardware', pattern: 'repeating-linear-gradient(135deg, #D6DEE0 0 7px, #CCD5D8 7px 14px)', status: 'OPEN' },
+        { id: 'esg', name: 'ESG Variety Ltd.', meta: 'Brades · variety, household goods, snacks', cat: 'grocery', pattern: 'repeating-linear-gradient(135deg, #E4DCD0 0 7px, #DAD1C2 7px 14px)', status: 'OPEN' }
+      ]
+    },
+    {
+      heading: 'REAL ESTATE',
+      // Always visible: the realty agency is not filtered by the shop-type chips.
+      always: true,
+      shops: [
+        { id: 'realty', name: 'Montserrat Realty Co.', meta: 'Brades · homes for sale & rent', cat: 'realty', img: IMG.realty, tint: TINT.realty, status: 'OPEN', screen: 'realtyDetail' }
+      ]
+    }
+  ];
+
+  /* ---------- Travel ---------- */
+
+  var AIRLINES = [
+    { id: 'flymni', short: 'FLY<br/>MNI', shortDesk: 'FLY', name: 'Fly MNI', deskName: 'Fly Montserrat', route: 'Antigua ↔ MNI, daily', bg: '#E7F2EB', color: '#13944B' },
+    { id: 'winair', short: 'WM', shortDesk: 'WM', name: 'Winair', deskName: 'Winair', route: 'St. Maarten ↔ MNI', bg: '#E4EDF9', color: '#0057B8' },
+    { id: 'svg', short: 'SVG', shortDesk: 'SVG', name: 'SVG Air', deskName: 'SVG Air', route: 'Antigua ↔ MNI', bg: '#FBF0DC', color: '#8A5B0E' }
+  ];
+
+  var HOTELS = [
+    { id: 'tropical', name: 'Tropical Mansion Suites', meta: 'Sweeneys · pool, on-site restaurant', deskMeta: 'Sweeneys · pool, restaurant', price: 'from EC$380', unit: '/night', img: IMG.hotelTropical, imgBig: IMG.hotelTropicalBig, tint: TINT.hotel },
+    { id: 'olveston', name: 'Olveston House', meta: 'Olveston · 6 rooms, restaurant & bar', price: 'from EC$310', unit: '/night', img: IMG.realtyCard, imgBig: IMG.realtyBig, tint: TINT.realty },
+    { id: 'gingerbread', name: 'Gingerbread Hill', meta: 'Jacks Bay · self-catering cottages', price: 'from EC$240', unit: '/night', img: IMG.hotelCottage, imgBig: IMG.hotelCottageBig, tint: TINT.hotel },
+    { id: 'chezmango', name: 'Chez Mango Villas', meta: 'Old Towne · pool, ocean views', deskMeta: 'Olveston · private villas, pool', price: 'from EC$410', deskPrice: 'from EC$420', unit: '/night', img: IMG.hotelCottage, imgBig: IMG.hotelVilla, tint: TINT.hotel }
+  ];
+
+  var TOURS = [
+    { id: 'heli', name: "Calvin's Helicopter Tours", meta: 'Volcano flyover · 20 min · up to 3 people', price: 'from EC$450', unit: '/person', img: IMG.tourHeli, imgBig: IMG.tourHeliBig, tint: TINT.tour },
+    { id: 'boat', name: 'Island Boat Tours', meta: 'Exclusion zone coastal tour · half day', price: 'from EC$180', unit: '/person', img: IMG.tourBoat, imgBig: IMG.tourBoatBig, tint: TINT.tour },
+    { id: 'islandtour', name: 'Montserrat Island Tours', meta: 'Volcano observatory & Plymouth · guided', price: 'from EC$140', unit: '/person', img: IMG.tourIsland, imgBig: IMG.tourIsland, tint: TINT.tour, deskOnly: true }
+  ];
+
+  /* ---------- Cart ---------- */
+
+  var CART_ITEMS = {
+    rams: {
+      key: 'rams', seller: "Ram's Supermarket", sellerBadge: 'DELIVERY AVAIL',
+      sellerBadgeBg: '#E4EDF9', sellerBadgeColor: '#0E3F80',
+      title: 'Bread, whole wheat loaf', meta: "700g · sliced · sold by Ram's Supermarket",
+      unitPrice: 14, img: IMG.groceryTall, thumb: IMG.grocery, tint: TINT.shop,
+      payNote: 'Pay by card or cash on delivery'
+    },
+    hilltop: {
+      key: 'hilltop', seller: 'Hilltop Coffee House', sellerBadge: 'PICKUP ONLY',
+      sellerBadgeBg: '#F4F2EC', sellerBadgeColor: '#3A4553',
+      title: 'Cinnamon rolls (box of 4)', meta: 'Baked fresh daily · sold by Hilltop Coffee House',
+      unitPrice: 50, img: IMG.cafeTall, thumb: IMG.cafe, tint: TINT.shop,
+      payNote: 'Cash only, pay at pickup'
+    }
+  };
+
+  /* ---------- Inbox ---------- */
+
+  var THREADS = [
+    { id: 'denroy', name: 'Denroy A.', time: '9:12', preview: 'Offered EC$1,650 — generator', unread: true, avatar: '#E6E1D4,#DED8C9', open: true },
+    { id: 'rams', name: "Ram's, Salem", time: '8:40', preview: 'Your order is bagged, cash on pickup', avatar: '#DEE4D6,#D5DCCB' },
+    { id: 'alvira', name: 'Alvira R.', time: 'Yesterday', preview: 'Wanted: washing machine — still looking?', avatar: '#D9E4E6,#CFDBDE' }
+  ];
+
+  var NOTIFICATIONS = [
+    { dot: '#0E3F80', title: 'Denroy accepted your offer', body: 'EC$1,650 · pickup at Brades til 6pm' },
+    { dot: '#F0B454', title: "Someone wants what you're selling", body: 'Wanted ad matches your breadfruit listing' },
+    { dot: '#C6CDD9', title: "Ram's order is bagged", body: 'Cash on pickup · Salem counter' }
+  ];
+
+  /* ---------- Filter chip definitions ---------- */
+
+  var CATS = [
+    { key: '', label: 'All' },
+    { key: 'vehicles', label: 'Vehicles' },
+    { key: 'home', label: 'Home &amp; Garden' },
+    { key: 'rentals', label: 'Real Estate' },
+    { key: 'farm', label: 'Farm &amp; Produce' },
+    { key: 'tools', label: 'Tools &amp; Power' },
+    { key: 'electronics', label: 'Electronics' },
+    { key: 'services', label: 'Services' }
+  ];
+
+  var VEHICLE_SUBS = [
+    { key: 'cars', label: 'Cars' },
+    { key: 'trucks', label: 'Trucks &amp; SUVs' },
+    { key: 'motorcycles', label: 'Motorcycles' },
+    { key: 'boats', label: 'Boats' },
+    { key: 'parts', label: 'Parts &amp; Accessories' }
+  ];
+
+  var SHOP_CATS = [
+    { key: 'all', label: 'All' }, { key: 'prime', label: 'PRIME' },
+    { key: 'grocery', label: 'Grocery' }, { key: 'eats', label: 'Eats' },
+    { key: 'bakery', label: 'Bakery' }, { key: 'hardware', label: 'Hardware' },
+    { key: 'pharmacy', label: 'Pharmacy' }
+  ];
+
+  var JOB_CATS = [
+    { key: 'all', label: 'All' }, { key: 'retail', label: 'Retail' },
+    { key: 'trades', label: 'Trades &amp; labor' }, { key: 'hospitality', label: 'Hospitality' },
+    { key: 'delivery', label: 'Delivery' }
+  ];
+
+  var WANTED_CATS = [
+    { key: 'all', label: 'All' }, { key: 'goods', label: 'Goods' },
+    { key: 'equipment', label: 'Equipment' }, { key: 'vehicles', label: 'Vehicles' },
+    { key: 'housing', label: 'Housing' }, { key: 'services', label: 'Services' },
+    { key: 'food', label: 'Food' }, { key: 'other', label: 'Other' }
+  ];
+
+  // Desktop sidebar counts are illustrative demo figures, as in the prototype.
+  var DESK_CAT_COUNTS = {
+    '': 412, vehicles: 88, home: 104, rentals: 57,
+    farm: 61, tools: 39, electronics: 33, services: 30
+  };
+  var DESK_WANTED_COUNTS = { all: 14, goods: 6, services: 4, food: 2, equipment: 1, other: 1 };
+  var DESK_JOB_COUNTS = { all: 3, retail: 1, trades: 1, hospitality: 0, delivery: 1 };
+  var DESK_SHOP_COUNTS = { all: 24, prime: 4, grocery: 9, eats: 6, bakery: 3, hardware: 4, pharmacy: 2 };
+
+  /* ---------- Derived helpers ---------- */
+
+  var SORTERS = {
+    newest: function (a, b) { return a.hoursAgo - b.hoursAgo; },
+    price: function (a, b) { return a.priceNum - b.priceNum; },
+    priceDesc: function (a, b) { return b.priceNum - a.priceNum; },
+    viewed: function (a, b) { return b.views - a.views; },
+    delivery: function (a, b) { return (b.delivery ? 1 : 0) - (a.delivery ? 1 : 0); },
+    near: function (a, b) { return a.hoursAgo - b.hoursAgo; }
+  };
+
+  function sortedListings(cats, sortBy) {
+    var items = LISTINGS.slice();
+    if (Array.isArray(cats) && cats.length) {
+      items = items.filter(function (i) { return cats.indexOf(i.cat) !== -1; });
+    }
+    return items.sort(SORTERS[sortBy] || SORTERS.newest);
+  }
+
+  function searchListings(q) {
+    if (!q || !q.trim()) return [];
+    var needle = q.trim().toLowerCase();
+    return LISTINGS.filter(function (i) {
+      return i.title.toLowerCase().indexOf(needle) !== -1
+        || i.catLabel.toLowerCase().indexOf(needle) !== -1
+        || i.location.toLowerCase().indexOf(needle) !== -1;
+    });
+  }
+
+  function wantedItems(cat, sortBy) {
+    var list = (!cat || cat === 'all') ? WANTED.slice() : WANTED.filter(function (i) { return i.cat === cat; });
+    if (sortBy === 'budget') list.sort(function (a, b) { return a.budget - b.budget; });
+    else if (sortBy === 'budgetDesc') list.sort(function (a, b) { return b.budget - a.budget; });
+    else if (sortBy === 'offers') list.sort(function (a, b) { return b.offers - a.offers; });
+    else if (sortBy === 'fewOffers') list.sort(function (a, b) { return a.offers - b.offers; });
+    else list.sort(function (a, b) { return a.hoursAgo - b.hoursAgo; });
+    return list;
+  }
+
+  function jobItems(cat, sortBy) {
+    var list = (!cat || cat === 'all') ? JOBS.slice() : JOBS.filter(function (i) { return i.cat === cat; });
+    if (sortBy === 'pay') list.sort(function (a, b) { return a.pay - b.pay; });
+    else if (sortBy === 'payDesc') list.sort(function (a, b) { return b.pay - a.pay; });
+    else if (sortBy === 'viewed') list.sort(function (a, b) { return b.views - a.views; });
+    return list;
+  }
+
+  function shopVisible(shopCat, shop) {
+    return !shopCat || shopCat === 'all' || shopCat === shop.cat;
+  }
+
+  global.EMData = {
+    IMG: IMG, TINT: TINT,
+    LISTINGS: LISTINGS, WANTED: WANTED, JOBS: JOBS,
+    SHOP_SECTIONS: SHOP_SECTIONS, AIRLINES: AIRLINES, HOTELS: HOTELS, TOURS: TOURS,
+    CART_ITEMS: CART_ITEMS, THREADS: THREADS, NOTIFICATIONS: NOTIFICATIONS,
+    CATS: CATS, VEHICLE_SUBS: VEHICLE_SUBS, SHOP_CATS: SHOP_CATS,
+    JOB_CATS: JOB_CATS, WANTED_CATS: WANTED_CATS,
+    DESK_CAT_COUNTS: DESK_CAT_COUNTS, DESK_WANTED_COUNTS: DESK_WANTED_COUNTS,
+    DESK_JOB_COUNTS: DESK_JOB_COUNTS, DESK_SHOP_COUNTS: DESK_SHOP_COUNTS,
+    sortedListings: sortedListings, searchListings: searchListings,
+    wantedItems: wantedItems, jobItems: jobItems, shopVisible: shopVisible
+  };
+})(window);
+</script>
+<script>
+/* Emerald Marketplace — shared style helpers, icons and repeated fragments.
+   Styles are written inline, matching the design file 1:1, so each screen reads
+   the way it was drawn. Anything reused more than twice lives here. */
+
+(function (global) {
+  'use strict';
+
+  /* ---------- primitives ---------- */
+
+  // Escape text destined for markup. Demo copy is authored here, but any value
+  // that could come from a form (the search box) goes through this.
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Photo background with a colour underneath: if the remote image fails to
+  // load, the tint shows through instead of an empty white box.
+  function bg(url, tint) {
+    return 'background: ' + (tint || '#E0DAC9') + " url('" + url + "') center/cover no-repeat;";
+  }
+
+  // `data-act` drives the single delegated click listener in app.js.
+  function act(name, arg) {
+    return 'data-act="' + name + '"' + (arg != null ? ' data-arg="' + esc(arg) + '"' : '');
+  }
+
+  function when(cond, html) { return cond ? html : ''; }
+
+  function map(list, fn) { return list.map(fn).join(''); }
+
+  /* ---------- chip / tab style variants ---------- */
+
+  // Chips on a white surface.
+  function chip(on) {
+    return on
+      ? 'background:#16233A;color:#FBF8F1;font-size:12px;font-weight:700;padding:6px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0'
+      : 'background:#FFFFFF;border:1px solid #E8E4D9;color:#3A4553;font-size:12px;font-weight:600;padding:6px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0';
+  }
+
+  // Chips on the blue header ("L" = light-on-blue in the original).
+  function chipL(on) {
+    return on
+      ? 'background:#F0B454;color:#2A1D06;font-size:12px;font-weight:600;padding:6px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0'
+      : 'background:rgba(255,255,255,0.12);color:#E6EEF9;font-size:12px;font-weight:400;padding:6px 13px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0';
+  }
+
+  // Second-level (vehicle sub-category) chips on the blue header.
+  function subChip(on) {
+    return on
+      ? 'background:rgba(255,255,255,0.95);color:#0E3F80;font-size:11px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0'
+      : 'background:transparent;border:1px solid rgba(255,255,255,0.35);color:rgba(255,255,255,0.85);font-size:11px;font-weight:500;padding:5px 11px;border-radius:999px;white-space:nowrap;cursor:pointer;flex-shrink:0';
+  }
+
+  // Market tabs (Listings / Wanted / Jobs / Shops / Travel) on the blue header.
+  function segL(on) {
+    return on
+      ? 'padding:2px 0 6px;text-align:center;font-size:14px;font-weight:700;color:#FFFFFF;border-bottom:2px solid #F0B454;cursor:pointer'
+      : 'padding:2px 0 6px;text-align:center;font-size:14px;font-weight:600;color:rgba(255,255,255,0.78);border-bottom:2px solid transparent;cursor:pointer';
+  }
+
+  // Inbox sub-tabs (Messages / Notifications) on white.
+  function msgTab(on) {
+    return on
+      ? 'padding:6px 0 8px;font-size:13.5px;font-weight:700;color:#16233A;border-bottom:2px solid #0E3F80;cursor:pointer'
+      : 'padding:6px 0 8px;font-size:13.5px;font-weight:600;color:#8B94A3;border-bottom:2px solid transparent;cursor:pointer';
+  }
+
+  // Rows inside a sort bottom-sheet.
+  function sortOpt(on) {
+    return on
+      ? 'padding:14px 20px;font-size:15px;font-weight:700;color:#0E3F80;border-bottom:1px solid #F0EDE4;background:#F7FCF9;cursor:pointer;display:flex;justify-content:space-between;align-items:center'
+      : 'padding:14px 20px;font-size:15px;font-weight:600;color:#16233A;border-bottom:1px solid #F0EDE4;cursor:pointer';
+  }
+
+  // Desktop top-nav tabs.
+  function deskTab(on) {
+    return on
+      ? 'color:#FFFFFF;font-size:13.5px;font-weight:700;border-bottom:2px solid #F0B454;padding-bottom:6px;cursor:pointer'
+      : 'color:rgba(230,238,249,0.78);font-size:13.5px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;';
+  }
+
+  // Desktop sidebar filter rows.
+  function deskSide(on) {
+    return on ? 'font-weight:700;color:#0E3F80' : 'font-weight:600;color:#3A4553';
+  }
+
+  function tabCol(on) { return on ? '#0E3F80' : '#9AA49C'; }
+
+
+  /* ---------- sort labels (shared by both frames) ---------- */
+
+  var SORT_LABELS = { newest: 'Newest', price: 'Price ↑', priceDesc: 'Price ↓', near: 'Nearest', delivery: 'Delivery', viewed: 'Most viewed' };
+  var WANTED_SORT_LABELS = { newest: 'Newest', budget: 'Budget ↑', budgetDesc: 'Budget ↓', offers: 'Most offers', fewOffers: 'Fewest offers' };
+  var JOB_SORT_LABELS = { newest: 'Newest', pay: 'Pay ↑', payDesc: 'Pay ↓', viewed: 'Most viewed' };
+
+  /* ---------- icons ---------- */
+
+  var ICON = {
+    mic: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E3F80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
+    micLg: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E3F80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>',
+    home: '<svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>',
+    cart: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',
+    cartLg: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8B94A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',
+    plus: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    plusSm: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    bell: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+    person: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.5 3.5-7 8-7s8 2.5 8 7"/></svg>',
+    heart: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+    heartSm: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+    share: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>',
+    trash: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+    pencil: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>',
+    bagSm: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3V6a3 3 0 0 0-3-3h0a3 3 0 0 0-3 3v1H8a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M8 10h8"/></svg>',
+    card: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+    gear: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    chatBubble: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    logout: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+    whatsapp: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.9C21.96 6.45 17.5 2 12.04 2zm5.8 14.02c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.87-1.24-4.74-4.14-4.89-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.12 1-2.41c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.98.88 2.12.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.65.78 1.94.92.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>',
+    google: '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.6 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.5 29.6 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.4-.3-3.5z"/><path fill="#FF3D00" d="M6.3 14.6l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.5 29.6 4.5 24 4.5c-7.5 0-14 4.2-17.3 10.4z"/><path fill="#4CAF50" d="M24 43.5c5.5 0 10.4-1.9 14.1-5.1l-6.5-5.5c-2 1.4-4.6 2.2-7.6 2.2-5.2 0-9.6-3.4-11.2-8.1l-6.6 5.1C9.9 39.2 16.4 43.5 24 43.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.5 5.5C41.5 36 43.5 30.6 43.5 24c0-1.2-.1-2.4-.3-3.5z"/></svg>',
+    facebook: '<svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.02 4.39 11.01 10.13 11.93v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.95h-1.51c-1.49 0-1.95.93-1.95 1.89v2.28h3.32l-.53 3.49h-2.79v8.44C19.61 23.08 24 18.09 24 12.07z"/></svg>'
+  };
+
+  /* ---------- repeated fragments ---------- */
+
+  function statusBar() {
+    return '<div style="background: #0E3F80; padding: 12px 22px 0; display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: #E6EEF9;">'
+      + '<span>9:41</span><span style="letter-spacing: 0.08em;">▮▮▮ ᯤ 􀛨</span></div>';
+  }
+
+  // Circular back / close button used at the top of most sub-screens.
+  function roundBtn(glyph, action, arg) {
+    return '<div ' + act(action, arg) + ' style="width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer; flex-shrink: 0;">' + glyph + '</div>';
+  }
+
+  // Photo hero with floating back / save / share controls (listing detail pages).
+  function heroHeader(height, imgCss, extra) {
+    return '<div style="height: ' + height + 'px; ' + imgCss + ' position: relative; flex-shrink: 0;">'
+      + '<div style="position: absolute; top: 46px; left: 16px; right: 16px; display: flex; justify-content: space-between;">'
+      + '<div ' + act('nav', 'browse') + ' style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #16233A; cursor: pointer;">‹</div>'
+      + '<div style="display: flex; gap: 8px;">'
+      + '<div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #A8483A;">♥</div>'
+      + '<div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A;">⤴</div>'
+      + '</div></div>' + (extra || '') + '</div>';
+  }
+
+  // The five-slot bottom nav, shared by Home, Browse, Inbox, Saved and Profile.
+  function bottomNav(s) {
+    function badge(count, right, top) {
+      return '<div style="position: absolute; top: ' + top + '; right: ' + right + '; min-width: 18px; height: 18px; border-radius: 9px; background: #F0B454; color: #2A1D06; font-size: 10px; font-weight: 800; border: 1.5px solid #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 0 3px;">' + count + '</div>';
+    }
+    var homeOn = ['home', 'browse', 'detail', 'collect'].indexOf(s.screen) !== -1;
+    return '<div style="background: #FFFFFF; border-top: 1px solid #E8E4D9; padding: 12px 14px 22px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; gap: 4px; position: relative; z-index: 5;">'
+      + '<div ' + act('nav', 'home') + ' style="display: flex; justify-content: center; cursor: pointer; color: ' + tabCol(homeOn) + ';">' + ICON.home + '</div>'
+      + '<div ' + act('nav', 'cart') + ' style="position: relative; display: flex; justify-content: center; cursor: pointer; color: ' + tabCol(s.screen === 'cart') + ';">' + ICON.cart + badge(s.cartCount, '-4px', '-7px') + '</div>'
+      + '<div ' + act('nav', 'sell') + ' style="display: flex; justify-content: center; cursor: pointer;">'
+      + '<div style="width: 52px; height: 52px; margin-top: -22px; border-radius: 50%; background: #16233A; color: #FBF8F1; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 18px -8px rgba(28,42,34,0.6);">' + ICON.plus + '</div></div>'
+      + '<div ' + act('nav', 'messages') + ' style="position: relative; display: flex; justify-content: center; cursor: pointer; color: ' + tabCol(s.screen === 'messages' || s.screen === 'thread') + ';">' + ICON.bell + badge(3, '0px', '-6px') + '</div>'
+      + '<div ' + act('nav', 'profile') + ' style="display: flex; justify-content: center; cursor: pointer; color: ' + tabCol(s.screen === 'profile') + ';">' + ICON.person + '</div>'
+      + '</div>';
+  }
+
+  // Sticky footer holding the primary action(s) on a detail / form screen.
+  function actionBar(inner, extraStyle) {
+    return '<div style="background: #FFFFFF; border-top: 1px solid #E8E4D9; padding: 12px 18px 26px;' + (extraStyle || '') + '">' + inner + '</div>';
+  }
+
+  function primaryBtn(label, action, arg, flex) {
+    return '<div ' + act(action, arg) + ' style="' + (flex ? 'flex: ' + flex + '; ' : '') + 'background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">' + label + '</div>';
+  }
+
+  // Bottom-sheet scaffold used by all three sort menus.
+  function sheet(closeAction, rows) {
+    return '<div ' + act(closeAction) + ' style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(23,35,29,0.42); display: flex; align-items: flex-end; z-index: 20; cursor: pointer;">'
+      + '<div ' + act('stop') + ' style="width: 100%; background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 0 0 26px; box-shadow: 0 -10px 40px rgba(23,35,29,0.18);">'
+      + '<div style="width: 36px; height: 4px; border-radius: 2px; background: #C6CDD9; margin: 10px auto 14px;"></div>'
+      + '<div style="padding: 0 20px 8px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; color: #9AA49C;">SORT BY</div>'
+      + rows + '</div></div>';
+  }
+
+  function sortRows(options, current, action) {
+    return map(options, function (o) {
+      return '<div ' + act(action, o.key) + ' style="' + sortOpt(current === o.key) + '">' + o.label + '</div>';
+    });
+  }
+
+  // Amber "pay in app" warning, repeated on detail pages, checkout and threads.
+  function payWarning(text) {
+    return '<div style="display: flex; align-items: flex-start; gap: 8px;">'
+      + '<div style="width: 18px; height: 18px; border-radius: 5px; background: #0E3F80; color: #FFFFFF; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;">✓</div>'
+      + '<div style="font-size: 12px; color: #3A4553; line-height: 1.4;">' + text + '</div></div>';
+  }
+
+  // Two-column key/value spec grid inside a DETAILS card.
+  function detailsCard(pairs, cols) {
+    return '<div style="display: flex; flex-direction: column; gap: 8px; background: #F7F6F0; border-radius: 12px; padding: 12px 13px;">'
+      + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">DETAILS</div>'
+      + '<div style="display: grid; grid-template-columns: repeat(' + (cols || 2) + ', 1fr); gap: 8px; font-size: 12.5px;">'
+      + map(pairs, function (p) {
+        return '<div><span style="color: #8B94A3;">' + p[0] + '</span><br/><span style="color: #16233A; font-weight: 600;">' + p[1] + '</span></div>';
+      })
+      + '</div></div>';
+  }
+
+  // Neutral pill used for condition / category / meta tags.
+  function tagPill(label) {
+    return '<div style="background: #F4F2EC; color: #3A4553; font-size: 11.5px; font-weight: 600; padding: 5px 10px; border-radius: 7px;">' + label + '</div>';
+  }
+
+  function bluePill(label) {
+    return '<div style="background: #E4EDF9; color: #0E3F80; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 7px;">' + label + '</div>';
+  }
+
+  // Stylised static map with a pin — a Google Maps embed would go here for real.
+  function mapCard(height, label, viewBox, paths) {
+    return '<div style="height: ' + height + 'px; border-radius: 12px; overflow: hidden; position: relative; background: #DDE6DE;">'
+      + '<svg width="100%" height="100%" viewBox="' + viewBox + '" preserveAspectRatio="xMidYMid slice">' + paths + '</svg>'
+      + '<div style="position: absolute; top: ' + (height / 2 - 18) + 'px; left: 165px; width: 24px; height: 24px; border-radius: 50%; background: #0E3F80; border: 3px solid #FFFFFF; box-shadow: 0 2px 6px rgba(23,35,29,0.35); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 11px;">📍</div>'
+      + '<div style="position: absolute; bottom: 7px; left: 9px; background: rgba(255,255,255,0.9); font-size: 10px; font-weight: 700; color: #16233A; padding: 3px 7px; border-radius: 6px;">' + label + '</div></div>';
+  }
+
+  // Contact block with a WhatsApp button (job, shop and realty detail pages).
+  function contactCard(name, line, label) {
+    return '<div style="display: flex; flex-direction: column; gap: 8px; background: #F7F6F0; border-radius: 12px; padding: 12px 13px;">'
+      + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">' + (label || 'CONTACT') + '</div>'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-size: 13px; color: #16233A; font-weight: 600;">' + name + '</div>'
+      + '<div ' + act('whatsapp') + ' style="display: flex; align-items: center; gap: 6px; background: #25D366; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 8px; cursor: pointer;">WhatsApp</div>'
+      + '</div><div style="font-size: 12.5px; color: #7C8697;">' + line + '</div></div>';
+  }
+
+  function avatar(size, colours, extra) {
+    var c = colours.split(',');
+    return '<div style="width: ' + size + 'px; height: ' + size + 'px; border-radius: 50%; background: repeating-linear-gradient(135deg, ' + c[0] + ' 0 6px, ' + c[1] + ' 6px 12px);' + (extra || '') + '"></div>';
+  }
+
+  global.EMUI = {
+    esc: esc, bg: bg, act: act, when: when, map: map,
+    chip: chip, chipL: chipL, subChip: subChip, segL: segL, msgTab: msgTab,
+    sortOpt: sortOpt, deskTab: deskTab, deskSide: deskSide, tabCol: tabCol,
+    ICON: ICON,
+    SORT_LABELS: SORT_LABELS, WANTED_SORT_LABELS: WANTED_SORT_LABELS, JOB_SORT_LABELS: JOB_SORT_LABELS,
+    statusBar: statusBar, roundBtn: roundBtn, heroHeader: heroHeader,
+    bottomNav: bottomNav, actionBar: actionBar, primaryBtn: primaryBtn,
+    sheet: sheet, sortRows: sortRows, payWarning: payWarning, detailsCard: detailsCard,
+    tagPill: tagPill, bluePill: bluePill, mapCard: mapCard, contactCard: contactCard,
+    avatar: avatar
+  };
+})(window);
+</script>
+<script>
+/* Emerald Marketplace — state store and render loop.
+
+   The prototype re-derived its whole view from one state object on every
+   change, so this keeps that model: setState -> re-render both frames.
+   Two things have to survive a full re-render to keep the demo feeling real:
+   the caret in the search box, and the scroll position of any scrolling list.
+   Elements opt in with data-focus-key / data-scroll-key. */
+
+(function (global) {
+  'use strict';
+
+  var state = {
+    // navigation
+    screen: 'home',           // which mobile screen is showing
+    market: 'sellers',        // sellers | wanted | jobs | shops | travel
+
+    // listings
+    cat: [],                  // selected category keys (single-select in practice)
+    vehSub: null,             // vehicle sub-category
+    sortBy: 'newest',
+    sortOpen: false,
+    listView: false,
+    searchSaved: false,
+
+    // other markets
+    shopCat: 'all',
+    wantedCat: 'all',
+    wantedSortBy: 'newest',
+    wantedSortOpen: false,
+    jobCat: 'all',
+    jobSortBy: 'newest',
+    jobSortOpen: false,
+
+    // search
+    searchQuery: '',
+
+    // detail pages
+    detailItem: 'generator',  // generator (Land Cruiser) | mango
+    carPhotoIdx: 0,
+    qaOpen: false,
+
+    // inbox / offers
+    msgTab: 'messages',
+    offer: 'open',            // open | accepted | declined
+
+    // cart
+    cartCount: 2,
+    ramsQty: 1,
+    hilltopQty: 1,
+    ramsSaved: false,
+    hilltopSaved: false,
+    ramsRemoved: false,
+    hilltopRemoved: false,
+    cartSummaryOpen: false,
+
+    // account
+    isSeller: true,
+    verified: false,
+
+    // overlays
+    wantedGateOpen: false,
+    aiAssistOpen: false,
+
+    // banners
+    hasActiveOrder: true,
+
+    // desktop-only view state
+    deskDetail: false,
+    deskItem: null,
+    deskSub: null             // null | 'job' | 'shop'
+  };
+
+  var listeners = [];
+  var frame = null;
+
+  function get() { return state; }
+
+  function setState(patch) {
+    Object.keys(patch).forEach(function (k) { state[k] = patch[k]; });
+    schedule();
+  }
+
+  function subscribe(fn) { listeners.push(fn); }
+
+  function schedule() {
+    if (frame) return;
+    frame = requestAnimationFrame(function () {
+      frame = null;
+      render();
+    });
+  }
+
+  /* ---------- render with focus + scroll preservation ---------- */
+
+  function captureFocus() {
+    var el = document.activeElement;
+    if (!el || !el.dataset || !el.dataset.focusKey) return null;
+    return {
+      key: el.dataset.focusKey,
+      start: el.selectionStart,
+      end: el.selectionEnd
+    };
+  }
+
+  function restoreFocus(saved) {
+    if (!saved) return;
+    var el = document.querySelector('[data-focus-key="' + saved.key + '"]');
+    if (!el) return;
+    el.focus();
+    if (saved.start != null && el.setSelectionRange) {
+      try { el.setSelectionRange(saved.start, saved.end); } catch (e) { /* not a text input */ }
+    }
+  }
+
+  function captureScroll() {
+    var out = {};
+    document.querySelectorAll('[data-scroll-key]').forEach(function (el) {
+      out[el.dataset.scrollKey] = el.scrollTop;
+    });
+    return out;
+  }
+
+  function restoreScroll(saved) {
+    document.querySelectorAll('[data-scroll-key]').forEach(function (el) {
+      var v = saved[el.dataset.scrollKey];
+      if (v) el.scrollTop = v;
+    });
+  }
+
+  function render() {
+    var savedFocus = captureFocus();
+    var savedScroll = captureScroll();
+    listeners.forEach(function (fn) { fn(state); });
+    restoreScroll(savedScroll);
+    restoreFocus(savedFocus);
+  }
+
+  global.EMStore = {
+    get: get, setState: setState, subscribe: subscribe, render: render
+  };
+})(window);
+</script>
+<script>
+/* Emerald Marketplace — mobile: Home and Browse (Listings / Wanted / Jobs /
+   Shops / Travel). Split from the rest of the mobile screens purely for file
+   size; both halves attach to EMScreens. */
+
+(function (global) {
+  'use strict';
+
+  var U = global.EMUI, D = global.EMData;
+  var act = U.act, when = U.when, map = U.map, esc = U.esc, bg = U.bg;
+
+  var S = global.EMScreens = global.EMScreens || {};
+
+  /* ================================ HOME ================================ */
+
+  // Small horizontal card used by "New today" and "Recently viewed".
+  function homeCard(o) {
+    return '<div ' + act('nav', o.screen || 'detail') + (o.item ? ' data-item="' + o.item + '"' : '')
+      + ' style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;">'
+      + when(o.isNew, '<div style="position: absolute; top: 7px; left: 7px; background: #0E3F80; color: #FFFFFF; font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 1;">NEW</div>')
+      + '<div style="height: 100px; ' + bg(o.img, o.tint) + '"></div>'
+      + '<div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">' + o.price + '</div>'
+      + '<div style="font-size: 11.5px; color: #3A4553;">' + o.title + '</div>'
+      + (o.trusted
+        ? '<div style="display: flex; align-items: center; gap: 4px;">'
+          + '<div style="font-size: 10px; color: #8B94A3;">' + o.meta + '</div>'
+          + '<div style="font-size: 9px; background: #E4EDF9; color: #0E3F80; font-weight: 700; padding: 1px 5px; border-radius: 3px;">TRUSTED SELLER</div></div>'
+        : '<div style="font-size: 10px; color: #8B94A3;">' + o.meta + '</div>')
+      + '</div></div>';
+  }
+
+  function homeTile(o) {
+    return '<div ' + act(o.action, o.arg) + ' style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;'
+      + (o.soon ? ' position: relative;' : '') + '">'
+      + '<div style="width: 52px; height: 52px; border-radius: 14px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 20px;">' + o.icon + '</div>'
+      + when(o.soon, '<div style="position: absolute; top: -6px; right: -6px; background: #E09E3B; color: #FFFFFF; font-size: 7.5px; font-weight: 800; padding: 2px 5px; border-radius: 5px; letter-spacing: 0.02em;">SOON</div>')
+      + '<div style="font-size: 10.5px; font-weight: 600; color: #3A4553; text-align: center;">' + o.label + '</div></div>';
+  }
+
+  S.home = function (s) {
+    var I = D.IMG, T = D.TINT;
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0; position: relative;">'
+      + U.statusBar()
+
+      // Search leads — no logo row, per the final design direction.
+      + '<div style="background: #0E3F80; padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div ' + act('nav', 'search') + ' style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 11px; padding: 12px 14px; cursor: pointer;">'
+      + '<span style="color: #7C8697; font-size: 13px;">⌕</span>'
+      + '<span style="color: #8B94A3; font-size: 13px; flex: 1;">Search the island</span>'
+      + U.ICON.mic + '</div></div>'
+
+      + '<div data-scroll-key="home" style="flex: 1; min-height: 0; overflow-y: auto; padding: 18px 20px 28px; display: flex; flex-direction: column; gap: 20px;">'
+
+      + '<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">'
+      + homeTile({ icon: '🏷️', label: 'Listings', action: 'market', arg: 'sellers' })
+      + homeTile({ icon: '🙋', label: 'Wanted', action: 'market', arg: 'wanted' })
+      + homeTile({ icon: '💼', label: 'Jobs', action: 'market', arg: 'jobs' })
+      + homeTile({ icon: '🛒', label: 'Shops', action: 'market', arg: 'shops', soon: true })
+      + homeTile({ icon: '✈️', label: 'Travel', action: 'market', arg: 'travel', soon: true })
+      + '</div>'
+
+      // Saved-search match: the hook that brings people back.
+      + '<div ' + act('nav', 'browse') + ' style="display: flex; align-items: center; justify-content: space-between; background: #E4EDF9; border-radius: 10px; padding: 10px 12px; cursor: pointer;">'
+      + '<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 13px;">🔔</span>'
+      + '<div style="font-size: 12.5px; color: #0E3F80; font-weight: 700;">2 new matches for &quot;Vehicles under EC$70k&quot;</div></div>'
+      + '<div style="font-size: 13px; color: #0E3F80;">›</div></div>'
+
+      + '<div ' + act('whatsapp') + ' style="position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; height: 84px; ' + bg(I.bank, T.dark) + '">'
+      + '<div style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,63,128,0.88) 0%, rgba(14,63,128,0.35) 65%, rgba(14,63,128,0) 100%); display: flex; flex-direction: column; justify-content: center; padding: 0 16px; gap: 3px;">'
+      + '<div style="color: #FFFFFF; font-size: 14px; font-weight: 800;">Bank of Montserrat</div>'
+      + '<div style="color: rgba(255,255,255,0.85); font-size: 11.5px;">Small business loans now open — apply today</div></div>'
+      + '<div style="position: absolute; top: 7px; right: 9px; background: rgba(255,255,255,0.85); color: #3A4553; font-size: 8.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.03em;">SPONSORED</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 10px;">'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">New today</div>'
+      + '<div ' + act('nav', 'browse') + ' style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">See all</div></div>'
+      + '<div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch;">'
+      + homeCard({ img: I.diningTable, tint: T.home, price: 'EC$450', title: 'Dining table, seats 6', meta: 'Brades · 2h', isNew: true, trusted: true })
+      + homeCard({ img: I.mango, tint: T.produce, price: 'EC$25', title: 'Fresh mango crate', meta: 'Cudjoe Head · 18 views', isNew: true, item: 'mango' })
+      + homeCard({ img: I.vehicle, tint: T.vehicle, price: 'EC$68,500', title: 'Land Cruiser, 2018', meta: 'Look Out · 41 views', isNew: true })
+      + '</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 10px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Recently viewed</div>'
+      + '<div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch;">'
+      + homeCard({ img: I.vehicle, tint: T.vehicle, price: 'EC$68,500', title: 'Land Cruiser, 2018', meta: 'Look Out · 41 views' })
+      + homeCard({ img: I.bed, tint: T.bed, price: 'EC$3,800', title: 'King bed set', meta: 'Salem · 112 views' })
+      + homeCard({ img: I.generator, tint: T.neutral, price: 'EC$28,000', title: 'Generator, 5kW', meta: 'Salem · 63 views' })
+      + '</div></div>'
+
+      + '<div ' + act('nav', 'sell') + ' style="background: #16233A; border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">'
+      + '<div style="display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="color: #FFFFFF; font-size: 14.5px; font-weight: 700;">Got something to sell?</div>'
+      + '<div style="color: rgba(230,238,249,0.72); font-size: 12px;">Takes under two minutes</div></div>'
+      + '<div style="width: 38px; height: 38px; border-radius: 50%; background: #F0B454; color: #2A1D06; display: flex; align-items: center; justify-content: center;">' + U.ICON.plusSm + '</div></div>'
+
+      + '</div></div>' + U.bottomNav(s);
+  };
+
+  /* =============================== BROWSE =============================== */
+
+  function chipRow(items, activeKey, action, style) {
+    return '<div style="display: flex; align-items: center; gap: 7px; overflow-x: auto; -webkit-overflow-scrolling: touch;">'
+      + map(items, function (c) {
+        return '<div ' + act(action, c.key) + ' style="' + style(c.key === activeKey) + '">' + c.label + '</div>';
+      }) + '</div>';
+  }
+
+  function browseHeader(s) {
+    var catKey = s.cat.length ? s.cat[0] : '';
+    var tabs = [
+      { key: 'sellers', label: 'Listings' },
+      { key: 'wanted', label: 'Wanted' },
+      { key: 'jobs', label: 'Jobs' },
+      { key: 'shops', label: 'Shops', soon: true },
+      { key: 'travel', label: 'Travel', soon: true }
+    ];
+    return U.statusBar()
+      + '<div style="background: #0E3F80; padding: 18px 20px 16px; display: flex; flex-direction: column; gap: 12px;">'
+
+      + '<div ' + act('nav', 'search') + ' style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 12px; padding: 12px 14px; cursor: pointer;">'
+      + '<span style="color: #7C8697; font-size: 13px;">⌕</span>'
+      + '<span style="color: #8B94A3; font-size: 13px; flex: 1;">Search the island</span>'
+      + U.ICON.mic + '</div>'
+
+      + '<div style="display: flex; gap: 18px;">'
+      + map(tabs, function (t) {
+        // An amber dot, not a "SOON" label — the calmer treatment settled on.
+        return '<div ' + act('market', t.key) + ' style="' + U.segL(s.market === t.key) + (t.soon ? ' position: relative;' : '') + '">' + t.label
+          + when(t.soon, '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#F0B454;margin-left:4px;vertical-align:middle;"></span>')
+          + '</div>';
+      }) + '</div>'
+
+      + when(s.market === 'sellers',
+          chipRow(D.CATS, catKey, 'cat', U.chipL)
+          + when(catKey === 'vehicles',
+              '<div style="display: flex; align-items: center; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: -2px;">'
+              + map(D.VEHICLE_SUBS, function (c) {
+                return '<div ' + act('vehSub', c.key) + ' style="' + U.subChip(s.vehSub === c.key) + '">' + c.label + '</div>';
+              }) + '</div>'))
+      + when(s.market === 'shops', chipRow(D.SHOP_CATS, s.shopCat, 'shopCat', U.chipL))
+      + when(s.market === 'jobs', chipRow(D.JOB_CATS, s.jobCat, 'jobCat', U.chipL))
+      + when(s.market === 'wanted', chipRow(D.WANTED_CATS, s.wantedCat, 'wantedCat', U.chipL))
+      + '</div>';
+  }
+
+  var SORT_LABELS = U.SORT_LABELS, WANTED_SORT_LABELS = U.WANTED_SORT_LABELS, JOB_SORT_LABELS = U.JOB_SORT_LABELS;
+
+  function sortPill(label, action) {
+    return '<div ' + act(action) + ' style="display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer; background: #E4EDF9; padding: 5px 9px; border-radius: 7px;">' + label + ' ⌄</div>';
+  }
+
+  /* ---- Listings ---- */
+
+  function listingCard(item, s) {
+    var cardStyle = s.listView
+      ? 'background:#FFFFFF;border:1px solid #E8E4D9;border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:row'
+      : 'background:#FFFFFF;border:1px solid #E8E4D9;border-radius:16px;overflow:hidden;cursor:pointer';
+    var imgExtra = s.listView ? 'width:110px;height:110px;' : '';
+    var flag = item.sponsored
+      ? '<div style="position: absolute; top: 7px; left: 7px; background: rgba(28,42,34,0.75); color: #F0E2B0; font-size: 9px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 7px; border-radius: 4px;">SPONSORED</div>'
+      : item.tag
+        ? '<div style="position: absolute; top: 7px; left: 7px; background: #5B6FBA; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px;">' + item.tag + '</div>'
+        : item.urgency
+          ? '<div style="position: absolute; top: 7px; left: 7px; background: #A8483A; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px;">' + item.urgency + '</div>'
+          : '';
+    return '<div ' + act('openListing', item.id) + ' style="' + cardStyle + '">'
+      + '<div style="height: 96px; ' + bg(item.img, item.tint) + ' position: relative; flex-shrink: 0; ' + imgExtra + '">'
+      + flag
+      + '<div style="position: absolute; top: 7px; right: 7px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #0E3F80;">♡</div></div>'
+      + '<div style="padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 2px;">'
+      + '<div style="display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; color: ' + item.catColor + ';">'
+      + '<span style="width: 5px; height: 5px; border-radius: 50%; background: ' + item.catColor + ';"></span>' + item.catLabel + '</div>'
+      + '<div style="font-size: 14.5px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">' + item.price + '</div>'
+      + '<div style="font-size: 12px; color: #3A4553; line-height: 1.2;">' + item.title + '</div>'
+      + '<div style="font-size: 10.5px; color: #8B94A3; line-height: 1.15;">' + item.location + ' · ' + item.timeAgo + '</div>'
+      + '<div style="font-size: 9.5px; color: #A8B3AB; line-height: 1.15;">' + item.views + ' views</div>'
+      + when(item.badgeText, '<div style="margin-top: 3px; align-self: flex-start; background: ' + item.badgeBg + '; color: ' + item.badgeColor + '; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 5px;">' + item.badgeText + '</div>')
+      + '</div></div>';
+  }
+
+  function listingsPanel(s) {
+    var items = D.sortedListings(s.cat, s.sortBy);
+    var title = !s.cat.length
+      ? "What's new nearby"
+      : (s.cat.length === 1 ? s.cat[0].charAt(0).toUpperCase() + s.cat[0].slice(1) : s.cat.length + ' categories selected');
+    var gridStyle = s.listView ? 'display:flex;flex-direction:column;gap:10px' : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
+
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">'
+      + '<div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding-bottom: 10px;">'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">' + title + '</div>'
+      + '<div style="display: flex; align-items: center; gap: 6px;">'
+      // Save-search sits with sort/view, applying to the filtered result set.
+      + '<div ' + act('toggleSaveSearch') + ' title="' + (s.searchSaved ? 'Search saved' : 'Save this search') + '" style="width: 30px; height: 30px; border-radius: 8px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: ' + (s.searchSaved ? '#E09E3B' : '#6C7585') + ';">' + (s.searchSaved ? '★' : '☆') + '</div>'
+      + '<div ' + act('toggleListView') + ' style="width: 30px; height: 30px; border-radius: 8px; background: ' + (s.listView ? '#16233A' : '#EFEBE1') + '; display: flex; align-items: center; justify-content: center; cursor: pointer;">'
+      + '<svg width="14" height="14" viewBox="0 0 14 14" fill="' + (s.listView ? '#FBF8F1' : '#6C7585') + '"><rect x="0" y="0" width="14" height="3" rx="1.5"/><rect x="0" y="5.5" width="14" height="3" rx="1.5"/><rect x="0" y="11" width="14" height="3" rx="1.5"/></svg></div>'
+      + sortPill(SORT_LABELS[s.sortBy], 'openSort')
+      + '</div></div></div>'
+      + '<div data-scroll-key="listings" style="overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 16px;">'
+      + '<div style="' + gridStyle + '">' + map(items, function (i) { return listingCard(i, s); }) + '</div>'
+      + when(!items.length, '<div style="text-align: center; padding: 40px 16px; color: #8B94A3; font-size: 13px;">Nothing listed in this category yet.</div>')
+      + '</div></div>';
+  }
+
+  /* ---- Shops ---- */
+
+  function shopCard(shop) {
+    var thumb = shop.pattern
+      ? 'background: ' + shop.pattern + ';'
+      : bg(shop.img, shop.tint);
+    var statusPill = shop.statusStyle === 'closed'
+      ? '<div style="background: #F2E7E4; color: #A8483A; font-size: 10px; font-weight: 800; padding: 4px 7px; border-radius: 5px;">' + shop.status + '</div>'
+      : '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10px; font-weight: 800; padding: 4px 7px; border-radius: 5px;">' + shop.status + '</div>';
+    var right = shop.delivers
+      ? '<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">' + statusPill
+        + '<div style="background: #FBF0DC; color: #8A5B0E; font-size: 9.5px; font-weight: 800; padding: 3px 7px; border-radius: 5px;">DELIVERY AVAIL.</div></div>'
+      : statusPill;
+    return '<div ' + (shop.screen ? act('nav', shop.screen) : act('noop'))
+      + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer;">'
+      + '<div style="width: 54px; height: 54px; border-radius: 11px; ' + thumb + ' flex-shrink: 0;"></div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A;">' + shop.name + '</div>'
+      + '<div style="font-size: 11.5px; color: #7C8697;">' + shop.meta + '</div></div>'
+      + right + '</div>';
+  }
+
+  function shopsPanel(s) {
+    var body = map(D.SHOP_SECTIONS, function (sec, idx) {
+      var visible = sec.always ? sec.shops : sec.shops.filter(function (sh) { return D.shopVisible(s.shopCat, sh); });
+      if (!visible.length) return '';
+      return '<div style="padding: ' + (idx ? '10px' : '2px') + ' 2px 2px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #8B94A3;">' + sec.heading + '</div>'
+        + '<div style="display: flex; flex-direction: column; gap: 9px;">' + map(visible, shopCard) + '</div>';
+    });
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">'
+      + '<div data-scroll-key="shops" style="overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 16px; display: flex; flex-direction: column; gap: 9px;">'
+      + body + '<div style="height: 56px; flex-shrink: 0;"></div></div></div>';
+  }
+
+  /* ---- Wanted ---- */
+
+  function wantedRow(item) {
+    return '<div ' + (item.screen ? act('nav', item.screen) : act('wantedGate'))
+      + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer;">'
+      + '<div style="width: 40px; height: 40px; border-radius: 11px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">' + item.icon + '</div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: center; gap: 7px;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A;">' + item.title + '</div>'
+      + '<div style="background: #F4F2EC; color: #3A4553; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 5px; white-space: nowrap;">' + item.catLabel + '</div></div>'
+      + '<div style="display: flex; align-items: center; gap: 6px;">'
+      + when(item.budgetLabel, '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px;">' + item.budgetLabel + '</div>')
+      + '<div style="font-size: 11px; color: #8B94A3;">' + item.location + ' · ' + item.timeAgo + ' · ' + item.offers + ' offers</div></div></div>'
+      + '<div ' + act('stop') + ' style="font-size: 15px; color: #0E3F80; cursor: pointer;">♡</div>'
+      + '<div style="font-size: 15px; color: #C6CDD9;">›</div></div>';
+  }
+
+  function wantedPanel(s) {
+    var items = D.wantedItems(s.wantedCat, s.wantedSortBy);
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">'
+      + '<div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">What the island is asking for</div>'
+      + sortPill(WANTED_SORT_LABELS[s.wantedSortBy], 'openWantedSort') + '</div>'
+      + '<div data-scroll-key="wanted" style="overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 16px; display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="background: #E4EDF9; border-radius: 16px; padding: 13px 14px; display: flex; align-items: center; gap: 12px;">'
+      + '<div style="width: 34px; height: 34px; border-radius: 10px; background: #0E3F80; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 16px; font-weight: 700;">?</div>'
+      + '<div style="flex: 1; font-size: 12.5px; line-height: 1.4; color: #16233A;">14 neighbours are looking for things. Have it in the shed? Say so.</div></div>'
+      + '<div ' + act('nav', 'postWanted') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 700; cursor: pointer;">+ Post a Wanted ad <span style="opacity: 0.7; font-weight: 600;">· Free</span></div>'
+      + map(items, wantedRow)
+      + when(!items.length, '<div style="text-align: center; padding: 30px 16px; color: #8B94A3; font-size: 13px;">No open asks in this category.</div>')
+      + '<div style="text-align: center; font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">See all 14 asks</div>'
+      + '<div style="height: 56px; flex-shrink: 0;"></div></div></div>';
+  }
+
+  /* ---- Jobs ---- */
+
+  function jobRow(item) {
+    return '<div ' + act('nav', 'jobDetail') + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer;">'
+      + '<div style="width: 40px; height: 40px; border-radius: 11px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">' + item.icon + '</div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: center; gap: 7px;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A;">' + item.title + '</div>'
+      + '<div style="background: #F4F2EC; color: #3A4553; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 5px; white-space: nowrap;">' + item.typeLabel + '</div></div>'
+      + '<div style="display: flex; align-items: center; gap: 6px;">'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 5px;">' + item.payLabel + '</div>'
+      + '<div style="font-size: 11px; color: #8B94A3;">' + item.employer + ' · ' + item.location + ' · ' + item.applied + ' applied</div></div></div>'
+      + '<div ' + act('stop') + ' style="font-size: 15px; color: #0E3F80; cursor: pointer;">♡</div>'
+      + '<div style="font-size: 15px; color: #C6CDD9;">›</div></div>';
+  }
+
+  function jobsPanel(s) {
+    var items = D.jobItems(s.jobCat, s.jobSortBy);
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">'
+      + '<div style="flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Job openings</div>'
+      + sortPill(JOB_SORT_LABELS[s.jobSortBy], 'openJobSort') + '</div>'
+      + '<div data-scroll-key="jobs" style="overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 16px; display: flex; flex-direction: column; gap: 10px;">'
+      + '<div ' + act('wantedGate') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 700; cursor: pointer;">+ Post a job <span style="opacity: 0.7; font-weight: 600;">· Free</span></div>'
+      + map(items, jobRow)
+      + when(!items.length, '<div style="text-align: center; padding: 30px 16px; color: #8B94A3; font-size: 13px;">No openings in this category right now.</div>')
+      + '<div style="height: 56px; flex-shrink: 0;"></div></div></div>';
+  }
+
+  /* ---- Travel ---- */
+
+  function stayCard(o, priceKey) {
+    return '<div ' + act('noop') + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; display: flex;">'
+      + '<div style="width: 110px; height: 110px; ' + bg(o.img, o.tint) + ' flex-shrink: 0;"></div>'
+      + '<div style="padding: 11px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A;">' + o.name + '</div>'
+      + '<div style="font-size: 11.5px; color: #7C8697;">' + o.meta + '</div>'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A; margin-top: 3px;">' + o[priceKey || 'price']
+      + '<span style="font-size: 11px; font-weight: 500; color: #7C8697;">' + o.unit + '</span></div></div></div>';
+  }
+
+  function travelPanel() {
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0;">'
+      + '<div data-scroll-key="travel" style="overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 16px; display: flex; flex-direction: column; gap: 16px;">'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Fly to Montserrat</div>'
+      + '<div style="font-size: 9px; font-weight: 800; letter-spacing: 0.04em; color: #A8B3AB;">SPONSORED</div></div>'
+      + '<div style="display: flex; gap: 8px;">'
+      + map(D.AIRLINES, function (a) {
+        return '<div ' + act('flymni') + ' style="flex: 1; position: relative; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;">'
+          + '<div style="position: absolute; top: 4px; right: 5px; font-size: 6.5px; font-weight: 800; letter-spacing: 0.03em; color: #C6CDD9;">AD</div>'
+          + '<div style="width: 30px; height: 30px; border-radius: 7px; background: ' + a.bg + '; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; color: ' + a.color + '; letter-spacing: -0.02em; text-align: center; line-height: 1.1;">' + a.short + '</div>'
+          + '<div style="font-size: 9.5px; font-weight: 700; color: #16233A; text-align: center;">' + a.name + '</div></div>';
+      }) + '</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Hotels on the island</div>'
+      + map(D.HOTELS, function (h) { return stayCard(h); }) + '</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Tours &amp; experiences</div>'
+      + map(D.TOURS.filter(function (t) { return !t.deskOnly; }), function (t) { return stayCard(t); }) + '</div>'
+
+      + '<div style="height: 56px; flex-shrink: 0;"></div></div></div>';
+  }
+
+  /* ---- Browse shell ---- */
+
+  S.browse = function (s) {
+    var panel = s.market === 'sellers' ? listingsPanel(s)
+      : s.market === 'shops' ? shopsPanel(s)
+      : s.market === 'wanted' ? wantedPanel(s)
+      : s.market === 'jobs' ? jobsPanel(s)
+      : travelPanel(s);
+
+    var showCartBar = s.market === 'shops' && !s.hasActiveOrder;
+    var waBottom = (s.hasActiveOrder || showCartBar) ? '138px' : '96px';
+
+    return '<div style="display: flex; flex-direction: column; flex: 1; min-height: 0; position: relative;">'
+      + browseHeader(s)
+      + '<div style="padding: 14px 20px 0; display: flex; flex-direction: column; gap: 13px; flex: 1; min-height: 0;">' + panel + '</div>'
+
+      // Persistent help channel — WhatsApp is how the island actually talks.
+      + '<div ' + act('whatsapp') + ' style="position: absolute; right: 14px; bottom: ' + waBottom + '; width: 44px; height: 44px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px -4px rgba(23,35,29,0.4); cursor: pointer; z-index: 15; transition: bottom 0.15s;">'
+      + U.ICON.whatsapp + '</div>'
+
+      + when(s.hasActiveOrder,
+          '<div ' + act('nav', 'collect') + ' style="background: #F0B454; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">'
+          + '<div style="display: flex; align-items: center; gap: 9px;">'
+          + '<div style="width: 24px; height: 24px; border-radius: 50%; background: #2A1D06; color: #F0E2B0; font-size: 13px; display: flex; align-items: center; justify-content: center;">✓</div>'
+          + '<div style="color: #2A1D06; font-size: 13px; font-weight: 700;">Order ready at Ram\'s, Salem</div></div>'
+          + '<div style="color: #2A1D06; font-size: 13px; font-weight: 700;">Collect ›</div></div>')
+
+      + when(showCartBar,
+          '<div ' + act('nav', 'cart') + ' style="background: #16233A; padding: 11px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">'
+          + '<div style="display: flex; align-items: center; gap: 9px;">'
+          + '<div style="width: 26px; height: 26px; border-radius: 50%; background: #F0B454; color: #2A1D06; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">' + s.cartCount + '</div>'
+          + '<div style="color: #FBF8F1; font-size: 13px; font-weight: 600;">Cart · EC$64</div></div>'
+          + '<div style="color: #F0B454; font-size: 13px; font-weight: 700;">Checkout ›</div></div>')
+
+      + '</div>' + U.bottomNav(s);
+  };
+
+})(window);
+</script>
+<script>
+/* Emerald Marketplace — mobile: detail pages, checkout, inbox, sell flow,
+   account screens and the modal overlays. */
+
+(function (global) {
+  'use strict';
+
+  var U = global.EMUI, D = global.EMData;
+  var act = U.act, when = U.when, map = U.map, esc = U.esc, bg = U.bg;
+  var S = global.EMScreens;
+
+  /* ============================ LISTING DETAIL =========================== */
+
+  // Seller trust card + the Emerald Pay note, shared by both detail variants.
+  function sellerCard(name, stats) {
+    return '<div ' + act('nav', 'thread') + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; padding: 13px; display: flex; flex-direction: column; gap: 11px; cursor: pointer;">'
+      + '<div style="display: flex; align-items: center; gap: 11px;">'
+      + U.avatar(40, '#E6E1D4,#DED8C9', 'flex-shrink: 0;')
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: center; gap: 6px;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A;">' + name + '</div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">VERIFIED</div></div>'
+      + '<div style="font-size: 11.5px; color: #7C8697;">' + stats + '</div></div>'
+      + '<div style="font-size: 15px; color: #0E3F80;">›</div></div>'
+      + '<div style="height: 1px; background: #EDE9DD;"></div>'
+      + U.payWarning('<strong style="color: #16233A;">Emerald Pay</strong> holds payment until you confirm the item. Off-app cash deals get no refund, no dispute support.')
+      + '</div>';
+  }
+
+  function qaSection(s, count, rows) {
+    return '<div ' + act('toggleQA') + ' style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding-bottom: 4px;">'
+      + '<div style="font-size: 13.5px; font-weight: 800; color: #16233A;">Questions &amp; Answers <span style="color: #8B94A3; font-weight: 600;">(' + count + ')</span></div>'
+      + '<div style="font-size: 13px; color: #8B94A3;">' + (s.qaOpen ? '▲' : '▼') + '</div></div>'
+      + when(s.qaOpen,
+          '<div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 6px;">'
+          + '<div ' + act('wantedGate') + ' style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer; align-self: flex-end;">Ask a question</div>'
+          + rows + '</div>');
+  }
+
+  function qaItem(q, a, when_) {
+    return '<div style="display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="font-size: 12.5px; font-weight: 700; color: #16233A;">Q: ' + q + '</div>'
+      + '<div style="font-size: 12.5px; color: #4A5A52; padding-left: 12px;">A: ' + a + '</div>'
+      + '<div style="font-size: 10.5px; color: #B0B8AE; padding-left: 12px;">' + when_ + '</div></div>';
+  }
+
+  function mangoDetail(s) {
+    var I = D.IMG, T = D.TINT;
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + U.heroHeader(220, bg(I.mango, T.produce))
+      + '<div data-scroll-key="detail" style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 13px;">'
+
+      + '<div style="display: flex; flex-direction: column; gap: 5px;">'
+      + '<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">'
+      + '<div style="font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: #16233A; line-height: 1;">EC$25</div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 6px; white-space: nowrap; margin-top: 5px;">Fixed price</div></div>'
+      + '<div style="font-size: 17px; font-weight: 600; color: #16233A; line-height: 1.3;">Fresh mango crate — Julie variety</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3;">Cudjoe Head · 5h ago · 18 views · 3 saves</div></div>'
+
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">' + U.tagPill('Farm &amp; Produce') + U.tagPill('Picked fresh') + '</div>'
+
+      // Fulfillment reads as its own colour-coded row, distinct from the tags.
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">'
+      + '<div style="display: flex; align-items: center; gap: 5px; background: #FFFFFF; border: 1px solid #D8E4DB; color: #0E3F80; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 7px;"><span>📍</span>Pickup · Cudjoe Head</div>'
+      + '<div style="display: flex; align-items: center; gap: 5px; background: #FBF0DC; border: 1px solid #F0D9A8; color: #8A5B0E; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 7px;"><span>🚚</span>Delivery avail. · EC$10</div></div>'
+
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">Whole crate, about 40-45 mangoes, picked this morning off the tree. Sweet Julie variety, ready to eat in a day or two.</div>'
+
+      + U.detailsCard([['Variety', 'Julie mango'], ['Quantity', '~40-45 fruit'], ['Harvested', 'This morning'], ['Ready to eat', '1-2 days']])
+      + sellerCard('Kenrick B.', '★ 4.8 (14) · 9 sales · member since 2022')
+
+      + '<div style="border-top: 1px solid #EDE9DD; padding-top: 12px;">'
+      + qaSection(s, 1, qaItem('Are these tree-ripened or picked green?', 'Tree-ripened, picked same day. — Kenrick B.', '1 day ago'))
+      + '</div><div style="height: 20px;"></div></div>'
+
+      + U.actionBar('<div ' + act('nav', 'collect') + ' style="flex: 1; background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Buy · EC$25</div>', ' display: flex; gap: 9px;')
+      + '</div>';
+  }
+
+  function carDetail(s) {
+    var I = D.IMG, T = D.TINT;
+    var heroes = [I.vehicleBig, I.car1, I.car2, I.car3];
+    var thumbs = [I.vehicleThumb, I.car1Thumb, I.car2Thumb, I.car3Thumb];
+    var idx = s.carPhotoIdx || 0;
+
+    var dots = map([0, 1, 2, 3], function (i) {
+      return '<div ' + act('carPhoto', i) + ' style="cursor: pointer; width: ' + (idx === i ? '18px' : '5px') + '; height: 5px; border-radius: 3px; background: ' + (idx === i ? '#0E3F80' : 'rgba(23,35,29,0.22)') + ';"></div>';
+    });
+
+    var heroExtra = '<div style="position: absolute; bottom: 14px; right: 14px; background: rgba(28,42,34,0.72); color: #FBF8F1; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;">' + (idx + 1) + ' / 4</div>'
+      + '<div style="position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px;">' + dots + '</div>';
+
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + U.heroHeader(252, bg(heroes[idx], T.vehicle), heroExtra)
+
+      + '<div style="display: flex; gap: 6px; padding: 8px 20px; flex-shrink: 0;">'
+      + map(thumbs, function (t, i) {
+        return '<div ' + act('carPhoto', i) + ' style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: 2px solid ' + (idx === i ? '#0E3F80' : 'transparent') + '; ' + bg(t, T.vehicle) + '"></div>';
+      }) + '</div>'
+
+      + '<div data-scroll-key="detail" style="flex: 1; overflow-y: auto; padding: 4px 20px 0; display: flex; flex-direction: column; gap: 13px;">'
+
+      + '<div style="display: flex; flex-direction: column; gap: 5px;">'
+      + '<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">'
+      + '<div style="font-size: 33px; font-weight: 800; letter-spacing: -0.03em; color: #16233A; line-height: 1;">EC$68,500</div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 6px; white-space: nowrap; margin-top: 5px;">Offers welcome</div></div>'
+      + '<div style="font-size: 17px; font-weight: 600; color: #16233A; line-height: 1.3;">2018 Toyota Land Cruiser</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3;">Look Out · 1h ago · 41 views · 12 saves</div></div>'
+
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">' + U.tagPill('Well maintained') + U.tagPill('Vehicles') + '</div>'
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">'
+      + '<div style="display: flex; align-items: center; gap: 5px; background: #FFFFFF; border: 1px solid #D8E4DB; color: #0E3F80; font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 7px;"><span>📍</span>View by appointment · Look Out</div></div>'
+
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">Well maintained, single owner, serviced regularly with new tires. Ready for island roads. <span style="color: #0E3F80; font-weight: 700;">More</span></div>'
+
+      + U.detailsCard([['Make', 'Toyota'], ['Model', 'Land Cruiser'], ['Year', '2018'], ['Mileage', '~62,000 km']])
+
+      + U.mapCard(100, 'General area · Look Out', '0 0 350 100',
+          '<rect width="350" height="100" fill="#DCE6DD"/><path d="M0 60 Q80 35 160 55 T350 45" stroke="#C3D3C6" stroke-width="12" fill="none"/>')
+
+      + sellerCard('Denroy A.', '★ 4.9 (31) · 23 sales · replies in ~1 hr')
+
+      + '<div style="border-top: 1px solid #EDE9DD; padding-top: 12px; display: flex; flex-direction: column; gap: 4px;">'
+      + qaSection(s, 2,
+          qaItem('Any accident history?', 'None, single owner since new. — Denroy A.', '2 days ago')
+          + '<div style="height: 1px; background: #EDE9DD;"></div>'
+          + qaItem('Can I get it inspected before I buy?', 'Yes, happy to arrange a viewing. — Denroy A.', '5 days ago'))
+      + '</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px; padding-bottom: 16px;">'
+      + '<div style="font-size: 13.5px; font-weight: 800; color: #16233A;">More from Denroy</div>'
+      + '<div style="display: flex; gap: 10px; overflow-x: auto;">'
+      + map([['EC$120', 'Roof rack, universal'], ['EC$220', 'Tire set, off-road']], function (p) {
+        return '<div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; overflow: hidden;">'
+          + '<div style="height: 78px; ' + bg(I.carParts, T.neutral) + '"></div>'
+          + '<div style="padding: 7px 8px 9px;"><div style="font-size: 12.5px; font-weight: 700; color: #16233A;">' + p[0] + '</div>'
+          + '<div style="font-size: 10.5px; color: #7C8697;">' + p[1] + '</div></div></div>';
+      }) + '</div></div>'
+
+      + '<div style="height: 20px;"></div></div>'
+
+      + U.actionBar(
+          '<div ' + act('nav', 'thread') + ' style="flex: 1; border: 1.5px solid #0E3F80; color: #0E3F80; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Make offer</div>'
+          + '<div ' + act('nav', 'collect') + ' style="flex: 1.15; background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Buy · EC$68,500</div>',
+          ' display: flex; gap: 9px;')
+      + '</div>';
+  }
+
+  S.detail = function (s) {
+    return s.detailItem === 'mango' ? mangoDetail(s) : carDetail(s);
+  };
+
+  /* ============================== CHECKOUT ============================== */
+
+  S.collect = function () {
+    var I = D.IMG, T = D.TINT;
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('‹', 'nav', 'browse')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Pickup &amp; pay</div></div>'
+      + '<div data-scroll-key="collect" style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; padding: 13px; display: flex; align-items: center; gap: 12px;">'
+      + '<div style="width: 52px; height: 52px; border-radius: 11px; ' + bg(I.vehicle, T.vehicle) + ' flex-shrink: 0;"></div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">'
+      + '<div style="font-size: 13.5px; font-weight: 700; color: #16233A;">2018 Toyota Land Cruiser</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3;">from Denroy A. · Look Out</div></div>'
+      + '<div style="font-size: 19px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">EC$68,500</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Where will you pick up?</div>'
+      + '<div style="height: 120px; border-radius: 14px; overflow: hidden; position: relative; background: #DDE6DE;">'
+      + '<svg width="100%" height="100%" viewBox="0 0 350 120" preserveAspectRatio="xMidYMid slice">'
+      + '<rect width="350" height="120" fill="#DCE6DD"/>'
+      + '<path d="M0 70 Q80 40 160 65 T350 55" stroke="#C3D3C6" stroke-width="14" fill="none"/>'
+      + '<path d="M40 0 Q60 60 30 120" stroke="#C3D3C6" stroke-width="10" fill="none"/>'
+      + '<path d="M300 0 Q280 50 320 120" stroke="#C3D3C6" stroke-width="8" fill="none"/></svg>'
+      + '<div style="position: absolute; top: 38px; left: 165px; display: flex; flex-direction: column; align-items: center;">'
+      + '<div style="width: 30px; height: 30px; border-radius: 50%; background: #0E3F80; border: 3px solid #FFFFFF; box-shadow: 0 2px 6px rgba(23,35,29,0.35); display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 13px;">📍</div></div>'
+      + '<div style="position: absolute; bottom: 8px; left: 10px; background: rgba(255,255,255,0.9); font-size: 10px; font-weight: 700; color: #16233A; padding: 3px 8px; border-radius: 6px;">Emerald point, Brades</div></div>'
+
+      + '<div style="background: #E4EDF9; border: 1.5px solid #0E3F80; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px;">'
+      + '<div style="width: 18px; height: 18px; border-radius: 50%; background: #0E3F80; color: #FFFFFF; font-size: 11px; display: flex; align-items: center; justify-content: center;">✓</div>'
+      + '<div style="flex: 1;"><div style="font-size: 13.5px; font-weight: 700; color: #0E3F80;">Brades — Emerald point</div>'
+      + '<div style="font-size: 11.5px; color: #3A5A4A; margin-top: 2px;">Beside the BBC complex · til 6pm</div></div></div>'
+
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px;">'
+      + '<div style="width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #C6CDD9;"></div>'
+      + '<div style="flex: 1;"><div style="font-size: 13.5px; font-weight: 700; color: #16233A;">Seller delivers to you</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">EC$40 · anywhere on island</div></div></div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">How will you pay?</div>'
+      + '<div style="display: flex; gap: 9px;">'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1.5px solid #0E3F80; border-radius: 13px; padding: 12px 10px;">'
+      + '<div style="font-size: 13px; font-weight: 800; color: #0E3F80;">Cash</div><div style="font-size: 10.5px; color: #3A5A4A; margin-top: 3px;">On pickup</div></div>'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 13px; padding: 12px 10px;">'
+      + '<div style="font-size: 13px; font-weight: 800; color: #16233A;">Card</div><div style="font-size: 10.5px; color: #8B94A3; margin-top: 3px;">Held in escrow</div></div>'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 13px; padding: 12px 10px;">'
+      + '<div style="font-size: 13px; font-weight: 800; color: #16233A;">Transfer</div><div style="font-size: 10.5px; color: #8B94A3; margin-top: 3px;">Upload receipt</div></div></div>'
+      + '<div style="font-size: 11.5px; line-height: 1.45; color: #7C8697;">Cash orders are held until closing. Two no-shows pauses cash for a month.</div></div>'
+
+      + '<div style="display: flex; align-items: flex-start; gap: 8px; background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 10px; padding: 10px 12px;">'
+      + '<span style="font-size: 13px;">🛡️</span>'
+      + '<div style="font-size: 11px; color: #6B4405; line-height: 1.45;">Pay through Emerald Pay for buyer protection — settling off-app means no refund if something goes wrong.</div></div>'
+
+      + '<div style="height: 12px;"></div></div>'
+
+      + U.actionBar(
+          '<div style="display: flex; justify-content: space-between; font-size: 12.5px; color: #7C8697;">'
+          + '<span>1 item · no delivery fee</span><span style="font-weight: 700; color: #16233A;">EC$68,500</span></div>'
+          + U.primaryBtn('Reserve for collection', 'nav', 'orderConfirmed'),
+          ' display: flex; flex-direction: column; gap: 9px;')
+      + '</div>';
+  };
+
+  /* =============================== INBOX =============================== */
+
+  S.messages = function (s) {
+    var onMessages = s.msgTab !== 'notifications';
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 20px 0; border-bottom: 1px solid #E8E4D9; display: flex; flex-direction: column; gap: 10px;">'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-family: \'Instrument Serif\', serif; font-size: 27px; color: #16233A; line-height: 1;">Inbox</div>'
+      + '<div style="display: inline-flex; align-items: center; justify-content: center; font-size: 17px; line-height: 1;">🇲🇸</div></div>'
+      + '<div style="display: flex; gap: 18px;">'
+      + '<div ' + act('msgTab', 'messages') + ' style="' + U.msgTab(onMessages) + '">Messages</div>'
+      + '<div ' + act('msgTab', 'notifications') + ' style="' + U.msgTab(!onMessages) + '">Notifications</div>'
+      + '</div></div>'
+
+      + (onMessages
+        ? '<div data-scroll-key="inbox" style="flex: 1; overflow-y: auto; padding: 8px 20px 0; display: flex; flex-direction: column;">'
+          + map(D.THREADS, function (t) {
+            return '<div ' + (t.open ? act('nav', 'thread') : act('noop')) + ' style="padding: 14px 0; border-bottom: 1px solid #F0EDE4; display: flex; align-items: center; gap: 12px;' + (t.open ? ' cursor: pointer;' : '') + '">'
+              + U.avatar(46, t.avatar)
+              + '<div style="flex: 1;"><div style="display: flex; justify-content: space-between; align-items: baseline;">'
+              + '<div style="font-size: 14.5px; font-weight: 700; color: #16233A;">' + t.name + '</div>'
+              + '<div style="font-size: 11px; color: #9AA49C;">' + t.time + '</div></div>'
+              + '<div style="font-size: 12.5px; color: #6E7B72; margin-top: 3px;">' + t.preview + '</div></div>'
+              + when(t.unread, '<div style="width: 9px; height: 9px; border-radius: 50%; background: #0E3F80;"></div>')
+              + '</div>';
+          }) + '</div>'
+        : '<div data-scroll-key="inbox" style="flex: 1; overflow-y: auto; padding: 8px 20px 0; display: flex; flex-direction: column;">'
+          + '<div style="display: flex; justify-content: flex-end; padding: 6px 0 4px;">'
+          + '<div style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">Mark all read</div></div>'
+          + map(D.NOTIFICATIONS, function (n) {
+            return '<div style="padding: 13px 0; border-bottom: 1px solid #F0EDE4; display: flex; gap: 11px;">'
+              + '<div style="width: 8px; height: 8px; border-radius: 50%; background: ' + n.dot + '; margin-top: 6px;"></div>'
+              + '<div style="flex: 1;"><div style="font-size: 13px; font-weight: 700; color: #16233A;">' + n.title + '</div>'
+              + '<div style="font-size: 12px; color: #7C8697; margin-top: 3px;">' + n.body + '</div></div></div>';
+          }) + '</div>')
+
+      + U.bottomNav(s) + '</div>';
+  };
+
+  S.thread = function (s) {
+    var offerCard = s.offer === 'open'
+      ? '<div style="align-self: stretch; background: #FFFFFF; border: 1.5px solid #E09E3B; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 11px;">'
+        + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+        + '<div style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #8A5B0E;">OFFER FROM ASHLEY</div>'
+        + '<div style="font-size: 11px; color: #9AA49C;">9:12</div></div>'
+        + '<div style="font-size: 11px; font-weight: 700; color: #A8483A;">⏱ Denroy has 23h 12m to respond</div>'
+        + '<div style="display: flex; align-items: baseline; gap: 10px;">'
+        + '<div style="font-size: 26px; font-weight: 800; letter-spacing: -0.025em; color: #16233A; line-height: 1;">EC$1,650</div>'
+        + '<div style="font-size: 12px; color: #8B94A3; text-decoration: line-through;">1,850</div></div>'
+        + '<div style="font-size: 12px; color: #6E7B72;">Cash on pickup at Brades point</div>'
+        + '<div style="display: flex; gap: 9px;">'
+        + '<div ' + act('declineOffer') + ' style="flex: 1; border: 1.5px solid #C6CDD9; color: #3A4553; border-radius: 11px; padding: 11px 0; text-align: center; font-size: 13.5px; font-weight: 700; cursor: pointer;">Decline</div>'
+        + '<div ' + act('acceptOffer') + ' style="flex: 1.2; background: #0E3F80; color: #FFFFFF; border-radius: 11px; padding: 11px 0; text-align: center; font-size: 13.5px; font-weight: 700; cursor: pointer;">Accept</div></div></div>'
+      : s.offer === 'accepted'
+        ? '<div style="align-self: stretch; background: #E4EDF9; border: 1.5px solid #0E3F80; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">'
+          + '<div style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #0E3F80;">OFFER ACCEPTED · EC$1,650</div>'
+          + '<div style="font-size: 13px; line-height: 1.45; color: #3A5A4A;">Pick up at Brades — Emerald point, til 6pm. Pay cash on pickup.</div>'
+          + '<div ' + act('nav', 'collect') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 11px; padding: 11px 0; text-align: center; font-size: 13.5px; font-weight: 700; cursor: pointer;">Arrange collection</div></div>'
+        : '<div style="align-self: stretch; background: #F7F6F0; border: 1px solid #E8E4D9; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">'
+          + '<div style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #A8483A;">OFFER DECLINED</div>'
+          + '<div style="font-size: 13px; line-height: 1.45; color: #3A4553;">Denroy can counter, or you can send another price.</div>'
+          + '<div ' + act('resetOffer') + ' style="border: 1.5px solid #0E3F80; color: #0E3F80; border-radius: 11px; padding: 11px 0; text-align: center; font-size: 13.5px; font-weight: 700; cursor: pointer;">Counter at EC$1,750</div></div>';
+
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 11px;">'
+      + U.roundBtn('‹', 'nav', 'messages')
+      + U.avatar(34, '#E6E1D4,#DED8C9')
+      + '<div style="flex: 1;"><div style="font-size: 14px; font-weight: 700; color: #16233A;">Denroy A.</div>'
+      + '<div style="font-size: 11px; color: #8B94A3;">★ 4.9 · usually replies in 1 hr</div></div></div>'
+
+      + '<div style="padding: 10px 18px; background: #F4F1E8; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E8E4D9;">'
+      + '<div style="width: 34px; height: 34px; border-radius: 8px; background: repeating-linear-gradient(135deg, #E6E1D4 0 6px, #DED8C9 6px 12px);"></div>'
+      + '<div style="flex: 1; font-size: 12.5px; font-weight: 600; color: #16233A;">Honda generator, 3kW</div>'
+      + '<div style="font-size: 12.5px; font-weight: 700; color: #16233A;">EC$1,850</div></div>'
+
+      + '<div style="padding: 8px 18px; background: #FBF0DC; border-bottom: 1px solid #F0D9A8; display: flex; align-items: center; gap: 7px;">'
+      + '<span style="font-size: 12px;">🛡️</span>'
+      + '<div style="font-size: 10.5px; color: #6B4405; line-height: 1.3;">Keep offers &amp; payment in-app — Emerald Pay protects you if something goes wrong.</div></div>'
+
+      + '<div data-scroll-key="thread" style="flex: 1; overflow-y: auto; padding: 14px 18px 0; display: flex; flex-direction: column; gap: 10px;">'
+      + '<div style="align-self: flex-start; max-width: 74%; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px 14px 14px 4px; padding: 10px 13px; font-size: 13.5px; color: #16233A; line-height: 1.45;">Morning. Still have the generator?</div>'
+      + '<div style="align-self: flex-end; max-width: 74%; background: #0E3F80; border-radius: 14px 14px 4px 14px; padding: 10px 13px; font-size: 13.5px; color: #FFFFFF; line-height: 1.45;">Yes, in Salem. You can see it this evening.</div>'
+      + offerCard + '<div style="height: 12px;"></div></div>'
+
+      + '<div style="border-top: 1px solid #E8E4D9; background: #FFFFFF; padding: 12px 18px 26px; display: flex; align-items: center; gap: 10px;">'
+      + '<div style="flex: 1; background: #F4F1E8; border-radius: 999px; padding: 12px 16px; font-size: 13.5px; color: #8B94A3;">Write a message</div>'
+      + '<div style="width: 42px; height: 42px; border-radius: 50%; background: #0E3F80; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px;">↑</div></div>'
+      + '</div>';
+  };
+
+  /* =============================== SELL =============================== */
+
+  function pillRow(items) {
+    return '<div style="display: flex; gap: 7px; flex-wrap: wrap;">' + map(items, function (p) {
+      return p.on
+        ? '<div style="background: ' + (p.tone === 'amber' ? '#FBF0DC' : p.tone === 'outline' ? '#E4EDF9' : '#0E3F80')
+          + '; ' + (p.tone === 'amber' ? 'border: 1.5px solid #E09E3B; color: #8A5B0E;' : p.tone === 'outline' ? 'border: 1.5px solid #0E3F80; color: #0E3F80;' : 'color: #FFFFFF;')
+          + ' font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px;">' + p.label + '</div>'
+        : '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">' + p.label + '</div>';
+    }) + '</div>';
+  }
+
+  S.sell = function () {
+    var I = D.IMG, T = D.TINT;
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('✕', 'nav', 'browse')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Sell something</div>'
+      + '<div style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div></div>'
+
+      + '<div data-scroll-key="sell" style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+
+      // AI assist entry point — the shortcut past a form nobody wants to fill in.
+      + '<div ' + act('openAiAssist') + ' style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">'
+      + '<div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>'
+      + '<div style="flex: 1;"><div style="color: #FFFFFF; font-size: 13.5px; font-weight: 700;">Fill this in for me</div>'
+      + '<div style="color: rgba(230,238,249,0.75); font-size: 11.5px; margin-top: 1px;">Snap a photo — AI writes the title, price &amp; details</div></div>'
+      + '<div style="color: #F0B454; font-size: 15px;">›</div></div>'
+
+      + '<div style="display: flex; gap: 10px;">'
+      + '<div style="width: 92px; height: 92px; border-radius: 14px; border: 1.5px dashed #C6CDD9; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">'
+      + '<div style="font-size: 20px; color: #0E3F80;">+</div><div style="font-size: 10.5px; color: #7C8697;">Add photo</div></div>'
+      + '<div style="width: 92px; height: 92px; border-radius: 14px; ' + bg(I.grocery, T.shop) + ' flex-shrink: 0;"></div>'
+      + '<div style="width: 92px; height: 92px; border-radius: 14px; ' + bg(I.grocery, T.shop) + ' flex-shrink: 0;"></div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">Honda generator, 3kW</div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 13.5px; color: #8B94A3; line-height: 1.45;">Say what it is, how old, any faults…</div>'
+      + '<div style="display: flex; gap: 9px;">'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">EC$ 1,850</div>'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Salem ⌄</div></div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Condition</div>'
+      + pillRow([{ label: 'New' }, { label: 'Like new', on: true }, { label: 'Used' }, { label: 'For parts' }]) + '</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">How can buyers get it?</div>'
+      + pillRow([{ label: 'Pickup', on: true, tone: 'outline' }, { label: "I'll drop it", on: true, tone: 'outline' }, { label: 'Pickup point' }]) + '</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Category</div>'
+      + pillRow([{ label: 'Tools &amp; power', on: true, tone: 'amber' }, { label: 'Home' }, { label: 'Farm' }, { label: 'Vehicles' }]) + '</div>'
+
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px;">'
+      + '<div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #C6CDD9;"></div>'
+      + '<div style="flex: 1;"><div style="font-size: 13px; font-weight: 700; color: #16233A;">Boost to the top for a week</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">EC$10 · paid at checkout</div></div></div>'
+
+      // Fee transparency: sellers see exactly what they keep before posting.
+      + '<div style="background: #F7F6F0; border-radius: 14px; padding: 13px 14px; display: flex; flex-direction: column; gap: 7px;">'
+      + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">IF THIS SELLS</div>'
+      + '<div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Sale price</span><span>EC$1,850</span></div>'
+      + '<div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Emerald fee (5%)</span><span>−EC$92.50</span></div>'
+      + '<div style="height: 1px; background: #E4E1D3; margin: 2px 0;"></div>'
+      + '<div style="display: flex; justify-content: space-between; font-size: 14.5px; font-weight: 800; color: #16233A;"><span>You keep</span><span>EC$1,757.50</span></div>'
+      + '<div style="font-size: 11px; color: #8B94A3; margin-top: 2px;">No fee unless it sells — listing is free.</div></div>'
+
+      + '<div style="height: 12px;"></div></div>'
+      + U.actionBar(U.primaryBtn('Post listing — free', 'nav', 'pending'))
+      + '</div>';
+  };
+
+  /* =============================== SEARCH =============================== */
+
+  S.search = function (s) {
+    var results = D.searchListings(s.searchQuery);
+    var hasQuery = !!(s.searchQuery && s.searchQuery.trim());
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 10px;">'
+      + U.roundBtn('‹', 'closeSearch')
+      + '<div style="flex: 1; display: flex; align-items: center; gap: 8px; background: #F4F2EC; border-radius: 10px; padding: 9px 12px;">'
+      + '<span style="color: #7C8697; font-size: 13px;">⌕</span>'
+      + '<input data-focus-key="search" data-input="search" value="' + esc(s.searchQuery) + '" placeholder="Search the island" '
+      + 'style="border: none; outline: none; background: transparent; flex: 1; font-size: 13.5px; color: #16233A; font-family: inherit;" /></div></div>'
+
+      + '<div style="flex: 1; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;">'
+      + (hasQuery
+        ? '<div style="font-size: 11.5px; font-weight: 700; color: #8B94A3;">' + results.length + (results.length === 1 ? ' result' : ' results') + '</div>'
+          + map(results, function (item) {
+            return '<div ' + act('openListing', item.id) + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 11px; display: flex; align-items: center; gap: 12px; cursor: pointer;">'
+              + '<div style="width: 52px; height: 52px; border-radius: 10px; ' + bg(item.img, item.tint) + ' flex-shrink: 0;"></div>'
+              + '<div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">'
+              + '<div style="font-size: 13.5px; font-weight: 700; color: #16233A;">' + item.title + '</div>'
+              + '<div style="font-size: 11.5px; color: #8B94A3;">' + item.location + ' · ' + item.timeAgo + '</div></div>'
+              + '<div style="font-size: 14px; font-weight: 800; color: #16233A;">' + item.price + '</div></div>';
+          })
+          + when(!results.length, '<div style="text-align: center; padding: 30px 10px; color: #8B94A3; font-size: 13px;">No listings match &quot;' + esc(s.searchQuery) + '&quot;</div>')
+        // A near-empty search screen with a few suggestions is the norm.
+        : '<div style="font-size: 11.5px; font-weight: 700; color: #8B94A3; padding-top: 4px;">TRY SEARCHING</div>'
+          + map(['Land Cruiser', 'Mango', 'Bed set'], function (q) {
+            return '<div ' + act('searchFor', q) + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 12px 14px; font-size: 13.5px; color: #3A4553; cursor: pointer;">' + q + '</div>';
+          }))
+      + '</div></div>';
+  };
+
+  /* =============================== LOGIN =============================== */
+
+  S.login = function () {
+    var I = D.IMG;
+    return '<div style="display: flex; flex-direction: column; height: 100%; background: #0E3F80;">'
+      + '<div style="height: 40%; position: relative; flex-shrink: 0; ' + bg(I.loginHero, '#1B4C86') + '">'
+      + '<div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,92,63,0.15) 0%, #0E3F80 100%); pointer-events: none;"></div>'
+      + '<div ' + act('nav', 'home') + ' style="position: absolute; top: 46px; right: 20px; width: 32px; height: 32px; border-radius: 50%; background: rgba(28,42,34,0.5); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer;">✕</div></div>'
+
+      + '<div style="flex: 1; display: flex; flex-direction: column; padding: 6px 26px 30px; gap: 20px;">'
+      + '<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: -4px;">'
+      + '<div style="color: #FFFFFF; font-family: \'Instrument Serif\', serif; font-size: 25px;">Join Emerald Marketplace</div>'
+      + '<div style="color: rgba(230,238,249,0.72); font-size: 13px; text-align: center;">Buy, sell and connect across Montserrat</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 10px;">'
+      + '<div ' + act('nav', 'home') + ' style="background: #FFFFFF; border-radius: 13px; padding: 14px 0; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">'
+      + '<span style="font-size: 16px;">✉️</span><span style="font-size: 14.5px; font-weight: 700; color: #16233A;">Continue with Email</span></div>'
+      + '<div ' + act('nav', 'home') + ' style="background: #FFFFFF; border-radius: 13px; padding: 14px 0; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">'
+      + U.ICON.google + '<span style="font-size: 14.5px; font-weight: 700; color: #16233A;">Continue with Google</span></div>'
+      + '<div ' + act('nav', 'home') + ' style="background: #1877F2; border-radius: 13px; padding: 14px 0; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">'
+      + U.ICON.facebook + '<span style="font-size: 14.5px; font-weight: 700; color: #FFFFFF;">Continue with Facebook</span></div>'
+      + '<div ' + act('nav', 'home') + ' style="border: 1.5px solid rgba(255,255,255,0.4); border-radius: 13px; padding: 13px 0; text-align: center; cursor: pointer;">'
+      + '<span style="font-size: 13.5px; font-weight: 700; color: #E6EEF9;">Continue as Guest</span></div></div>'
+
+      + '<div style="font-size: 11px; color: rgba(230,238,249,0.6); text-align: center; line-height: 1.5;">Guests can browse, but need an account to message sellers, reply to Wanted posts, or sell.</div>'
+      + '</div></div>';
+  };
+
+  /* ========================== WANTED / JOB DETAIL ======================== */
+
+  S.wantedDetail = function () {
+    var I = D.IMG;
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="height: 220px; ' + bg(I.wantedWasher, '#D4D8DC') + ' position: relative; flex-shrink: 0;">'
+      + '<div style="position: absolute; top: 46px; left: 16px; right: 16px; display: flex; justify-content: space-between;">'
+      + '<div ' + act('nav', 'browse') + ' style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">‹</div>'
+      + '<div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #0E3F80;">♡</div></div>'
+      + '<div style="position: absolute; bottom: 12px; left: 16px; background: #FBF0DC; color: #8A5B0E; font-size: 10px; font-weight: 800; padding: 4px 9px; border-radius: 6px;">WANTED — reference photo</div></div>'
+
+      + '<div data-scroll-key="wantedDetail" style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div style="display: flex; flex-direction: column; gap: 5px;">'
+      + '<div style="font-size: 21px; font-weight: 800; color: #16233A; line-height: 1.2;">Washing machine, working</div>'
+      + '<div style="font-size: 13px; color: #7C8697;">St. Peter\'s · posted 1h ago</div></div>'
+
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">'
+      + U.bluePill('Up to EC$600') + U.tagPill('Needed this week') + U.tagPill('52 views') + U.tagPill('3 offers so far') + '</div>'
+
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">Front or top loader, just needs to actually work. Can collect from anywhere on the island — I have a pickup truck. Photo shown is just an example of the style I\'m after.</div>'
+
+      // Identity is gated: seeing who posted is what drives sign-ups.
+      + '<div style="background: #E4EDF9; border-radius: 12px; padding: 13px 14px; display: flex; align-items: center; gap: 10px;">'
+      + '<span style="font-size: 15px;">🔒</span>'
+      + '<div style="font-size: 12.5px; color: #0E3F80; line-height: 1.4;">Log in to see who\'s asking and send an offer</div></div>'
+      + '<div style="height: 20px;"></div></div>'
+
+      + U.actionBar('<div ' + act('wantedGate') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">I have this — offer it</div>')
+      + '</div>';
+  };
+
+  S.yardDetail = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('‹', 'nav', 'browse')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Wanted — Service</div></div>'
+
+      + '<div data-scroll-key="yard" style="flex: 1; overflow-y: auto; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div style="display: flex; flex-direction: column; gap: 5px;">'
+      + '<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">'
+      + '<div style="font-size: 21px; font-weight: 800; color: #16233A; line-height: 1.2;">Someone to cut a yard, Salem</div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10.5px; font-weight: 800; padding: 5px 9px; border-radius: 6px; white-space: nowrap; margin-top: 3px;">SERVICE</div></div>'
+      + '<div style="font-size: 13px; color: #7C8697;">Salem · posted yesterday</div></div>'
+
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">'
+      + U.bluePill('Cash same day') + U.tagPill('19 views') + U.tagPill('1 offer so far') + '</div>'
+
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">Medium-size yard, mostly grass with a slope at the back. Own tools preferred but not required — I have a weed whacker you could borrow. Looking to get this done this weekend.</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px; background: #F7F6F0; border-radius: 12px; padding: 12px 13px;">'
+      + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">POSTED BY</div>'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="display: flex; align-items: center; gap: 9px;">' + U.avatar(34, '#DDE4EE,#D3DBE7', 'flex-shrink: 0;')
+      + '<div style="font-size: 13px; color: #16233A; font-weight: 600;">Merle J. · Salem</div></div>'
+      + '<div ' + act('whatsapp') + ' style="display: flex; align-items: center; gap: 6px; background: #25D366; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 8px; cursor: pointer;">WhatsApp</div></div>'
+      + '<div style="font-size: 12.5px; color: #7C8697;">Member since 2024 · usually replies within a few hours</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Your offer</div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Your price, EC$</div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; min-height: 56px; font-size: 13.5px; color: #8B94A3; line-height: 1.45;">Add a note — when you\'re free, tools you have…</div></div>'
+      + '<div style="height: 20px;"></div></div>'
+
+      + U.actionBar(U.primaryBtn('Send offer', 'nav', 'browse'))
+      + '</div>';
+  };
+
+  S.jobDetail = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('‹', 'nav', 'browse')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Job posting</div>'
+      + '<div style="font-size: 17px; color: #0E3F80;">♡</div></div>'
+
+      + '<div data-scroll-key="jobDetail" style="flex: 1; overflow-y: auto; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div style="display: flex; flex-direction: column; gap: 5px;">'
+      + '<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">'
+      + '<div style="font-size: 21px; font-weight: 800; color: #16233A; line-height: 1.2;">Cashier, part-time</div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10.5px; font-weight: 800; padding: 5px 9px; border-radius: 6px; white-space: nowrap; margin-top: 3px;">HIRING</div></div>'
+      + '<div style="font-size: 13px; color: #7C8697;">Ram\'s Supermarket · Salem</div></div>'
+
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">'
+      + U.tagPill('Part-time') + U.tagPill('EC$18/hr') + U.tagPill('In-person') + '</div>'
+
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">Looking for a reliable cashier to join our Salem location, weekday afternoons and Saturdays. Prior retail/cash handling experience preferred but not required — we\'ll train the right person.</div>'
+
+      + U.detailsCard([['Schedule', 'Weekday PM + Sat'], ['Pay', 'EC$18/hr'], ['Start date', 'As soon as possible'], ['Experience', 'Not required']])
+      + U.contactCard('Denise A. · Store manager', '+1 (664) 491-2278 · replies within a day')
+      + '<div style="height: 20px;"></div></div>'
+
+      + U.actionBar(U.primaryBtn('Apply now', 'nav', 'thread'))
+      + '</div>';
+  };
+
+  /* ======================= SHOP / REALTY STOREFRONTS ===================== */
+
+  function storefront(o) {
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="height: 190px; ' + bg(o.hero, o.tint) + ' position: relative; flex-shrink: 0;">'
+      + '<div style="position: absolute; top: 46px; left: 16px; right: 16px; display: flex; justify-content: space-between;">'
+      + '<div ' + act('nav', 'browse') + ' style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">‹</div>'
+      + '<div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 15px; color: #0E3F80;">♡</div></div></div>'
+
+      + '<div style="padding: 14px 20px 0; display: flex; align-items: center; gap: 12px;">'
+      + '<div style="width: 58px; height: 58px; border-radius: 14px; ' + bg(o.mark, o.tint) + ' margin-top: -34px; border: 3px solid #FFFFFF; flex-shrink: 0;"></div>'
+      + '<div style="flex: 1;"><div style="font-size: 18px; font-weight: 800; color: #16233A;">' + o.name + '</div>'
+      + '<div style="font-size: 12px; color: #7C8697;">' + o.meta + '</div></div>'
+      + '<div style="background: #E4EDF9; color: #0E3F80; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 5px;">OPEN</div></div>'
+
+      + '<div data-scroll-key="storefront" style="flex: 1; overflow-y: auto; padding: 14px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div style="display: flex; gap: 7px; flex-wrap: wrap;">' + map(o.tags, U.tagPill) + '</div>'
+      + '<div style="font-size: 13.5px; line-height: 1.55; color: #3A4553;">' + o.blurb + '</div>'
+      + o.body
+      + U.contactCard(o.contactName, o.contactLine)
+      + '<div style="height: 20px;"></div></div>'
+      + U.actionBar(U.primaryBtn(o.cta, 'nav', 'thread'))
+      + '</div>';
+  }
+
+  S.shopDetail = function () {
+    var I = D.IMG, T = D.TINT;
+    var items = [
+      { img: I.necklace, price: 'EC$45', name: 'Shell necklace' },
+      { img: I.cards, price: 'EC$28', name: 'Volcano print card set' },
+      { img: I.basket, price: 'EC$60', name: 'Handwoven basket' }
+    ];
+    return storefront({
+      hero: I.momentosWide, mark: I.momentos, tint: T.craft,
+      name: 'Island Momentos', meta: 'Little Bay · Crafts, souvenirs, jewelry',
+      tags: ['Made in Montserrat', 'Mon-Sat, 9-5', 'Pickup only'],
+      blurb: 'Handmade Montserrat crafts, jewelry and souvenirs — a PRIME-exhibiting local favorite. Stop by the shop in Little Bay or message ahead to reserve a piece.',
+      body: '<div style="display: flex; flex-direction: column; gap: 9px;">'
+        + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Featured items</div>'
+        + '<div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch;">'
+        + map(items, function (it) {
+          return '<div style="width: 128px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; overflow: hidden;">'
+            + '<div style="height: 88px; ' + bg(it.img, T.craft) + '"></div>'
+            + '<div style="padding: 8px 9px 10px;"><div style="font-size: 13px; font-weight: 800; color: #16233A;">' + it.price + '</div>'
+            + '<div style="font-size: 10.5px; color: #7C8697;">' + it.name + '</div></div></div>';
+        }) + '</div></div>',
+      contactName: 'Sonia P. · Owner', contactLine: '+1 (664) 491-5502 · Little Bay',
+      cta: 'Message the shop'
+    });
+  };
+
+  S.realtyDetail = function () {
+    var I = D.IMG, T = D.TINT;
+    var props = [
+      { img: I.villa, price: 'EC$1,250,000', title: '3-bed villa, sea view', meta: 'Woodlands · For sale' },
+      { img: I.apartment, price: 'EC$2,400/mo', title: '2-bed apartment', meta: 'Salem · For rent' },
+      { img: I.lot, price: 'EC$310,000', title: 'Building lot, 0.5 acre', meta: 'Look Out · For sale' }
+    ];
+    return storefront({
+      hero: I.realtyWide, mark: I.realty, tint: T.realty,
+      name: 'Montserrat Realty Co.', meta: 'Brades · Licensed real estate agency',
+      tags: ['Licensed agent', 'Sales &amp; rentals', 'Mon-Fri, 9-5'],
+      blurb: 'Full-service real estate agency covering all of Montserrat — home sales, long-term rentals, and land. Message us for a viewing.',
+      body: '<div style="display: flex; flex-direction: column; gap: 9px;">'
+        + '<div style="font-size: 15px; font-weight: 800; color: #16233A;">Listed properties</div>'
+        + '<div style="display: flex; flex-direction: column; gap: 9px;">'
+        + map(props, function (p) {
+          return '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; overflow: hidden; display: flex; cursor: pointer;">'
+            + '<div style="width: 100px; height: 88px; ' + bg(p.img, T.realty) + ' flex-shrink: 0;"></div>'
+            + '<div style="padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; justify-content: center;">'
+            + '<div style="font-size: 14px; font-weight: 800; color: #16233A;">' + p.price + '</div>'
+            + '<div style="font-size: 12px; color: #3A4553;">' + p.title + '</div>'
+            + '<div style="font-size: 10.5px; color: #8B94A3;">' + p.meta + '</div></div></div>';
+        }) + '</div></div>',
+      contactName: 'Denise A. · Broker', contactLine: '+1 (664) 491-8820 · Brades',
+      cta: 'Message the agency'
+    });
+  };
+
+  /* ============================ POST WANTED ============================ */
+
+  S.postWanted = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('✕', 'nav', 'browse')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Post a Wanted ad</div></div>'
+
+      + '<div data-scroll-key="postWanted" style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">What are you looking for?</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Reference photo (optional)</div>'
+      + '<div style="display: flex; gap: 10px;">'
+      + '<div style="width: 76px; height: 76px; border-radius: 14px; border: 1.5px dashed #C6CDD9; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">'
+      + '<div style="font-size: 18px; color: #0E3F80;">+</div><div style="font-size: 9.5px; color: #7C8697;">Add photo</div></div></div></div>'
+
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 13.5px; color: #8B94A3; line-height: 1.45;">Add detail — brand, size, condition you\'ll accept…</div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Budget</div>'
+      + '<div style="display: flex; gap: 9px;">'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Min EC$</div>'
+      + '<div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Max EC$</div></div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Needed by</div>'
+      + pillRow([{ label: 'This week', on: true }, { label: 'This month' }, { label: 'No rush' }])
+      + '<div style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; cursor: pointer;">'
+      + '<span style="font-size: 14px;">📅</span><span style="font-size: 13.5px; color: #8B94A3;">Or pick a specific date or date range</span></div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Area</div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Salem ⌄</div></div>'
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Notes for sellers</div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; min-height: 64px; font-size: 13.5px; color: #8B94A3; line-height: 1.45;">e.g. Can collect same day, prefer cash…</div></div>'
+
+      + '<div style="height: 12px;"></div></div>'
+      + U.actionBar(U.primaryBtn('Post Wanted ad — free', 'nav', 'browse'))
+      + '</div>';
+  };
+
+  /* ======================== VERIFY / PENDING STATES ====================== */
+
+  S.verify = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('✕', 'nav', 'profile')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Verify your identity</div></div>'
+
+      + '<div style="flex: 1; overflow-y: auto; padding: 18px 20px 0; display: flex; flex-direction: column; gap: 16px;">'
+      + '<div style="font-size: 13.5px; color: #4A5A52; line-height: 1.55;">Every seller on Emerald Marketplace is verified — this keeps the island\'s buyers and sellers safe. Takes about 2 minutes.</div>'
+      + '<div style="display: flex; flex-direction: column; gap: 10px;">'
+      + '<div style="border: 1.5px dashed #C6CDD9; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 7px;">'
+      + '<div style="font-size: 22px; color: #0E3F80;">🪪</div>'
+      + '<div style="font-size: 13px; font-weight: 700; color: #16233A;">Upload a photo ID</div>'
+      + '<div style="font-size: 11.5px; color: #8B94A3;">Passport or national ID</div></div>'
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Phone number for verification</div></div>'
+      + '<div style="display: flex; align-items: flex-start; gap: 8px; background: #E4EDF9; border-radius: 10px; padding: 11px 12px;">'
+      + '<span style="font-size: 13px;">🛡️</span>'
+      + '<div style="font-size: 11.5px; color: #3A5A4A; line-height: 1.45;">Your ID is only used to confirm you\'re a real person — it\'s never shown to buyers.</div></div></div>'
+
+      + U.actionBar(U.primaryBtn('Submit for verification', 'completeVerify'))
+      + '</div>';
+  };
+
+  S.pending = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%; align-items: center; justify-content: center; padding: 40px 30px; text-align: center; gap: 16px;">'
+      + '<div style="width: 64px; height: 64px; border-radius: 50%; background: #FBF0DC; display: flex; align-items: center; justify-content: center; font-size: 28px;">⏳</div>'
+      + '<div style="font-size: 19px; font-weight: 800; color: #16233A;">Submitted for review</div>'
+      + '<div style="font-size: 13.5px; color: #7C8697; line-height: 1.55; max-width: 280px;">Your listing goes live once our team approves it — usually within a few hours. We check photos and pricing to keep the marketplace trustworthy.</div>'
+      + '<div ' + act('nav', 'home') + ' style="margin-top: 8px; background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 30px; font-size: 14.5px; font-weight: 700; cursor: pointer;">Back to home</div></div>';
+  };
+
+  S.orderConfirmed = function () {
+    return '<div style="display: flex; flex-direction: column; height: 100%; align-items: center; justify-content: center; padding: 36px 30px; text-align: center; gap: 14px;">'
+      + '<div style="width: 64px; height: 64px; border-radius: 50%; background: #E4F5EA; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #13944B;">✓</div>'
+      + '<div style="font-size: 17px; font-weight: 800; color: #16233A;">Order placed!</div>'
+      + '<div style="font-size: 13px; color: #8B94A3; line-height: 1.5;">Ram\'s Supermarket will prepare your delivery. Hilltop Coffee House will have your pickup ready — cash on arrival.</div>'
+      + '<div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 8px;">'
+      + '<div ' + act('nav', 'collect') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 14.5px; font-weight: 700; cursor: pointer;">Track my order</div>'
+      + '<div ' + act('nav', 'home') + ' style="background: #F4F2EC; color: #16233A; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 14.5px; font-weight: 700; cursor: pointer;">Continue shopping</div></div></div>';
+  };
+
+  /* =============================== CART =============================== */
+
+  function cartLine(item, qty, s) {
+    var lineTotal = 'EC$' + (item.unitPrice * qty);
+    return '<div style="display: flex; flex-direction: column; gap: 8px; background: #F7F6F0; border-radius: 16px; padding: 12px;">'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-size: 12.5px; font-weight: 700; color: #16233A;">' + item.seller + '</div>'
+      + '<div style="background: ' + item.sellerBadgeBg + '; color: ' + item.sellerBadgeColor + '; font-size: 9.5px; font-weight: 800; padding: 3px 7px; border-radius: 5px;">' + item.sellerBadge + '</div></div>'
+
+      + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px; display: flex; gap: 12px;">'
+      // Taller photo, quantity moved alongside — the Amazon-style cart row.
+      + '<div style="width: 84px; height: 108px; border-radius: 10px; ' + bg(item.img, item.tint) + ' flex-shrink: 0;"></div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">'
+      + '<div style="display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">'
+      + '<div style="font-size: 14px; font-weight: 700; color: #16233A; line-height: 1.25;">' + item.title + '</div>'
+      + '<div style="font-size: 15px; font-weight: 800; color: #16233A; flex-shrink: 0;">' + lineTotal + '</div></div>'
+      + '<div style="font-size: 11px; color: #8B94A3;">' + item.meta + '</div>'
+      + '<div style="font-size: 11px; color: #13944B; font-weight: 600;">In stock</div></div>'
+      + '<div style="display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="display: flex; align-items: center; gap: 10px; background: #F4F2EC; border-radius: 7px; padding: 4px 10px;">'
+      + '<span ' + act('qty', item.key + ':-1') + ' style="font-size: 14px; font-weight: 700; color: #0E3F80; cursor: pointer; width: 12px; text-align: center;">−</span>'
+      + '<span style="font-size: 12.5px; font-weight: 700; color: #16233A;">' + qty + '</span>'
+      + '<span ' + act('qty', item.key + ':1') + ' style="font-size: 14px; font-weight: 700; color: #0E3F80; cursor: pointer; width: 12px; text-align: center;">+</span></div>'
+      // Icons only: save / share / remove read fine without labels.
+      + '<div style="display: flex; align-items: center; gap: 12px;">'
+      + '<div ' + act('saveForLater', item.key) + ' style="color: #3A4553; cursor: pointer; display: flex;">' + U.ICON.heart + '</div>'
+      + '<div ' + act('noop') + ' style="color: #3A4553; cursor: pointer; display: flex;">' + U.ICON.share + '</div>'
+      + '<div ' + act('removeItem', item.key) + ' style="color: #3A4553; cursor: pointer; display: flex;">' + U.ICON.trash + '</div>'
+      + '</div></div></div></div>'
+
+      + '<div style="display: flex; align-items: center; justify-content: space-between; padding: 2px 2px 0;">'
+      + '<div style="font-size: 10.5px; color: #8B94A3;">' + item.payNote + '</div>'
+      + '<div style="font-size: 11px; font-weight: 700; color: #3A4553;">Subtotal ' + lineTotal + '</div></div></div>';
+  }
+
+  function savedForLaterRow(item) {
+    return '<div style="background: #F7F6F0; border: 1px solid #E8E4D9; border-radius: 14px; padding: 11px; display: flex; align-items: center; gap: 12px;">'
+      + '<div style="width: 52px; height: 52px; border-radius: 10px; ' + bg(item.thumb, item.tint) + ' flex-shrink: 0; opacity: 0.7;"></div>'
+      + '<div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="font-size: 13.5px; font-weight: 700; color: #16233A;">' + item.title + '</div>'
+      + '<div ' + act('moveToCart', item.key) + ' style="font-size: 11px; font-weight: 700; color: #0E3F80; cursor: pointer;">Move to cart</div></div>'
+      + '<div style="font-size: 14px; font-weight: 800; color: #8B94A3;">EC$' + item.unitPrice + '</div></div>';
+  }
+
+  S.cart = function (s) {
+    var C = D.CART_ITEMS, I = D.IMG, T = D.TINT;
+    var header = '<div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">'
+      + U.roundBtn('‹', 'nav', 'home')
+      + '<div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Your cart</div></div>';
+
+    if (s.ramsRemoved && s.hilltopRemoved) {
+      return '<div style="display: flex; flex-direction: column; height: 100%;">' + header
+        + '<div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 40px; text-align: center;">'
+        + '<div style="width: 60px; height: 60px; border-radius: 50%; background: #F4F2EC; display: flex; align-items: center; justify-content: center;">' + U.ICON.cartLg + '</div>'
+        + '<div style="font-size: 15px; font-weight: 700; color: #16233A;">Your cart is empty</div>'
+        + '<div style="font-size: 12.5px; color: #8B94A3;">Browse listings and shops to add items</div>'
+        + '<div ' + act('nav', 'browse') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 11px 22px; font-size: 13.5px; font-weight: 700; cursor: pointer; margin-top: 6px;">Start browsing</div>'
+        + '</div></div>';
+    }
+
+    var savedCount = (s.ramsSaved ? 1 : 0) + (s.hilltopSaved ? 1 : 0);
+    var subtotal = (s.ramsSaved || s.ramsRemoved ? 0 : C.rams.unitPrice * s.ramsQty)
+      + (s.hilltopSaved || s.hilltopRemoved ? 0 : C.hilltop.unitPrice * s.hilltopQty);
+
+    return '<div style="display: flex; flex-direction: column; height: 100%;">' + header
+      + '<div data-scroll-key="cart" style="flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 16px;">'
+      + when(!s.ramsSaved && !s.ramsRemoved, cartLine(C.rams, s.ramsQty, s))
+      + when(!s.hilltopSaved && !s.hilltopRemoved, cartLine(C.hilltop, s.hilltopQty, s))
+
+      + when(savedCount,
+          '<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #F0EDE3;">'
+          + '<div style="font-size: 12.5px; font-weight: 700; color: #8B94A3;">Saved for later (' + savedCount + ')</div>'
+          + when(s.ramsSaved, savedForLaterRow(C.rams))
+          + when(s.hilltopSaved, savedForLaterRow(C.hilltop)) + '</div>')
+
+      + '<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #F0EDE3;">'
+      + '<div style="font-size: 12.5px; font-weight: 700; color: #8B94A3;">Bought before</div>'
+      + '<div style="display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch;">'
+      + '<div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; overflow: hidden;">'
+      + '<div style="height: 78px; ' + bg(I.mangoSquare, T.produce) + '"></div>'
+      + '<div style="padding: 7px 8px 8px;"><div style="font-size: 12px; font-weight: 800; color: #16233A;">EC$25</div>'
+      + '<div style="font-size: 9.5px; color: #7C8697;">Mango crate</div>'
+      + '<div ' + act('noop') + ' style="margin-top: 4px; text-align: center; background: #F4F2EC; color: #0E3F80; font-size: 10px; font-weight: 700; padding: 4px 0; border-radius: 6px; cursor: pointer;">+ Add again</div>'
+      + '</div></div></div></div>'
+      + '</div>'
+
+      + '<div style="background: #FFFFFF; border-top: 1px solid #E8E4D9; padding: 14px 18px 26px; display: flex; flex-direction: column; gap: 8px;">'
+      + '<div style="display: flex; align-items: center; gap: 6px; justify-content: center; background: #F4F2EC; border-radius: 8px; padding: 6px 0; font-size: 11.5px; font-weight: 700; color: #A8483A;">⏱ Reserved for 9:42 — complete your order</div>'
+      + when(s.cartSummaryOpen,
+          '<div style="display: flex; align-items: flex-start; gap: 7px; background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 10px; padding: 9px 10px;">'
+          + '<span style="font-size: 13px;">🛡️</span>'
+          + '<div style="font-size: 10.5px; color: #6B4405; line-height: 1.4;">Pay through Emerald Pay for buyer protection — cash off-app means no refund if something goes wrong.</div></div>'
+          + '<div style="background: #E4EDF9; border-radius: 10px; padding: 8px 10px; font-size: 11px; color: #0E3F80; font-weight: 600;">Add EC$36 more from Ram\'s for free delivery</div>'
+          + '<div style="font-size: 11px; color: #8B94A3;">2 sellers · 2 fulfillment methods — charged separately per seller</div>'
+          + '<div style="display: flex; justify-content: space-between; font-size: 12px; color: #3A4553;"><span>Subtotal</span><span>EC$' + subtotal + '</span></div>'
+          + '<div style="display: flex; justify-content: space-between; font-size: 12px; color: #3A4553;"><span>Delivery fee</span><span>EC$0</span></div>')
+      + '<div ' + act('toggleCartSummary') + ' style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 700; color: #16233A; padding-top: 4px; border-top: 1px solid #F0EDE3; cursor: pointer;">'
+      + '<span style="display: flex; align-items: center; gap: 5px;">Total <span style="font-size: 10px; color: #8B94A3;">' + (s.cartSummaryOpen ? '▾' : '▸') + '</span></span>'
+      + '<span>EC$' + subtotal + '</span></div>'
+      + '<div ' + act('nav', 'orderConfirmed') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px;">Checkout</div>'
+      + '</div></div>';
+  };
+
+  /* =============================== SAVED =============================== */
+
+  S.saved = function (s) {
+    var I = D.IMG, T = D.TINT;
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 20px 14px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: space-between;">'
+      + '<div style="font-family: \'Instrument Serif\', serif; font-size: 27px; color: #16233A; line-height: 1;">Saved</div>'
+      + '<div style="font-size: 12.5px; color: #8B94A3;">6 items</div></div>'
+
+      + when(s.searchSaved,
+          '<div style="padding: 12px 20px 0;">'
+          + '<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #8B94A3; margin-bottom: 6px;">SAVED SEARCHES</div>'
+          + '<div ' + act('nav', 'browse') + ' style="background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 11px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">'
+          + '<div style="font-size: 13px; font-weight: 700; color: #16233A;">☆ Your saved search</div>'
+          + '<div style="font-size: 11.5px; color: #8A5B0E;">View ›</div></div></div>')
+
+      + '<div data-scroll-key="saved" style="flex: 1; overflow-y: auto; padding: 14px 20px 0;">'
+      + '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">'
+      + '<div ' + act('nav', 'detail') + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer;">'
+      + '<div style="height: 120px; ' + bg(I.generator, T.neutral) + ' position: relative;">'
+      + '<div style="position: absolute; top: 7px; right: 7px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #0E3F80;">♡</div></div>'
+      + '<div style="padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.07em; color: #E09E3B;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #E09E3B;"></span>TOOLS</div>'
+      + '<div style="font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">EC$1,850</div>'
+      + '<div style="font-size: 12.5px; color: #3A4553; line-height: 1.3;">Honda generator, 3kW</div>'
+      + '<div style="font-size: 11px; color: #8B94A3;">Price dropped EC$200</div></div></div>'
+
+      + '<div ' + act('nav', 'detail') + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer;">'
+      + '<div style="height: 88px; background: repeating-linear-gradient(135deg, #DEE4D6 0 8px, #D5DCCB 8px 16px); position: relative;">'
+      + '<div style="position: absolute; top: 7px; right: 7px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #0E3F80;">♡</div></div>'
+      + '<div style="padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 3px;">'
+      + '<div style="display: flex; align-items: center; gap: 5px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.07em; color: #0E3F80;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #0E3F80;"></span>HOME</div>'
+      + '<div style="font-size: 15px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">EC$300</div>'
+      + '<div style="font-size: 12.5px; color: #3A4553; line-height: 1.3;">Mahogany chairs (4)</div>'
+      + '<div style="font-size: 11px; color: #8B94A3;">Brades · still available</div></div></div>'
+      + '</div></div>' + U.bottomNav(s) + '</div>';
+  };
+
+  /* ============================== PROFILE ============================== */
+
+  function profileRow(icon, label, action, colour) {
+    return '<div ' + act(action) + ' style="display: flex; align-items: center; gap: 12px; padding: 13px 2px; cursor: pointer;">'
+      + '<div style="width: 22px; color: ' + (colour || '#6C7585') + ';">' + icon + '</div>'
+      + '<div style="flex: 1; font-size: 13.5px; font-weight: 600; color: ' + (colour || '#16233A') + ';">' + label + '</div>'
+      + when(!colour, '<div style="font-size: 15px; color: #C6CDD9;">›</div>') + '</div>';
+  }
+
+  S.profile = function (s) {
+    var I = D.IMG, T = D.TINT;
+
+    var sellingBlock = s.isSeller
+      ? when(!s.verified,
+          '<div ' + act('nav', 'verify') + ' style="background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">'
+          + '<div style="width: 34px; height: 34px; border-radius: 10px; background: #E09E3B; display: flex; align-items: center; justify-content: center; font-size: 15px;">🛡️</div>'
+          + '<div style="flex: 1;"><div style="font-size: 13px; font-weight: 700; color: #6B4405;">Verify your identity to sell</div>'
+          + '<div style="font-size: 11.5px; color: #8A5B0E; margin-top: 1px;">ID + phone check — required before listing goes live</div></div>'
+          + '<div style="font-size: 15px; color: #8A5B0E;">›</div></div>')
+
+        + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #9AA49C; padding-top: 6px;">SELLING</div>'
+        + '<div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">'
+        + '<div><div style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #9AA49C;">EARNED THIS MONTH</div>'
+        + '<div style="font-size: 27px; font-weight: 800; letter-spacing: -0.025em; color: #16233A; line-height: 1; margin-top: 6px;">EC$2,140</div></div>'
+        + '<div style="text-align: right;"><div style="font-size: 12px; color: #8B94A3;">4 sold</div>'
+        + '<div style="font-size: 12px; font-weight: 700; color: #0E3F80; margin-top: 3px;">EC$310 pending</div></div></div>'
+
+        + '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #9AA49C; padding-top: 2px;">BUYING</div>'
+        + '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">'
+        + map([
+            { icon: U.ICON.heartSm, label: 'Saved', action: 'nav', arg: 'saved' },
+            { icon: U.ICON.bagSm, label: 'Purchases', action: 'nav', arg: 'collect' },
+            { icon: U.ICON.card, label: 'Payment', action: 'noop' }
+          ], function (t) {
+            return '<div ' + act(t.action, t.arg) + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;">'
+              + '<div style="color: #0E3F80;">' + t.icon + '</div>'
+              + '<div style="font-size: 11px; font-weight: 700; color: #16233A; text-align: center;">' + t.label + '</div></div>';
+          }) + '</div>'
+
+        + '<div style="display: flex; gap: 18px; border-bottom: 1px solid #E8E4D9;">'
+        + '<div style="font-size: 13.5px; font-weight: 700; color: #0E3F80; padding-bottom: 9px; border-bottom: 2px solid #0E3F80;">Active 3</div>'
+        + '<div style="font-size: 13.5px; font-weight: 600; color: #8B94A3; padding-bottom: 9px;">Pending 1</div>'
+        + '<div style="font-size: 13.5px; font-weight: 600; color: #8B94A3; padding-bottom: 9px;">Sold 4</div>'
+        + '<div style="font-size: 13.5px; font-weight: 600; color: #8B94A3; padding-bottom: 9px;">Drafts 2</div></div>'
+
+        + '<div style="display: flex; flex-direction: column; gap: 10px;">'
+        + map([
+            { title: 'Breadfruit, half dozen', meta: 'EC$18 · 22 views · 2 saves', link: true },
+            { title: 'Baby stroller', meta: 'EC$150 · offer pending EC$120' }
+          ], function (l) {
+            return '<div ' + (l.link ? act('nav', 'detail') : act('noop')) + ' style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 11px; display: flex; align-items: center; gap: 12px; cursor: pointer;">'
+              + '<div style="width: 54px; height: 54px; border-radius: 10px; ' + bg(I.grocery, T.shop) + ' flex-shrink: 0;"></div>'
+              + '<div style="flex: 1;"><div style="font-size: 13.5px; font-weight: 600; color: #16233A;">' + l.title + '</div>'
+              + '<div style="font-size: 11.5px; color: #8B94A3; margin-top: 3px;">' + l.meta + '</div></div>'
+              + '<div style="font-size: 15px; color: #9AA49C;">⋯</div></div>';
+          }) + '</div>'
+
+      // Buyers who have never sold get an invitation, not an empty dashboard.
+      : '<div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #9AA49C; padding-top: 6px;">SELLING</div>'
+        + '<div ' + act('startSelling') + ' style="background: #F4F2EC; border: 1px dashed #C6D0C9; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer;">'
+        + '<div style="width: 40px; height: 40px; border-radius: 50%; background: #16233A; color: #FBF8F1; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700;">+</div>'
+        + '<div style="font-size: 13.5px; font-weight: 700; color: #16233A;">Start selling on Emerald</div>'
+        + '<div style="font-size: 11.5px; color: #8B94A3;">List your first item — free to post, small fee only when it sells</div></div>';
+
+    return '<div style="display: flex; flex-direction: column; height: 100%;">'
+      + '<div style="padding: 46px 20px 16px; background: #0E3F80; display: flex; align-items: center; gap: 13px;">'
+      + '<div style="width: 52px; height: 52px; border-radius: 50%; background: repeating-linear-gradient(135deg, #2E7256 0 6px, #276549 6px 12px); border: 1.5px solid rgba(255,255,255,0.35);"></div>'
+      + '<div style="flex: 1;"><div style="color: #FFFFFF; font-size: 18px; font-weight: 700;">Ashley M.</div>'
+      + '<div style="color: rgba(230,238,249,0.75); font-size: 12px; margin-top: 3px;">Salem · joined 2025 · ★ 5.0 (8)</div></div>'
+      + '<div ' + act('noop') + ' style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; cursor: pointer;">' + U.ICON.pencil + '</div></div>'
+
+      + '<div data-scroll-key="profile" style="flex: 1; overflow-y: auto; padding: 14px 20px 0; display: flex; flex-direction: column; gap: 14px;">'
+      + sellingBlock
+      + '<div style="display: flex; flex-direction: column; gap: 2px; padding-top: 4px; border-top: 1px solid #F0EDE3;">'
+      + profileRow(U.ICON.gear, 'Settings &amp; account', 'noop')
+      + profileRow(U.ICON.chatBubble, 'Help &amp; support', 'whatsapp')
+      + profileRow(U.ICON.logout, 'Log out', 'logOut', '#A8483A')
+      + '<div style="text-align: center; font-size: 10.5px; color: #C6CDD9; padding: 10px 0 4px;">Emerald Marketplace · v1.0</div>'
+      + '</div></div>' + U.bottomNav(s) + '</div>';
+  };
+
+  /* ============================== OVERLAYS ============================== */
+
+  S.overlays = function (s) {
+    var out = '';
+
+    if (s.sortOpen) {
+      out += U.sheet('closeSort', U.sortRows([
+        { key: 'newest', label: 'Newest first' },
+        { key: 'price', label: 'Price: low to high' },
+        { key: 'priceDesc', label: 'Price: high to low' },
+        { key: 'near', label: 'Nearest to me' },
+        { key: 'delivery', label: 'Delivery available' },
+        { key: 'viewed', label: 'Most viewed' }
+      ], s.sortBy, 'sort'));
+    }
+
+    if (s.jobSortOpen) {
+      out += U.sheet('closeJobSort', U.sortRows([
+        { key: 'newest', label: 'Newest first' },
+        { key: 'pay', label: 'Pay: low to high' },
+        { key: 'payDesc', label: 'Pay: high to low' },
+        { key: 'viewed', label: 'Most viewed' }
+      ], s.jobSortBy, 'jobSort'));
+    }
+
+    if (s.wantedSortOpen) {
+      out += U.sheet('closeWantedSort', U.sortRows([
+        { key: 'newest', label: 'Newest first' },
+        { key: 'budget', label: 'Budget: low to high' },
+        { key: 'budgetDesc', label: 'Budget: high to low' },
+        { key: 'offers', label: 'Most offers' },
+        { key: 'fewOffers', label: 'Fewest offers' }
+      ], s.wantedSortBy, 'wantedSort'));
+    }
+
+    if (s.wantedGateOpen) {
+      out += '<div ' + act('closeWantedGate') + ' style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(23,35,29,0.42); display: flex; align-items: center; justify-content: center; z-index: 25; cursor: pointer; padding: 30px;">'
+        + '<div ' + act('stop') + ' style="width: 100%; background: #FFFFFF; border-radius: 18px; padding: 26px 22px; box-shadow: 0 20px 40px -14px rgba(23,35,29,0.45); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">'
+        + '<div style="width: 52px; height: 52px; border-radius: 50%; background: #FBF0DC; display: flex; align-items: center; justify-content: center; font-size: 22px;">🔒</div>'
+        + '<div style="font-size: 17px; font-weight: 800; color: #16233A;">Create a free account to reply</div>'
+        + '<div style="font-size: 13px; color: #7C8697; line-height: 1.5;">Sign up to see who\'s asking and message them directly — takes under a minute.</div>'
+        + '<div ' + act('openLogin') + ' style="width: 100%; background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 13px 0; text-align: center; font-size: 14.5px; font-weight: 700; cursor: pointer;">Sign up free</div>'
+        + '<div ' + act('openLogin') + ' style="font-size: 12.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">I already have an account</div></div></div>';
+    }
+
+    if (s.aiAssistOpen) {
+      out += '<div ' + act('closeAiAssist') + ' style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(23,35,29,0.42); display: flex; align-items: flex-end; z-index: 25; cursor: pointer;">'
+        + '<div ' + act('stop') + ' style="width: 100%; background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 22px 20px 30px; box-shadow: 0 -10px 40px rgba(23,35,29,0.18); display: flex; flex-direction: column; gap: 14px;">'
+        + '<div style="width: 36px; height: 4px; border-radius: 3px; background: #E4E1D3; margin: 0 auto;"></div>'
+        + '<div style="display: flex; align-items: center; gap: 10px;">'
+        + '<div style="width: 36px; height: 36px; border-radius: 10px; background: #0E3F80; display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>'
+        + '<div style="font-size: 16px; font-weight: 800; color: #16233A;">AI listing assist</div></div>'
+        + '<div style="font-size: 13.5px; color: #4A5A52; line-height: 1.5;">Take or upload a photo of your item — AI suggests a title, category, condition and fair price based on similar Montserrat listings. You review and edit before posting.</div>'
+        + '<div style="border: 1.5px dashed #C6CDD9; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">'
+        + '<div style="font-size: 24px; color: #0E3F80;">📷</div>'
+        + '<div style="font-size: 13px; font-weight: 700; color: #16233A;">Take a photo</div>'
+        + '<div style="font-size: 11.5px; color: #8B94A3;">or choose from your library</div></div>'
+        + '<div ' + act('closeAiAssist') + ' style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Continue</div></div></div>';
+    }
+
+    return out;
+  };
+})(window);
+</script>
+<script>
+/* Emerald Marketplace — wiring.
+
+   One delegated click listener reads data-act / data-arg off the clicked
+   element and runs the matching action, which is the only thing allowed to
+   change state. State changes re-render both frames. */
+
+(function (global) {
+  'use strict';
+
+  var Store = global.EMStore, S = global.EMScreens, D = global.EMData;
+
+  function set(patch) { Store.setState(patch); }
+
+  // Navigating anywhere dismisses whatever transient UI was open.
+  function closeTransient(patch) {
+    patch = patch || {};
+    patch.sortOpen = false;
+    patch.jobSortOpen = false;
+    patch.wantedSortOpen = false;
+    return patch;
+  }
+
+  var actions = {
+
+    /* ---------- navigation ---------- */
+
+    nav: function (screen) {
+      var patch = closeTransient({ screen: screen, wantedGateOpen: false, aiAssistOpen: false });
+      if (screen === 'detail') patch.detailItem = 'generator';
+      if (screen === 'search') patch.searchQuery = '';
+      // Leaving a mobile screen also drops the desktop drill-down, so the two
+      // frames never disagree about where you are.
+      patch.deskDetail = false;
+      patch.deskSub = null;
+      set(patch);
+    },
+
+    market: function (key) {
+      set(closeTransient({
+        market: key, screen: 'browse', searchQuery: '',
+        deskDetail: false, deskSub: null,
+        wantedGateOpen: false, aiAssistOpen: false
+      }));
+    },
+
+    /* ---------- filters ---------- */
+
+    // Single-select: tapping the active chip clears it, tapping another replaces
+    // it. Multi-select was tried and dropped — two sub-category rows at once
+    // was more confusing than useful.
+    cat: function (key) {
+      var cur = Store.get().cat;
+      var next = !key ? [] : (cur.indexOf(key) !== -1 ? [] : [key]);
+      set({ cat: next, vehSub: null, deskDetail: false, deskSub: null, searchQuery: '' });
+    },
+    vehSub: function (key) { set({ vehSub: Store.get().vehSub === key ? null : key }); },
+    shopCat: function (key) { set({ shopCat: key, deskDetail: false, deskSub: null }); },
+    jobCat: function (key) { set({ jobCat: key, deskDetail: false, deskSub: null }); },
+    wantedCat: function (key) { set({ wantedCat: key, deskDetail: false, deskSub: null }); },
+
+    /* ---------- sorting ---------- */
+
+    openSort: function () { set({ sortOpen: true }); },
+    closeSort: function () { set({ sortOpen: false }); },
+    sort: function (key) { set({ sortBy: key, sortOpen: false }); },
+
+    openJobSort: function () { set({ jobSortOpen: true }); },
+    closeJobSort: function () { set({ jobSortOpen: false }); },
+    jobSort: function (key) { set({ jobSortBy: key, jobSortOpen: false }); },
+
+    openWantedSort: function () { set({ wantedSortOpen: true }); },
+    closeWantedSort: function () { set({ wantedSortOpen: false }); },
+    wantedSort: function (key) { set({ wantedSortBy: key, wantedSortOpen: false }); },
+
+    toggleListView: function () { set({ listView: !Store.get().listView }); },
+    toggleSaveSearch: function () { set({ searchSaved: !Store.get().searchSaved }); },
+
+    /* ---------- listings ---------- */
+
+    openListing: function (id) {
+      set(closeTransient({ screen: 'detail', detailItem: id === 'mango' ? 'mango' : 'generator', carPhotoIdx: 0 }));
+    },
+    carPhoto: function (i) { set({ carPhotoIdx: parseInt(i, 10) || 0 }); },
+    toggleQA: function () { set({ qaOpen: !Store.get().qaOpen }); },
+
+    /* ---------- search ---------- */
+
+    closeSearch: function () { set({ screen: 'home', searchQuery: '' }); },
+    searchFor: function (q) { set({ searchQuery: q }); },
+
+    /* ---------- cart ---------- */
+
+    qty: function (arg) {
+      var parts = String(arg).split(':');
+      var key = parts[0] + 'Qty';
+      var delta = parseInt(parts[1], 10);
+      var patch = {};
+      patch[key] = Math.max(1, (Store.get()[key] || 1) + delta);
+      set(patch);
+    },
+    saveForLater: function (key) { var p = {}; p[key + 'Saved'] = true; set(p); },
+    moveToCart: function (key) { var p = {}; p[key + 'Saved'] = false; set(p); },
+    removeItem: function (key) {
+      var p = {};
+      p[key + 'Removed'] = true;
+      p[key + 'Saved'] = false;
+      p.cartCount = Math.max(0, Store.get().cartCount - 1);
+      set(p);
+    },
+    toggleCartSummary: function () { set({ cartSummaryOpen: !Store.get().cartSummaryOpen }); },
+
+    /* ---------- offers ---------- */
+
+    acceptOffer: function () { set({ offer: 'accepted' }); },
+    declineOffer: function () { set({ offer: 'declined' }); },
+    resetOffer: function () { set({ offer: 'open' }); },
+
+    /* ---------- inbox ---------- */
+
+    msgTab: function (tab) { set({ msgTab: tab }); },
+
+    /* ---------- account / gates ---------- */
+
+    wantedGate: function () { set({ wantedGateOpen: true }); },
+    closeWantedGate: function () { set({ wantedGateOpen: false }); },
+    openLogin: function () { set({ wantedGateOpen: false, screen: 'login' }); },
+    logOut: function () { set({ screen: 'login' }); },
+    completeVerify: function () { set({ verified: true, screen: 'profile' }); },
+    startSelling: function () { set({ isSeller: true, screen: 'sell' }); },
+
+    openAiAssist: function () { set({ aiAssistOpen: true }); },
+    closeAiAssist: function () { set({ aiAssistOpen: false }); },
+
+    /* ---------- desktop ---------- */
+
+    deskOpenItem: function (id) {
+      var item = D.LISTINGS.filter(function (i) { return i.id === id; })[0] || null;
+      set({ deskDetail: true, deskItem: item, deskSub: null });
+    },
+    deskCloseDetail: function () { set({ deskDetail: false, deskItem: null }); },
+    deskOpenJob: function () { set({ deskSub: 'job', deskDetail: false }); },
+    deskOpenShop: function () { set({ deskSub: 'shop', deskDetail: false }); },
+    deskBack: function () { set({ deskSub: null }); },
+
+    /* ---------- external ---------- */
+
+    whatsapp: function () { global.open('https://wa.me/16648001234', '_blank'); },
+    flymni: function () { global.open('https://www.flymontserrat.com', '_blank'); },
+
+    /* ---------- no-ops ---------- */
+
+    // `stop` exists so a click inside a dismissible overlay does not close it;
+    // `noop` marks a control that is deliberately inert in the demo.
+    stop: function () {},
+    noop: function () {}
+  };
+
+  // Either frame may be absent: index.html has both, web.html only the desktop
+  // (and so does not load the mobile screen modules at all).
+  function render(s) {
+    var phone = document.getElementById('phone');
+    if (phone && S.home) {
+      // Screen names match the exported function names one for one.
+      var screen = typeof S[s.screen] === 'function' ? S[s.screen] : S.home;
+      phone.innerHTML = screen(s) + S.overlays(s);
+    }
+    var desk = document.getElementById('desktop');
+    if (desk) {
+      desk.innerHTML = S.desktop(s, { chrome: desk.dataset.chrome !== 'off' });
+    }
+  }
+
+  /* ---------- events ---------- */
+
+  function onClick(e) {
+    var el = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!el) return;
+    var name = el.dataset.act;
+    var fn = actions[name];
+    if (!fn) return;
+    // closest() returns the innermost action, so a heart inside a card runs the
+    // heart's handler (often `stop`) and never the card's.
+    fn(el.dataset.arg);
+  }
+
+  function onInput(e) {
+    var el = e.target;
+    if (!el.dataset || el.dataset.input !== 'search') return;
+    set({ searchQuery: el.value, deskDetail: false, deskSub: null });
+  }
+
+  document.addEventListener('click', onClick);
+  document.addEventListener('input', onInput);
+
+  Store.subscribe(render);
+  Store.render();
+})(window);
+</script>
+</body>
+</html>

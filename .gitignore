@@ -1,0 +1,15 @@
+# The Claude Design handoff bundle stays out of this repository.
+#
+# chats/ is the full design conversation and project/ holds the working files —
+# including the pricing proposal (build fee options, equity vs revenue share,
+# margin assumptions and prior client rates). This repo is public and serves a
+# client-facing demo, so none of that belongs in it, in the tree or in history.
+#
+# Keep the originals in your own workspace, not here.
+
+chats/
+project/
+
+# Local noise
+.DS_Store
+node_modules/

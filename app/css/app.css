@@ -1,0 +1,99 @@
+/* Emerald Marketplace — page chrome only.
+   Everything inside the two frames is styled inline by the screen modules, so
+   this file stays limited to the stage, the device frames and global resets. */
+
+body {
+  margin: 0;
+  background: #EDEAE3;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #16233A;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: #0E3F80; text-decoration: none; }
+
+/* Scrollbars are hidden throughout — the frames still scroll, they just don't
+   show a track that would break the illusion of a real device. */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* Inputs inherit the page family so the search fields match everything else. */
+input, button, textarea { font-family: inherit; }
+
+.em-stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 40px 20px 60px;
+  box-sizing: border-box;
+}
+
+/* ---------- phone ---------- */
+
+.em-phone {
+  width: 390px;
+  height: 844px;
+  flex-shrink: 0;
+  background: #FBF8F1;
+  border-radius: 38px;
+  box-shadow: 0 30px 60px -20px rgba(23, 35, 29, 0.35), 0 0 0 1px rgba(23, 35, 29, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* anchors the sort sheets and modal overlays */
+}
+
+/* ---------- desktop web app ---------- */
+
+.em-web {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.em-web-label {
+  font-size: 13px;
+  color: #7C8697;
+  font-weight: 700;
+}
+
+.em-web-clip {
+  width: 900px;
+  max-width: 92vw;
+  display: flex;
+  justify-content: center;
+}
+
+.em-web-frame {
+  width: 1440px;
+  flex-shrink: 0;
+  /* `zoom` scales the box AND its layout size, so the 1440px design shrinks to
+     fit the 900px column without being clipped or leaving dead space. */
+  zoom: 0.625;
+  background: #FFFFFF;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -24px rgba(23, 35, 29, 0.35), 0 0 0 1px rgba(23, 35, 29, 0.08);
+}
+
+/* Firefox has no `zoom`; fall back to a transform, accepting that the parent
+   reserves untransformed height (a little extra space below the mock). */
+@supports not (zoom: 1) {
+  .em-web-frame {
+    transform: scale(0.625);
+    transform-origin: top center;
+  }
+  .em-web-clip { height: 1150px; overflow: hidden; }
+}
+
+/* On a narrow screen the desktop mock is the thing to drop first. */
+@media (max-width: 700px) {
+  .em-stage { padding: 16px 0 40px; gap: 10px; }
+  .em-phone { width: 100%; max-width: 390px; border-radius: 0; box-shadow: none; }
+}

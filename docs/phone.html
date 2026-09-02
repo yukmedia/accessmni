@@ -393,60 +393,59 @@ document.addEventListener('DOMContentLoaded', async function() {
 (function () {
   'use strict';
 
-  function apply() {
-    // The web-app mock sits in a wrapper alongside its "Web app (PWA) version"
-    // caption; #webAppScaleBox is the stable handle on it.
-    var box = document.getElementById('webAppScaleBox');
-    var phone = null;
-
-    // The phone is the 390px-wide frame the design draws the app inside.
-    var divs = document.querySelectorAll('section > div, section div');
+  function findPhone() {
+    var divs = document.querySelectorAll('section div');
     for (var i = 0; i < divs.length; i++) {
       var st = divs[i].getAttribute('style') || '';
-      if (/width:\s*390px/.test(st) && /height:\s*844px/.test(st)) { phone = divs[i]; break; }
+      if (/width:\s*390px/.test(st) && /height:\s*844px/.test(st)) return divs[i];
     }
-    if (!phone) return false;
-
-    if (box && box.parentElement && box.parentElement.parentElement) {
-      box.parentElement.parentElement.style.display = 'none';
-    }
-    phone.id = 'emPhoneFrame';
-
-    var sec = phone.closest ? phone.closest('section') : null;
-    if (sec) sec.id = 'emStage';
-
-    if (!document.getElementById('emPhoneCss')) {
-      var s = document.createElement('style');
-      s.id = 'emPhoneCss';
-      s.textContent = [
-        // Desktop: leave the device frame, just tighten the padding now that
-        // there is nothing below it.
-        '#emStage { padding: 30px 20px !important; min-height: 100vh; }',
-        // Scrollbars off — they break the illusion of a device.
-        '* { scrollbar-width: none; -ms-overflow-style: none; }',
-        '*::-webkit-scrollbar { display: none; width: 0; height: 0; }',
-        // Phone: drop the frame and fill the screen. dvh tracks the browser's
-        // collapsing address bar; vh is the fallback for older engines.
-        '@media (max-width: 700px) {',
-        '  body { background: #FBF8F1 !important; }',
-        '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
-        '  #emPhoneFrame {',
-        '    width: 100vw !important; max-width: none !important;',
-        '    height: 100vh !important; height: 100dvh !important;',
-        '    border-radius: 0 !important; box-shadow: none !important;',
-        '  }',
-        '}'
-      ].join('\n');
-      document.head.appendChild(s);
-    }
-    return true;
+    return null;
   }
+  function webBox() { return document.getElementById('webAppScaleBox'); }
+  // The caption and the mock share a parent; hiding it removes both.
+  function webWrap() {
+    var b = webBox();
+    return b && b.parentElement ? b.parentElement.parentElement : null;
+  }
+  function stage(el) { return el && el.closest ? el.closest('section') : null; }
+  function addCss(id, css) {
+    if (document.getElementById(id)) return;
+    var s = document.createElement('style');
+    s.id = id; s.textContent = css;
+    document.head.appendChild(s);
+  }
+  var NO_SCROLLBARS =
+    '* { scrollbar-width: none; -ms-overflow-style: none; }' +
+    '*::-webkit-scrollbar { display: none; width: 0; height: 0; }';
 
+  function apply() {
+
+    var phone = findPhone();
+    if (!phone) return false;
+    var wrap = webWrap();
+    if (wrap) wrap.style.display = 'none';
+    phone.id = 'emPhoneFrame';
+    var sec = stage(phone);
+    if (sec) sec.id = 'emStage';
+    addCss('emPhoneCss', [
+      '#emStage { padding: 30px 20px !important; min-height: 100vh; }',
+      NO_SCROLLBARS,
+      '@media (max-width: 700px) {',
+      '  body { background: #FBF8F1 !important; }',
+      '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
+      '  #emPhoneFrame {',
+      '    width: 100vw !important; max-width: none !important;',
+      '    height: 100vh !important; height: 100dvh !important;',
+      '    border-radius: 0 !important; box-shadow: none !important;',
+      '  }',
+      '}'
+    ].join('\n'));
+    return true;
+
+  }
   if (apply()) return;
   var tries = 0;
-  var t = setInterval(function () {
-    if (apply() || ++tries > 100) clearInterval(t);
-  }, 100);
+  var t = setInterval(function () { if (apply() || ++tries > 100) clearInterval(t); }, 100);
 })();
 </script>
 </body>

@@ -12,15 +12,30 @@ Static HTML/CSS/vanilla JS. No dependencies, no build tooling, no backend.
 `node app/build.js` bundles `app/` into three single-file pages in `app/dist/`
 and copies them to `docs/`.
 
+## Two generations of the demo live here
+
+`docs/phone.html` is generated **from the Claude Design export**, not from `app/`.
+The export is already a working build — canvas runtime, screens, logic and every
+photo inlined in one file — so it tracks the current design exactly and needs no
+porting. Regenerate it with:
+
+```
+node app/from-export.js <path-to-standalone-export.html>
+```
+
+`docs/index.html` and `docs/phone-and-web.html` are still the **hand-written**
+build in `app/`, which mirrors the *earlier* design. `node app/build.js` writes
+those two and deliberately does not touch `docs/phone.html`.
+
 ## Published
 
 GitHub Pages serves `docs/` from `main`:
 
 | URL | Page |
 |---|---|
-| `https://yukmedia.github.io/accessmni/` | web app |
-| `https://yukmedia.github.io/accessmni/phone.html` | phone app, full screen |
-| `https://yukmedia.github.io/accessmni/phone-and-web.html` | both, sharing one state |
+| `https://yukmedia.github.io/accessmni/` | web app — earlier design, hand-built |
+| `https://yukmedia.github.io/accessmni/phone.html` | phone app, full screen — **current design**, from the export |
+| `https://yukmedia.github.io/accessmni/phone-and-web.html` | both — earlier design, hand-built |
 
 Push to `main` and Pages redeploys itself. **Don't rename these files** — the
 phone link has been shared, so the path needs to stay put.

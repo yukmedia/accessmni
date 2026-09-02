@@ -58,8 +58,11 @@ bundle('index.html', 'emerald-marketplace-demo.html');
 const DOCS = path.resolve(ROOT, '..', 'docs');
 fs.mkdirSync(DOCS, { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-web.html'), path.join(DOCS, 'index.html'));
-fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-phone.html'), path.join(DOCS, 'phone.html'));
+// NOTE: docs/phone.html is NOT written here. It is generated from the Claude
+// Design export by app/from-export.js, which tracks the current design. This
+// hand-built phone bundle stays in dist/ as the older, code-based version.
 fs.copyFileSync(path.join(ROOT, 'dist', 'emerald-marketplace-demo.html'), path.join(DOCS, 'phone-and-web.html'));
 // Stops GitHub Pages running the files through Jekyll, which ignores some paths.
 fs.writeFileSync(path.join(DOCS, '.nojekyll'), '');
-console.log('Wrote docs/index.html, docs/phone.html and docs/phone-and-web.html (for GitHub Pages)');
+console.log('Wrote docs/index.html and docs/phone-and-web.html (for GitHub Pages)');
+console.log('docs/phone.html is owned by app/from-export.js — not touched here.');

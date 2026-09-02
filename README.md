@@ -21,7 +21,7 @@ Three pages are published:
 | Page | What it is |
 |---|---|
 | `index.html` | the web app — fills the browser window |
-| `phone.html` | the phone app — fills the screen on a real phone |
+| `phone.html` | the phone app — fills the screen on a real phone (current design) |
 | `phone-and-web.html` | both side by side, sharing one state |
 
 ## Building

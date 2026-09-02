@@ -15,15 +15,15 @@
 <helmet>
 <script src="./image-slot.js"></script>
 <meta name="design_doc_mode" content="canvas">
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop&auto=format" data-resource-id="imgVehicle" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop&auto=format" data-resource-id="imgHome" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=300&fit=crop&auto=format" data-resource-id="imgMango" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1586105251261-72a756497a11?w=400&h=300&fit=crop&auto=format" data-resource-id="imgBed" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop&auto=format" data-resource-id="carHero0" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1600661653561-629509216228?w=800&h=600&fit=crop&auto=format" data-resource-id="carHero1" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1613214149922-f1809c99b414?w=800&h=600&fit=crop&auto=format" data-resource-id="carHero2" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=800&h=600&fit=crop&auto=format" data-resource-id="carHero3" />
-<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&h=300&fit=crop&auto=format" data-resource-id="imgYaris" />
+<meta name="ext-resource-dependency" content="assets/listing-vehicle-suv.jpg" data-resource-id="imgVehicle" />
+<meta name="ext-resource-dependency" content="assets/listing-dining-set.jpg" data-resource-id="imgHome" />
+<meta name="ext-resource-dependency" content="assets/listing-mango-crate.jpg" data-resource-id="imgMango" />
+<meta name="ext-resource-dependency" content="assets/listing-bed-set.jpg" data-resource-id="imgBed" />
+<meta name="ext-resource-dependency" content="assets/listing-vehicle-suv.jpg" data-resource-id="carHero0" />
+<meta name="ext-resource-dependency" content="assets/listing-car-side.jpg" data-resource-id="carHero1" />
+<meta name="ext-resource-dependency" content="assets/listing-car-wheel.jpg" data-resource-id="carHero2" />
+<meta name="ext-resource-dependency" content="assets/listing-car-engine.jpg" data-resource-id="carHero3" />
+<meta name="ext-resource-dependency" content="assets/listing-yaris-hire.jpg" data-resource-id="imgYaris" />
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,7 +152,7 @@
                 </div>
                 <div onClick="{{ openDetailMango }}" style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 7px; left: 7px; background: #0E3F80; color: #FFFFFF; font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 1;">NEW</div>
-                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 100px; background: url('assets/listing-mango-crate.jpg') center/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-size: 15px; font-weight: 800; color: #16233A;">EC$25</div>
                     <div style="font-size: 11.5px; color: #3A4553;">Fresh mango crate</div>
@@ -161,7 +161,7 @@
                 </div>
                 <div onClick="{{ openDetail }}" style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 7px; left: 7px; background: #0E3F80; color: #FFFFFF; font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 1;">NEW</div>
-                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 100px; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-size: 15px; font-weight: 800; color: #16233A;">EC$68,500</div>
                     <div style="font-size: 11.5px; color: #3A4553;">Land Cruiser, 2018</div>
@@ -215,7 +215,7 @@
               <div style="font-size: 15px; font-weight: 800; color: #16233A;">Recently viewed</div>
               <div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 <div onClick="{{ openDetail }}" style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer;">
-                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 100px; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-size: 15px; font-weight: 800; color: #16233A;">EC$68,500</div>
                     <div style="font-size: 11.5px; color: #3A4553;">Land Cruiser, 2018</div>
@@ -223,7 +223,7 @@
                   </div>
                 </div>
                 <div onClick="{{ openDetail }}" style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer;">
-                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1586105251261-72a756497a11?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 100px; background: url('assets/listing-bed-set.jpg') center/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-size: 15px; font-weight: 800; color: #16233A;">EC$3,800</div>
                     <div style="font-size: 11.5px; color: #3A4553;">King bed set</div>
@@ -880,10 +880,10 @@
             </div>
           </div>
           <div style="display: flex; gap: 6px; padding: 8px 20px; flex-shrink: 0;">
-            <div onClick="{{ carPhoto0 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb0Border }}; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=200&h=200&fit=crop&auto=format') center/cover;"></div>
+            <div onClick="{{ carPhoto0 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb0Border }}; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
             <div onClick="{{ carPhoto1 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb1Border }}; background: url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&auto=format') center/cover;"></div>
             <div onClick="{{ carPhoto2 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb2Border }}; background: url('https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=200&h=200&fit=crop&auto=format') center/cover;"></div>
-            <div onClick="{{ carPhoto3 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb3Border }}; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=200&h=200&fit=crop&auto=format') center/cover;"></div>
+            <div onClick="{{ carPhoto3 }}" style="width: 44px; height: 44px; border-radius: 8px; cursor: pointer; border: {{ carThumb3Border }}; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
           </div>
           <div style="flex: 1; overflow-y: auto; padding: 4px 20px 0; display: flex; flex-direction: column; gap: 13px; scrollbar-width: none;">
             <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -1546,7 +1546,7 @@
           <sc-if value="{{ ordersOnDone }}" hint-placeholder-val="{{ false }}">
           <div style="flex: 1; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none;">
             <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 11px;">
-              <div style="width: 50px; height: 50px; border-radius: 11px; background: url('https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=120&h=120&fit=crop&auto=format') center/cover; flex-shrink: 0; opacity: 0.85;"></div>
+              <div style="width: 50px; height: 50px; border-radius: 11px; background: url('assets/listing-mango-crate.jpg') center/cover; flex-shrink: 0; opacity: 0.85;"></div>
               <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
                 <div style="font-size: 13.5px; font-weight: 700; color: #16233A;">Fresh mango crate</div>
                 <div style="font-size: 11.5px; color: #8B94A3;">Kenrick B. · picked up 24 Aug</div>
@@ -1675,7 +1675,7 @@
           </div>
           <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: none;">
             <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; padding: 13px; display: flex; align-items: center; gap: 12px;">
-              <div style="width: 52px; height: 52px; border-radius: 11px; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=120&h=120&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
+              <div style="width: 52px; height: 52px; border-radius: 11px; background: url('assets/listing-vehicle-suv.jpg') center/cover; flex-shrink: 0;"></div>
               <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
                 <div style="font-size: 13.5px; font-weight: 700; color: #16233A;">2018 Toyota Land Cruiser</div>
                 <div style="font-size: 11.5px; color: #8B94A3;">from Denroy A. · Look Out</div>
@@ -2836,7 +2836,7 @@
               <div style="font-size: 12.5px; font-weight: 700; color: #8B94A3;">Bought before</div>
               <div style="display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 <div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; overflow: hidden;">
-                  <div style="height: 78px; background: url('https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=300&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 78px; background: url('assets/listing-mango-crate.jpg') center/cover;"></div>
                   <div style="padding: 7px 8px 8px;">
                     <div style="font-size: 12px; font-weight: 800; color: #16233A;">EC$25</div>
                     <div style="font-size: 9.5px; color: #7C8697;">Mango crate</div>
@@ -3896,7 +3896,7 @@
                 </div>
                 <div onClick="{{ openLogin }}" style="color: rgba(230,238,249,0.85); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 2px;">Already have an account? <span style="color: #F0B454; text-decoration: underline;">Sign in</span></div>
               </div>
-              <div style="flex: 1; height: 260px; border-radius: 16px; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=560&fit=crop&auto=format') center/cover;"></div>
+              <div style="flex: 1; height: 260px; border-radius: 16px; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
               <div onClick="{{ pickSellers }}" style="background: #FFFFFF; border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 13px; cursor: pointer; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
@@ -3923,7 +3923,7 @@
               </div>
               <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;">
               <div onClick="{{ deskOpenDetail }}" style="background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 8px 20px -14px rgba(23,35,29,0.3); cursor: pointer;">
-                <div style="height: 150px; background: url('https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=500&h=350&fit=crop&auto=format') center/cover;"></div>
+                <div style="height: 150px; background: url('assets/listing-vehicle-suv.jpg') center/cover;"></div>
                 <div style="padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px;">
                   <div style="font-size: 17px; font-weight: 800; color: #17231D;">EC$68,500</div>
                   <div style="font-size: 13.5px; color: #3A4553;">Toyota Land Cruiser, 2018</div>
@@ -3939,7 +3939,7 @@
                 </div>
               </div>
               <div onClick="{{ deskOpenDetail }}" style="background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 8px 20px -14px rgba(23,35,29,0.3); cursor: pointer;">
-                <div style="height: 150px; background: url('https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=500&h=350&fit=crop&auto=format') center/cover;"></div>
+                <div style="height: 150px; background: url('assets/listing-mango-crate.jpg') center/cover;"></div>
                 <div style="padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px;">
                   <div style="font-size: 17px; font-weight: 800; color: #17231D;">EC$25</div>
                   <div style="font-size: 13.5px; color: #3A4553;">Fresh mango crate</div>
@@ -3947,7 +3947,7 @@
                 </div>
               </div>
               <div onClick="{{ deskOpenDetail }}" style="background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 8px 20px -14px rgba(23,35,29,0.3); cursor: pointer;">
-                <div style="height: 150px; background: url('https://images.unsplash.com/photo-1586105251261-72a756497a11?w=500&h=350&fit=crop&auto=format') center/cover;"></div>
+                <div style="height: 150px; background: url('assets/listing-bed-set.jpg') center/cover;"></div>
                 <div style="padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px;">
                   <div style="font-size: 17px; font-weight: 800; color: #17231D;">EC$3,800</div>
                   <div style="font-size: 13.5px; color: #3A4553;">King bed set</div>
@@ -4474,7 +4474,7 @@ class Component extends DCLogic {
         price: 'EC$1,650', title: 'Workshop tool lot', meta: 'Look Out · saved 2 days ago',
         drop: true, flagText: '↓ EC$200', flagBg: '#0E3F80', flagColor: '#FFFFFF',
         priceColor: '#16233A', watchers: '4 others saved this' },
-      { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#0E3F80', img: u('photo-1533473359331-0135ef1b58bf'),
+      { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#0E3F80', img: 'assets/listing-vehicle-suv.jpg',
         price: 'EC$68,500', title: 'Land Cruiser, 2018', meta: 'Look Out · saved 4 days ago',
         drop: false, flagText: '', flagBg: '', flagColor: '',
         priceColor: '#16233A', watchers: '7 others saved this' },
@@ -4482,11 +4482,11 @@ class Component extends DCLogic {
         price: 'EC$1,200', title: 'Dining table, seats 6', meta: 'Brades · saved 5 days ago',
         drop: true, flagText: '↓ EC$150', flagBg: '#0E3F80', flagColor: '#FFFFFF',
         priceColor: '#16233A', watchers: '' },
-      { cat: 'home', catLabel: 'HOME', catColor: '#5B6FBA', img: u('photo-1586105251261-72a756497a11'),
+      { cat: 'home', catLabel: 'HOME', catColor: '#5B6FBA', img: 'assets/listing-bed-set.jpg',
         price: 'EC$3,800', title: 'King bed set', meta: 'Salem · saved 1 week ago',
         drop: false, flagText: '', flagBg: '', flagColor: '',
         priceColor: '#16233A', watchers: '' },
-      { cat: 'farm', catLabel: 'FARM', catColor: '#3E7D53', img: u('photo-1601493700631-2b16ec4b4716'),
+      { cat: 'farm', catLabel: 'FARM', catColor: '#3E7D53', img: 'assets/listing-mango-crate.jpg',
         price: 'EC$25', title: 'Fresh mango crate', meta: 'Cudjoe Head · saved 1 week ago',
         drop: false, flagText: 'SOLD', flagBg: 'rgba(22,35,58,0.82)', flagColor: '#FFFFFF',
         sold: true, imgDim: 'opacity: 0.55;', priceColor: '#A8B0BE', priceStrike: 'text-decoration: line-through;', watchers: '' },
@@ -4522,17 +4522,17 @@ class Component extends DCLogic {
     const u = (id) => 'https://images.unsplash.com/' + id + '?w=120&h=120&fit=crop&auto=format';
     if (kind === 'sold') {
       return [
-        { name: 'Fresh mango crate', sub: 'Farm & Produce · Cudjoe Head', value: '28 sold', img: u('photo-1601493700631-2b16ec4b4716') },
+        { name: 'Fresh mango crate', sub: 'Farm & Produce · Cudjoe Head', value: '28 sold', img: 'assets/listing-mango-crate.jpg' },
         { name: 'Workshop tool lot', sub: 'Tools & Power · Look Out', value: '11 sold', img: u('photo-1530124566582-a618bc2615dc') },
         { name: 'Dining table, seats 6', sub: 'Home & Garden · Brades', value: '9 sold', img: u('photo-1617806118233-18e1de247200') },
         { name: 'Cordless drill set', sub: 'Tools & Power · Salem', value: '7 sold', img: u('photo-1572981779307-38b8cabb2407') },
       ];
     }
     return [
-      { name: 'Land Cruiser, 2018', sub: 'Vehicles · Look Out', value: '412', img: u('photo-1533473359331-0135ef1b58bf') },
-      { name: 'Room to rent, Salem', sub: 'Real Estate · Salem', value: '188', img: u('photo-1586105251261-72a756497a11') },
+      { name: 'Land Cruiser, 2018', sub: 'Vehicles · Look Out', value: '412', img: 'assets/listing-vehicle-suv.jpg' },
+      { name: 'Room to rent, Salem', sub: 'Real Estate · Salem', value: '188', img: 'assets/listing-bed-set.jpg' },
       { name: 'Workshop tool lot', sub: 'Tools & Power · Look Out', value: '141', img: u('photo-1530124566582-a618bc2615dc') },
-      { name: 'Fresh mango crate', sub: 'Farm & Produce · Cudjoe Head', value: '96', img: u('photo-1601493700631-2b16ec4b4716') },
+      { name: 'Fresh mango crate', sub: 'Farm & Produce · Cudjoe Head', value: '96', img: 'assets/listing-mango-crate.jpg' },
     ];
   }
   _admRangeData(range) {
@@ -4718,12 +4718,12 @@ class Component extends DCLogic {
   _listingsData() {
     const R = (window.__resources || {});
     return [
-      { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#A8483A', img: R.imgVehicle || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&h=300&fit=crop&auto=format', sponsored: true, price: 'EC$68,500', priceNum: 68500, title: 'Toyota Land Cruiser, 2018', seller: 'Courtney W.', location: 'Look Out', timeAgo: '1h', hoursAgo: 1, views: 41, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E' },
-      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgHome || 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop&auto=format', price: 'EC$2,200', priceNum: 2200, title: 'Dining table & 6 chairs', seller: 'Merle J.', location: 'Brades', timeAgo: '1d', hoursAgo: 24, views: 96, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E', urgency: 'MOVING SALE' },
-      { cat: 'farm', catLabel: 'FARM & PRODUCE', catColor: '#2E7F8C', img: R.imgMango || 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=300&fit=crop&auto=format', price: 'EC$25', priceNum: 25, title: 'Fresh mango crate', seller: 'Kenrick B.', location: 'Cudjoe Head', timeAgo: '5h', hoursAgo: 5, views: 18, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
-      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgBed || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=400&h=300&fit=crop&auto=format', price: 'EC$3,800', priceNum: 3800, title: 'King bed set, solid wood', seller: 'Alvira R.', location: 'Salem', timeAgo: '3d', hoursAgo: 72, views: 112, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
-      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgBed || 'https://images.unsplash.com/photo-1586105251261-72a756497a11?w=400&h=300&fit=crop&auto=format', tag: 'FOR RENT', price: 'EC$1,500/mo', priceNum: 1500, title: 'Private room, Salem', seller: 'Marcus T.', location: 'Salem', timeAgo: '12h', hoursAgo: 12, views: 63, delivery: false },
-      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgYaris || 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=400&h=300&fit=crop&auto=format', tag: 'FOR HIRE', price: 'EC$180/day', priceNum: 180, title: 'Toyota Yaris — car hire', seller: 'Janice R.', location: 'Brades', timeAgo: '2d', hoursAgo: 48, views: 29, delivery: false },
+      { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#A8483A', img: R.imgVehicle || 'assets/listing-vehicle-suv.jpg', sponsored: true, price: 'EC$68,500', priceNum: 68500, title: 'Toyota Land Cruiser, 2018', seller: 'Courtney W.', location: 'Look Out', timeAgo: '1h', hoursAgo: 1, views: 41, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E' },
+      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgHome || 'assets/listing-dining-set.jpg', price: 'EC$2,200', priceNum: 2200, title: 'Dining table & 6 chairs', seller: 'Merle J.', location: 'Brades', timeAgo: '1d', hoursAgo: 24, views: 96, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E', urgency: 'MOVING SALE' },
+      { cat: 'farm', catLabel: 'FARM & PRODUCE', catColor: '#2E7F8C', img: R.imgMango || 'assets/listing-mango-crate.jpg', price: 'EC$25', priceNum: 25, title: 'Fresh mango crate', seller: 'Kenrick B.', location: 'Cudjoe Head', timeAgo: '5h', hoursAgo: 5, views: 18, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
+      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgBed || 'assets/listing-bed-set.jpg', price: 'EC$3,800', priceNum: 3800, title: 'King bed set, solid wood', seller: 'Alvira R.', location: 'Salem', timeAgo: '3d', hoursAgo: 72, views: 112, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
+      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgBed || 'assets/listing-bed-set.jpg', tag: 'FOR RENT', price: 'EC$1,500/mo', priceNum: 1500, title: 'Private room, Salem', seller: 'Marcus T.', location: 'Salem', timeAgo: '12h', hoursAgo: 12, views: 63, delivery: false },
+      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgYaris || 'assets/listing-yaris-hire.jpg', tag: 'FOR HIRE', price: 'EC$180/day', priceNum: 180, title: 'Toyota Yaris — car hire', seller: 'Janice R.', location: 'Brades', timeAgo: '2d', hoursAgo: 48, views: 29, delivery: false },
     ];
   }
   _bg(u) { return "url('" + u + "') center/cover"; }
@@ -4731,10 +4731,10 @@ class Component extends DCLogic {
   _carPhotos() {
     const R = (window.__resources || {});
     return [
-      R.carHero0 || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop&auto=format',
-      R.carHero1 || 'https://images.unsplash.com/photo-1600661653561-629509216228?w=800&h=600&fit=crop&auto=format',
-      R.carHero2 || 'https://images.unsplash.com/photo-1613214149922-f1809c99b414?w=800&h=600&fit=crop&auto=format',
-      R.carHero3 || 'https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=800&h=600&fit=crop&auto=format',
+      R.carHero0 || 'assets/listing-vehicle-suv.jpg',
+      R.carHero1 || 'assets/listing-car-side.jpg',
+      R.carHero2 || 'assets/listing-car-wheel.jpg',
+      R.carHero3 || 'assets/listing-car-engine.jpg',
     ];
   }
   _sortedListings(cat, sortBy) {
@@ -5129,7 +5129,7 @@ class Component extends DCLogic {
       colSaved: tabCol(s.screen === 'saved'), colProfile: tabCol(s.screen === 'profile'),
       toggleNotif: () => this.go('messages', { msgTab: 'notifications'  }),
       carPhotoIdx: s.carPhotoIdx || 0,
-      carHeroBg: this._bg((() => { const R = (window.__resources || {}); return [R.carHero0 || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop&auto=format', R.carHero1 || 'https://images.unsplash.com/photo-1600661653561-629509216228?w=800&h=600&fit=crop&auto=format', R.carHero2 || 'https://images.unsplash.com/photo-1613214149922-f1809c99b414?w=800&h=600&fit=crop&auto=format', R.carHero3 || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop&auto=format'][s.carPhotoIdx || 0]; })()),
+      carHeroBg: this._bg((() => { const R = (window.__resources || {}); return [R.carHero0 || 'assets/listing-vehicle-suv.jpg', R.carHero1 || 'assets/listing-car-side.jpg', R.carHero2 || 'assets/listing-car-wheel.jpg', R.carHero3 || 'assets/listing-vehicle-suv.jpg'][s.carPhotoIdx || 0]; })()),
       carPhotoCounter: ((s.carPhotoIdx || 0) + 1) + ' / 4',
       carThumb0: this._bg(this._carPhotos()[0]), carThumb1: this._bg(this._carPhotos()[1]),
       carThumb2: this._bg(this._carPhotos()[2]), carThumb3: this._bg(this._carPhotos()[3]),
@@ -5207,7 +5207,7 @@ class Component extends DCLogic {
       openDetail: () => this.go('detail', { _detailItem: 'generator' }), openCollect: () => this.go('collect'),
       openDetailMango: () => this.go('detail', { _detailItem: 'mango' }),
       isMangoDetail: s._detailItem === 'mango', isGeneratorDetail: s._detailItem !== 'mango',
-      mangoBg: this._bg((window.__resources || {}).imgMango || 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=300&fit=crop&auto=format'),
+      mangoBg: this._bg((window.__resources || {}).imgMango || 'assets/listing-mango-crate.jpg'),
       deskDetailOn: !!s._deskDetail,
       deskOpenJob: () => this.setState({ _deskSub: 'job' }),
       deskOpenShop: () => this.setState({ _deskSub: 'shop' }),

@@ -58,6 +58,28 @@ A handoff bundle references remote Unsplash URLs, so those pages need a
 connection for imagery. A Standalone export inlines the photos instead and works
 offline. If image reliability matters more than freshness, prefer an export.
 
+**Nine photo slots are dead upstream** and are substituted at build time — the
+vehicle gallery, the dining set, the mango crate, the bed set and the Yaris
+hire. The design marks them itself:
+
+```html
+<meta name="ext-resource-dependency" id="imgVehicle" content="https://images.unsplash.com/…">
+```
+
+That means *the host supplies this image; the URL is only a fallback*. Claude
+Design supplies them, a static host cannot, and those particular URLs 404 — so
+on GitHub Pages those listings rendered as empty grey boxes. The replacements in
+`app/assets/` are the same listings' own photos, recovered from a Standalone
+export's asset bundle, mapped in `DEAD_PHOTOS` in `from-handoff.js`.
+
+The mapping is keyed by Unsplash photo ID, not full URL, because the design asks
+for each photo at half a dozen crop sizes. Two spellings are rewritten: the URL
+in full, and `u('photo-…')`, the helper the listing data uses. The build then
+refuses to write a page that still contains a dead ID or references a missing
+`assets/` file — so this fails loudly rather than shipping a broken image. If a
+future design revision fixes the URLs upstream, nothing matches and nothing
+fires.
+
 ## Never commit these
 
 `chats/` and `project/` are in `.gitignore` and must stay out. They contain the
@@ -76,8 +98,9 @@ that also holds the handoff bundle, push the specific branch
 - **Category-specific listing fields** are hand-built variants in the design
   rather than a category-driven schema — the work noted in the backend spec.
 - **Page weight.** A Standalone export runs ~5.4 MB because every photo is
-  embedded; a handoff build is ~530 KB but fetches photos over the network.
-  Neither has had its images optimised.
+  embedded; a handoff build is ~530 KB plus ~480 KB of local `assets/`, and
+  fetches the rest of the photos over the network. Only the local assets have
+  been optimised (capped at 800px, q82 progressive).
 
 ## The older hand-written build
 

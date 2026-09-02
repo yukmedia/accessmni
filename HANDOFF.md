@@ -52,6 +52,30 @@ it back into a one-shot.
   its own page — which is why the admin design becomes `docs/admin.html` and the
   desktop panel loads it inline.
 
+### Desktop search returns an empty page
+
+On the web view, typing a query showed the right heading — *Results for "car" ·
+2 results across the app* — and then nothing. The grid iterates
+`{{ searchResults }}`, which `renderVals()` never produces; it produces
+`searchGroups`, the grouped shape the **phone's** results list uses. The heading
+was right because `searchResultsLabel` does exist. The phone was unaffected.
+
+`fixDesktopSearch()` defines `searchResults` next to `searchGroups`, resolving
+the query the way `_searchScoped()` does — island vocabulary first (`_localWords`
+maps *car* to *toyota*, *provisions* to *mango*), then the listings match.
+
+It also re-points the desktop's empty state. That block's own copy reads *"No
+listings match …"*, but it was wired to `searchNoResults`, true only when nothing
+**anywhere** in the app matched — so a query hitting a shop or a job but no
+listing (*nails*, *villa*, *flight*) showed neither cards nor a message.
+
+Two things worth fixing in Claude Design rather than here:
+
+- `searchResults` should exist in the design, so this patch can go away.
+- The heading counts across the whole app while the grid below it shows listings
+  only, so *salem* reads "8 results" above two cards. Either scope the count to
+  listings or give the grid the other groups.
+
 ### Photos
 
 A handoff bundle references remote Unsplash URLs, so those pages need a

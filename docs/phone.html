@@ -3877,7 +3877,7 @@
                 </div>
               </sc-for>
             </div>
-            <sc-if value="{{ searchNoResults }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ deskSearchNoResults }}" hint-placeholder-val="{{ false }}">
               <div style="background: #FFFFFF; border-radius: 16px; padding: 44px; text-align: center; color: #7C8697; font-size: 14px;">No listings match “{{ searchQuery }}” — try a shorter word, or browse by category.</div>
             </sc-if>
           </div>
@@ -5185,6 +5185,8 @@ class Component extends DCLogic {
       })),
       searchHasQuery: !!(s.searchQuery && s.searchQuery.trim().length > 0),
       searchGroups: this._searchScoped(s.searchQuery),
+      searchResults: (s.searchQuery && s.searchQuery.trim()) ? this._searchListings(this._localWords(s.searchQuery) || s.searchQuery) : [],
+      deskSearchNoResults: !!(s.searchQuery && s.searchQuery.trim()) && this._searchListings(this._localWords(s.searchQuery) || s.searchQuery).length === 0,
       searchNoResults: !!(s.searchQuery && this._searchTotal(s.searchQuery) === 0),
       searchResultsLabel: (() => {
         const n = this._searchTotal(s.searchQuery);

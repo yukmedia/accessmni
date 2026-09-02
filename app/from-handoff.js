@@ -186,6 +186,64 @@ function replaceDeadPhotos(html) {
   return html;
 }
 
+/* --------------------- desktop search results (design bug) ---------------- */
+
+/* On the web view, typing "car" shows "Results for “car” · 2 results across the
+   app" and then an empty grid.
+
+   The grid iterates <sc-for list="{{ searchResults }}">, but renderVals() never
+   produces searchResults — it produces searchGroups, the grouped shape the
+   phone's results list uses. The heading is right because it comes from
+   searchResultsLabel, which does exist; the grid below it silently renders
+   nothing. The phone is unaffected.
+
+   So searchResults is defined here, next to searchGroups, mirroring how
+   _searchScoped() resolves a query: island vocabulary first (_localWords maps
+   "car" to "toyota", "provisions" to "mango"), then the listings match. The
+   desktop card template reads item.price / .title / .location / .timeAgo /
+   .bgImg, which is the listing shape _searchListings() returns.
+
+   This is a defect in the design file, not in the publishing. It wants fixing
+   in Claude Design too — otherwise every future export needs this patch, and
+   the day the anchor below stops matching, the build fails rather than quietly
+   shipping an empty results page again. */
+
+const SEARCH_ANCHOR = 'searchGroups: this._searchScoped(s.searchQuery),';
+
+// _searchScoped() resolves a query the same way: island vocabulary, then match.
+const DESK_HITS = "this._searchListings(this._localWords(s.searchQuery) || s.searchQuery)";
+const SEARCH_FIX = SEARCH_ANCHOR
+  + '\n      searchResults: (s.searchQuery && s.searchQuery.trim()) ? ' + DESK_HITS + ' : [],'
+  + '\n      deskSearchNoResults: !!(s.searchQuery && s.searchQuery.trim()) && ' + DESK_HITS + '.length === 0,';
+
+/* The desktop's empty state has to follow the same list. Its own copy says
+   "No listings match …", but it is wired to searchNoResults, which is true only
+   when nothing anywhere in the app matched — so a query that hits a shop or a
+   job but no listing shows neither cards nor a message, just a blank page.
+   Matched via that copy, since the phone's empty state shares the value. */
+const DESK_EMPTY = /(<sc-if value=")\{\{ searchNoResults \}\}("[^>]*>\s*<div[^>]*>No listings match)/;
+
+function fixDesktopSearch(html, page) {
+  if (html.includes('searchResults:')) return html;          // already defined upstream
+  if (!html.includes('{{ searchResults }}')) return html;    // grid gone or renamed
+  if (!html.includes(SEARCH_ANCHOR)) {
+    console.error('\nCannot patch the desktop search results in ' + page + ':');
+    console.error('the grid still reads {{ searchResults }} but renderVals() has moved.');
+    console.error('Re-point SEARCH_ANCHOR at the current searchGroups definition, or fix');
+    console.error('the design — refusing to publish a search that returns an empty page.');
+    process.exit(1);
+  }
+  html = html.replace(SEARCH_ANCHOR, SEARCH_FIX);
+
+  if (DESK_EMPTY.test(html)) {
+    html = html.replace(DESK_EMPTY, '$1{{ deskSearchNoResults }}$2');
+  } else {
+    console.warn('! Desktop empty-search state not found — a query that matches only a');
+    console.warn('  shop or a job will show an empty results grid with no message.');
+  }
+  return html;
+}
+
 /* A broken image is invisible until someone opens the page on their phone, so
    both halves are checked before anything is written: every assets/… path the
    built page asks for must exist, and no dead photo ID may survive. The second
@@ -237,6 +295,7 @@ function write(name, html, inject) {
   html = prepare(html);
   html = resolveImports(html);
   html = replaceDeadPhotos(html);
+  html = fixDesktopSearch(html, 'docs/' + name);
   if (inject) html = html.replace(/<\/body>/i, inject + '</body>');
   checkAssets(html, 'docs/' + name);
   const out = path.join(DOCS, name);

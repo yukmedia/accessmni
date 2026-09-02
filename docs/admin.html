@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Access MNI — Montserrat, West Indies</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0E3F80">
+  <meta name="description" content="Buy, sell, find work and book travel across Montserrat.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #EEF0F4; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  a { color: #0E3F80; }
+  a:hover { color: #16233A; }
+</style>
+</helmet>
+
+<div style="width: 1440px; height: 940px; display: flex; background: #F7F6F0; overflow: hidden; box-shadow: 0 24px 60px rgba(16,22,33,0.16); border-radius: 14px;">
+
+  <div style="width: 232px; flex-shrink: 0; background: #16233A; display: flex; flex-direction: column; padding: 20px 0 0;">
+    <div style="padding: 0 18px 20px; display: flex; align-items: center; gap: 10px;">
+      <div style="width: 30px; height: 30px; border-radius: 9px; background: #FBF8F1; position: relative; flex-shrink: 0;">
+        <div style="position: absolute; top: 7px; left: 8px; width: 6.5px; height: 6.5px; border-radius: 50%; background: #0E3F80;"></div>
+        <div style="position: absolute; top: 7px; left: 15px; width: 6.5px; height: 6.5px; border-radius: 50%; background: #0E3F80;"></div>
+        <div style="position: absolute; top: 13.5px; left: 11.5px; width: 6.5px; height: 6.5px; border-radius: 50%; background: #0E3F80;"></div>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <div style="color: #FFFFFF; font-size: 14px; font-weight: 700; letter-spacing: -0.01em;">Access MNI Admin</div>
+        <div style="color: rgba(230,238,249,0.5); font-size: 10.5px;">Montserrat</div>
+      </div>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 0 10px;">
+      <div style="padding: 8px 8px 6px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: rgba(230,238,249,0.38);">DAILY WORK</div>
+      <div onClick="{{ goDash }}" style="{{ navDash }}"><span>Dashboard</span></div>
+      <div onClick="{{ goQueue }}" style="{{ navQueue }}"><span>Approvals</span><span style="{{ pillQueue }}">12</span></div>
+      <div onClick="{{ goDeliveries }}" style="{{ navDeliveries }}"><span>Deliveries</span><span style="{{ pillDeliveries }}">4</span></div>
+      <div onClick="{{ goReports }}" style="{{ navReports }}"><span>Reports</span><span style="{{ pillReports }}">2</span></div>
+
+      <div style="padding: 14px 8px 6px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: rgba(230,238,249,0.38);">MANAGE</div>
+      <div onClick="{{ goShops }}" style="{{ navShops }}"><span>Shops &amp; billing</span></div>
+      <div onClick="{{ goAds }}" style="{{ navAds }}"><span>Adverts</span></div>
+      <div onClick="{{ goUsers }}" style="{{ navUsers }}"><span>Users</span></div>
+      <div onClick="{{ goListings }}" style="{{ navListings }}"><span>All listings</span></div>
+      <div onClick="{{ goCategories }}" style="{{ navCategories }}"><span>Categories</span></div>
+
+      <div style="padding: 14px 8px 6px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; color: rgba(230,238,249,0.38);">OWNER ONLY</div>
+      <div onClick="{{ goTeam }}" style="{{ navTeam }}"><span>Team &amp; roles</span></div>
+      <div onClick="{{ goLog }}" style="{{ navLog }}"><span>Activity log</span></div>
+      <div onClick="{{ goSettings }}" style="{{ navSettings }}"><span>Settings &amp; fees</span></div>
+    </div>
+
+    <div style="padding: 14px 14px 16px; border-top: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; gap: 10px;">
+      <div style="width: 32px; height: 32px; border-radius: 50%; background: #F0B454; color: #2A1D06; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">{{ meInitials }}</div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="color: #FFFFFF; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ meName }}</div>
+        <div style="color: rgba(230,238,249,0.5); font-size: 10.5px;">{{ meRole }}</div>
+      </div>
+      <div onClick="{{ cycleRole }}" title="Switch role (demo)" style="font-size: 10px; font-weight: 700; color: #F0B454; cursor: pointer; white-space: nowrap;">Switch</div>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+
+    <div style="height: 62px; flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid #E4E1D6; display: flex; align-items: center; padding: 0 24px; gap: 16px;">
+      <div style="font-size: 17px; font-weight: 800; color: #16233A; letter-spacing: -0.01em;">{{ pageTitle }}</div>
+      <div style="font-size: 12px; color: #8B94A3;">{{ pageSub }}</div>
+      <div style="flex: 1;"></div>
+      <div style="display: flex; align-items: center; gap: 8px; background: #F4F2EC; border-radius: 9px; padding: 8px 12px; width: 260px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C8697" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+        <span style="color: #8B94A3; font-size: 12.5px;">Search anything</span>
+      </div>
+      <div style="position: relative; width: 34px; height: 34px; border-radius: 9px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3A4553" stroke-width="1.9" stroke-linecap="round"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        <div style="position: absolute; top: -4px; right: -4px; min-width: 17px; height: 17px; border-radius: 9px; background: #C0392B; color: #FFFFFF; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF;">5</div>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 22px 24px 30px;">
+
+      <sc-if value="{{ onDash }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div onClick="{{ rToday }}" style="{{ rTabToday }}">Today</div>
+            <div onClick="{{ rWeek }}" style="{{ rTabWeek }}">This week</div>
+            <div onClick="{{ rMonth }}" style="{{ rTabMonth }}">This month</div>
+            <div onClick="{{ rQuarter }}" style="{{ rTabQuarter }}">This quarter</div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">{{ rangeDates }}</div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 14px;">
+            <div style="background: #16233A; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: rgba(230,238,249,0.6); letter-spacing: 0.04em;">EARNED {{ rangeLabelCaps }}</div>
+              <div style="font-size: 30px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em; margin-top: 5px;">{{ mTotal }}</div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+                <div style="background: rgba(127,169,139,0.25); color: #A8D4B4; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{{ mDelta }}</div>
+                <div style="font-size: 11px; color: rgba(230,238,249,0.6);">{{ mCompare }}</div>
+              </div>
+              <div style="display: flex; gap: 12px; margin-top: 11px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12);">
+                <div><div style="font-size: 9.5px; color: rgba(230,238,249,0.5); font-weight: 700;">SHOPS</div><div style="font-size: 12.5px; color: #FFFFFF; font-weight: 700; margin-top: 2px;">{{ mShops }}</div></div>
+                <div><div style="font-size: 9.5px; color: rgba(230,238,249,0.5); font-weight: 700;">ADVERTS</div><div style="font-size: 12.5px; color: #FFFFFF; font-weight: 700; margin-top: 2px;">{{ mAds }}</div></div>
+                <div><div style="font-size: 9.5px; color: rgba(230,238,249,0.5); font-weight: 700;">FEES</div><div style="font-size: 12.5px; color: #FFFFFF; font-weight: 700; margin-top: 2px;">{{ mFees }}</div></div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; letter-spacing: 0.04em;">WAITING ON YOU</div>
+              <div style="font-size: 30px; font-weight: 800; color: #16233A; letter-spacing: -0.02em; margin-top: 5px;">12</div>
+              <div style="font-size: 11.5px; color: #A8483A; margin-top: 3px;">3 waiting over 24 hrs</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; letter-spacing: 0.04em;">NEW LISTINGS</div>
+              <div style="font-size: 30px; font-weight: 800; color: #16233A; letter-spacing: -0.02em; margin-top: 5px;">{{ mListings }}</div>
+              <div style="font-size: 11.5px; color: #7C8697; margin-top: 3px;">148 live in total</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; letter-spacing: 0.04em;">SHOPS PAID</div>
+              <div style="font-size: 30px; font-weight: 800; color: #16233A; letter-spacing: -0.02em; margin-top: 5px;">18<span style="font-size: 15px; color: #A8B0BE; font-weight: 700;">/24</span></div>
+              <div style="font-size: 11.5px; color: #A8483A; margin-top: 3px;">6 overdue · EC$1,200</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; align-items: start;">
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+              <div style="padding: 14px 16px; border-bottom: 1px solid #EFEDE4; display: flex; align-items: center; justify-content: space-between;">
+                <div style="font-size: 14px; font-weight: 800; color: #16233A;">Needs a decision</div>
+                <div onClick="{{ goQueue }}" style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">Open queue</div>
+              </div>
+              <sc-for list="{{ dashQueue }}" as="row" hint-placeholder-count="4">
+                <div onClick="{{ goQueue }}" style="padding: 12px 16px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                  <div style="width: 40px; height: 40px; border-radius: 9px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 13px; font-weight: 700; color: #16233A;">{{ row.title }}</div>
+                    <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">{{ row.meta }}</div>
+                  </div>
+                  <div style="{{ row.tagStyle }}">{{ row.tag }}</div>
+                  <div style="font-size: 11.5px; color: {{ row.ageColor }}; width: 62px; text-align: right;">{{ row.age }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+                <div style="font-size: 14px; font-weight: 800; color: #16233A;">Today's deliveries</div>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #F0B454;"></div>
+                    <div style="flex: 1; font-size: 12.5px; color: #3A4553;">On the way</div>
+                    <div style="font-size: 13px; font-weight: 800; color: #16233A;">2</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #0E3F80;"></div>
+                    <div style="flex: 1; font-size: 12.5px; color: #3A4553;">Waiting on a driver</div>
+                    <div style="font-size: 13px; font-weight: 800; color: #16233A;">2</div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: #7FA98B;"></div>
+                    <div style="flex: 1; font-size: 12.5px; color: #3A4553;">Delivered today</div>
+                    <div style="font-size: 13px; font-weight: 800; color: #16233A;">7</div>
+                  </div>
+                </div>
+                <div onClick="{{ goDeliveries }}" style="margin-top: 13px; background: #F4F2EC; border-radius: 9px; padding: 9px 0; text-align: center; font-size: 12.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">Manage deliveries</div>
+              </div>
+
+              <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+                <div style="font-size: 14px; font-weight: 800; color: #16233A;">Who's working</div>
+                <div style="display: flex; flex-direction: column; gap: 11px; margin-top: 12px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #E4EDF9; color: #0E3F80; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;">CA</div>
+                    <div style="flex: 1;"><div style="font-size: 12.5px; font-weight: 600; color: #16233A;">Cherise A.</div><div style="font-size: 10.5px; color: #8B94A3;">Owner · online now</div></div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #E4EDF9; color: #0E3F80; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;">DW</div>
+                    <div style="flex: 1;"><div style="font-size: 12.5px; font-weight: 600; color: #16233A;">Delroy W.</div><div style="font-size: 10.5px; color: #8B94A3;">Manager · 9 approvals today</div></div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #F4F2EC; color: #3A4553; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;">KB</div>
+                    <div style="flex: 1;"><div style="font-size: 12.5px; font-weight: 600; color: #16233A;">Kelvin B.</div><div style="font-size: 10.5px; color: #8B94A3;">Driver · 3 runs today</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="padding: 13px 16px; border-bottom: 1px solid #EFEDE4; display: flex; align-items: center; gap: 8px;">
+              <div style="font-size: 14px; font-weight: 800; color: #16233A;">Best performing {{ rangeLabel }}</div>
+              <div style="flex: 1;"></div>
+              <div onClick="{{ lbSellers }}" style="{{ lbTabSellers }}">Sellers</div>
+              <div onClick="{{ lbShops }}" style="{{ lbTabShops }}">Shops</div>
+              <div onClick="{{ lbCats }}" style="{{ lbTabCats }}">Categories</div>
+              <div onClick="{{ lbVillages }}" style="{{ lbTabVillages }}">Villages</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 28px 1.6fr 1fr 1fr 1fr; padding: 10px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>#</div><div>{{ lbColName }}</div><div>{{ lbCol2 }}</div><div>{{ lbCol3 }}</div><div>{{ lbCol4 }}</div>
+            </div>
+            <sc-for list="{{ lbRows }}" as="row" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: 28px 1.6fr 1fr 1fr 1fr; padding: 11px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="font-size: 11px; font-weight: 800; color: #A8B0BE;">{{ row.rank }}</div>
+                <div style="display: flex; align-items: center; gap: 9px;">
+                  <div style="width: 26px; height: 26px; border-radius: 7px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                  <div>
+                    <div style="font-weight: 700; color: #16233A;">{{ row.name }}</div>
+                    <div style="font-size: 11px; color: #8B94A3;">{{ row.sub }}</div>
+                  </div>
+                </div>
+                <div>{{ row.c2 }}</div>
+                <div>{{ row.c3 }}</div>
+                <div style="font-weight: 700; color: #16233A;">{{ row.c4 }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onQueue }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div onClick="{{ qAll }}" style="{{ qTabAll }}">Everything <span style="opacity: 0.6;">12</span></div>
+            <div onClick="{{ qListings }}" style="{{ qTabListings }}">Listings <span style="opacity: 0.6;">7</span></div>
+            <div onClick="{{ qIds }}" style="{{ qTabIds }}">Seller IDs <span style="opacity: 0.6;">3</span></div>
+            <div onClick="{{ qAds }}" style="{{ qTabAds }}">Adverts <span style="opacity: 0.6;">2</span></div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">Oldest first</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <sc-for list="{{ queueRows }}" as="row" hint-placeholder-count="5">
+              <div style="padding: 14px 16px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: flex-start; gap: 13px;">
+                <div style="width: 62px; height: 62px; border-radius: 10px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #16233A;">{{ row.title }}</div>
+                    <div style="{{ row.tagStyle }}">{{ row.tag }}</div>
+                    <sc-if value="{{ row.flagged }}" hint-placeholder-val="{{ false }}">
+                      <div style="background: #F7E4E0; color: #A8483A; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">NEEDS A LOOK</div>
+                    </sc-if>
+                  </div>
+                  <div style="font-size: 12px; color: #3A4553;">{{ row.detail }}</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">{{ row.meta }}</div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                  <div style="font-size: 11.5px; color: {{ row.ageColor }};">{{ row.age }}</div>
+                  <div style="display: flex; gap: 7px;">
+                    <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; background: #FFFFFF; color: #3A4553; font-size: 12px; font-weight: 600; padding: 7px 11px; border-radius: 8px; cursor: pointer;">Open</div>
+                    <div onClick="{{ openReject }}" style="border: 1px solid #E9C9C2; background: #FFFFFF; color: #A8483A; font-size: 12px; font-weight: 700; padding: 7px 11px; border-radius: 8px; cursor: pointer;">Reject</div>
+                    <div onClick="{{ stop }}" style="background: #0E3F80; color: #FFFFFF; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 8px; cursor: pointer;">Approve</div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="padding: 12px 16px; display: flex; align-items: center; gap: 10px; background: #FBFAF6;">
+              <div style="font-size: 12px; color: #8B94A3;">Tick several to approve or reject them together.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onDeliveries }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+            <div onClick="{{ dFilterWait }}" style="{{ dCardWait }}">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">NEEDS A DRIVER</div>
+              <div style="font-size: 26px; font-weight: 800; color: #A8483A; margin-top: 4px;">2</div>
+            </div>
+            <div onClick="{{ dFilterWay }}" style="{{ dCardWay }}">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">ON THE WAY</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">2</div>
+            </div>
+            <div onClick="{{ dFilterDone }}" style="{{ dCardDone }}">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">DELIVERED TODAY</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">7</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 14px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">DRIVERS ON SHIFT</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">3</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ dFiltered }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <div style="font-size: 12.5px; color: #3A4553;">Showing <b>{{ dFilterLabel }}</b> · {{ dCount }}</div>
+              <div onClick="{{ dFilterAll }}" style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">Show all</div>
+            </div>
+          </sc-if>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>ORDER</div><div>FROM → TO</div><div>DRIVER</div><div>STATUS</div><div></div>
+            </div>
+            <sc-for list="{{ deliveryRows }}" as="row" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px; padding: 13px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div>
+                  <div style="font-weight: 700; color: #16233A;">{{ row.ref }}</div>
+                  <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">{{ row.items }}</div>
+                </div>
+                <div style="font-size: 12px;">{{ row.route }}</div>
+                <div>
+                  <sc-if value="{{ row.hasDriver }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: flex; align-items: center; gap: 7px;">
+                      <div style="width: 24px; height: 24px; border-radius: 50%; background: #E4EDF9; color: #0E3F80; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;">{{ row.driverInitials }}</div>
+                      <span style="font-size: 12px;">{{ row.driver }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ row.needsDriver }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size: 12px; color: #A8483A; font-weight: 600;">Unassigned</span>
+                  </sc-if>
+                </div>
+                <div><div style="{{ row.statusStyle }}">{{ row.status }}</div></div>
+                <div style="display: flex; justify-content: flex-end;">
+                  <div onClick="{{ stop }}" style="{{ row.actionStyle }}">{{ row.action }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onShops }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div onClick="{{ openAddShop }}" style="background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 14px; border-radius: 9px; cursor: pointer;">+ Add a shop</div>
+            <div style="border: 1px solid #E4E1D6; background: #FFFFFF; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 9px 14px; border-radius: 9px; cursor: pointer;">Send overdue reminders (6)</div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">EC$1,200 outstanding</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>BUSINESS</div><div>CATEGORY</div><div>PLAN</div><div>MONTHLY</div><div>PAYMENT</div><div></div>
+            </div>
+            <sc-for list="{{ shopRows }}" as="row" hint-placeholder-count="6">
+              <div style="display: grid; grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px; padding: 12px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 32px; height: 32px; border-radius: 8px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                  <div>
+                    <div style="font-weight: 700; color: #16233A;">{{ row.name }}</div>
+                    <div style="font-size: 11px; color: #8B94A3;">{{ row.village }}</div>
+                  </div>
+                </div>
+                <div style="font-size: 12px;">{{ row.category }}</div>
+                <div><div style="{{ row.planStyle }}">{{ row.plan }}</div></div>
+                <div style="font-weight: 700; color: #16233A;">{{ row.fee }}</div>
+                <div><div style="{{ row.payStyle }}">{{ row.payStatus }}</div></div>
+                <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                  <div onClick="{{ stop }}" style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">Manage</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onAds }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 14px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">RUNNING NOW</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">3</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 14px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">BOOKED AHEAD</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">2</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 14px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">ADVERT INCOME · SEPT</div>
+              <div style="font-size: 26px; font-weight: 800; color: #16233A; margin-top: 4px;">EC$1,450</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 14px 16px;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3;">SLOTS FREE THIS WEEK</div>
+              <div style="font-size: 26px; font-weight: 800; color: #1E6B49; margin-top: 4px;">9</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start;">
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 16px;">
+              <div style="font-size: 14px; font-weight: 800; color: #16233A;">Put up a new advert</div>
+              <div style="font-size: 12px; color: #8B94A3; margin-top: 3px; line-height: 1.5;">Most businesses already have a flyer made for Facebook — upload that.</div>
+
+              <div style="display: flex; gap: 12px; margin-top: 14px;">
+                <div style="width: 96px; height: 120px; border-radius: 10px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; flex-shrink: 0;">
+                  <span style="font-size: 18px; color: #8B94A3;">+</span>
+                  <span style="font-size: 10.5px; color: #8B94A3; font-weight: 600;">Flyer image</span>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 9px;">
+                  <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 12.5px; color: #C2C9D4;">Which business</div>
+                  <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 12.5px; color: #C2C9D4;">Headline — e.g. Cake Fantasy Day</div>
+                  <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 12.5px; color: #3A4553; display: flex; justify-content: space-between;">Links to their shop page <span style="color: #8B94A3;">▾</span></div>
+                </div>
+              </div>
+
+              <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3; margin-top: 16px;">WHERE IT SHOWS</div>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <div onClick="{{ pickSlotOpen }}" style="{{ adSlotOpenCard }}">
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 700; color: #16233A;">Full screen when the app opens</div>
+                    <div style="font-size: 11.5px; color: #8B94A3; margin-top: 1px;">Seen once a day per person. One advertiser per day.</div>
+                  </div>
+                  <div style="text-align: right; flex-shrink: 0;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">EC$150</div>
+                    <div style="font-size: 10.5px; color: #8B94A3;">a day</div>
+                  </div>
+                  <div style="{{ adRadioOpen }}"></div>
+                </div>
+                <div onClick="{{ pickSlotDeals }}" style="{{ adSlotDealsCard }}">
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 700; color: #16233A;">Deals row on the home screen</div>
+                    <div style="font-size: 11.5px; color: #8B94A3; margin-top: 1px;">First card in the row. Up to three advertisers a day.</div>
+                  </div>
+                  <div style="text-align: right; flex-shrink: 0;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">EC$60</div>
+                    <div style="font-size: 10.5px; color: #8B94A3;">a day</div>
+                  </div>
+                  <div style="{{ adRadioDeals }}"></div>
+                </div>
+                <div onClick="{{ pickSlotResults }}" style="{{ adSlotResultsCard }}">
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 700; color: #16233A;">Sponsored card inside a category</div>
+                    <div style="font-size: 11.5px; color: #8B94A3; margin-top: 1px;">Sits near the top of the listings they choose.</div>
+                  </div>
+                  <div style="text-align: right; flex-shrink: 0;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">EC$40</div>
+                    <div style="font-size: 10.5px; color: #8B94A3;">a day</div>
+                  </div>
+                  <div style="{{ adRadioResults }}"></div>
+                </div>
+              </div>
+
+              <div style="background: #F7F6F0; border: 1px solid #EDE9DD; border-radius: 10px; padding: 12px 13px; margin-top: 14px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="font-size: 12.5px; color: #3A4553;">3 days from Wed 3 Sept</div>
+                <div style="font-size: 14px; font-weight: 800; color: #16233A;">{{ adTotal }}</div>
+              </div>
+              <div style="display: flex; gap: 9px; margin-top: 12px;">
+                <div onClick="{{ stop }}" style="flex: 1; border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; font-weight: 600; color: #3A4553; cursor: pointer;">Save as draft</div>
+                <div onClick="{{ stop }}" style="flex: 1; background: #0E3F80; color: #FFFFFF; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; font-weight: 700; cursor: pointer;">Book &amp; mark paid</div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 16px;">
+                <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                  <div style="font-size: 14px; font-weight: 800; color: #16233A;">September</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">Open-screen slot · one a day</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 12px;">
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">M</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">T</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">W</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">T</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">F</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">S</div>
+                  <div style="font-size: 9.5px; font-weight: 700; color: #A8B0BE; text-align: center;">S</div>
+                  <sc-for list="{{ adCalendar }}" as="d" hint-placeholder-count="30">
+                    <div style="{{ d.style }}">{{ d.day }}</div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; gap: 14px; margin-top: 13px; padding-top: 12px; border-top: 1px solid #F0EDE3;">
+                  <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 10px; height: 10px; border-radius: 3px; background: #16233A;"></div><span style="font-size: 11px; color: #3A4553;">Taken</span></div>
+                  <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 10px; height: 10px; border-radius: 3px; background: #F0B454;"></div><span style="font-size: 11px; color: #3A4553;">Your booking</span></div>
+                  <div style="display: flex; align-items: center; gap: 6px;"><div style="width: 10px; height: 10px; border-radius: 3px; background: #EFEDE4;"></div><span style="font-size: 11px; color: #3A4553;">Free</span></div>
+                </div>
+              </div>
+
+              <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+                <div style="padding: 13px 16px; border-bottom: 1px solid #EFEDE4; font-size: 14px; font-weight: 800; color: #16233A;">Booked</div>
+                <sc-for list="{{ adRows }}" as="row" hint-placeholder-count="4">
+                  <div style="padding: 12px 16px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: center; gap: 11px;">
+                    <div style="width: 34px; height: 42px; border-radius: 6px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-size: 12.5px; font-weight: 700; color: #16233A;">{{ row.business }}</div>
+                      <div style="font-size: 11px; color: #8B94A3; margin-top: 1px;">{{ row.slot }} · {{ row.dates }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                      <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">{{ row.paid }}</div>
+                      <div style="{{ row.statusStyle }}">{{ row.status }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onTeam }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <div style="background: #E4EDF9; border: 1px solid #CBDCF2; border-radius: 12px; padding: 13px 15px; display: flex; align-items: flex-start; gap: 10px;">
+            <span style="font-size: 14px;">🛈</span>
+            <div style="font-size: 12.5px; color: #123A66; line-height: 1.5;">One admin for everyone — each person signs in as themselves, and what they can touch depends on their role. Every action is recorded in the activity log, so you can always see who did what.</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>PERSON</div><div>ROLE</div><div>CAN DO</div><div>LAST ACTIVE</div><div></div>
+            </div>
+            <sc-for list="{{ teamRows }}" as="row" hint-placeholder-count="4">
+              <div style="display: grid; grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px; padding: 13px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ row.avatarBg }}; color: {{ row.avatarColor }}; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center;">{{ row.initials }}</div>
+                  <div>
+                    <div style="font-weight: 700; color: #16233A;">{{ row.name }}</div>
+                    <div style="font-size: 11px; color: #8B94A3;">{{ row.email }}</div>
+                  </div>
+                </div>
+                <div><div style="{{ row.roleStyle }}">{{ row.role }}</div></div>
+                <div style="font-size: 11.5px; color: #3A4553; line-height: 1.45;">{{ row.can }}</div>
+                <div style="font-size: 12px; color: #8B94A3;">{{ row.lastActive }}</div>
+                <div style="display: flex; justify-content: flex-end;">
+                  <div onClick="{{ stop }}" style="font-size: 12px; font-weight: 700; color: #0E3F80; cursor: pointer;">Edit</div>
+                </div>
+              </div>
+            </sc-for>
+            <div style="padding: 13px 16px; background: #FBFAF6;">
+              <div onClick="{{ stop }}" style="display: inline-block; background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 15px; border-radius: 9px; cursor: pointer;">+ Invite someone</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">Owner</div>
+              <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">Cherise</div>
+              <div style="font-size: 12px; color: #3A4553; line-height: 1.6; margin-top: 10px;">Everything, including fees, payouts, inviting people and the activity log.</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">Manager</div>
+              <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">Delroy</div>
+              <div style="font-size: 12px; color: #3A4553; line-height: 1.6; margin-top: 10px;">Approvals, deliveries, reports, shops and users. Cannot change fees, see payouts or invite people.</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px;">
+              <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">Technical</div>
+              <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">You</div>
+              <div style="font-size: 12px; color: #3A4553; line-height: 1.6; margin-top: 10px;">Everything a manager can do, plus settings and integrations. Kept separate so the owner can remove it later without touching staff.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onLog }}" hint-placeholder-val="{{ false }}">
+        <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+          <div style="padding: 13px 16px; border-bottom: 1px solid #EFEDE4; display: flex; align-items: center; gap: 10px;">
+            <div style="font-size: 13.5px; font-weight: 800; color: #16233A;">Everything that happened</div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">Kept for 12 months</div>
+          </div>
+          <sc-for list="{{ logRows }}" as="row" hint-placeholder-count="8">
+            <div style="padding: 11px 16px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: center; gap: 12px; font-size: 12.5px;">
+              <div style="width: 26px; height: 26px; border-radius: 50%; background: {{ row.avatarBg }}; color: {{ row.avatarColor }}; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">{{ row.initials }}</div>
+              <div style="width: 92px; font-weight: 700; color: #16233A;">{{ row.who }}</div>
+              <div style="flex: 1; color: #3A4553;">{{ row.what }}</div>
+              <div style="color: #8B94A3; font-size: 11.5px; width: 110px; text-align: right;">{{ row.when }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onUsers }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 9px; padding: 9px 12px; width: 280px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C8697" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+              <span style="color: #8B94A3; font-size: 12.5px;">Name, phone or email</span>
+            </div>
+            <div onClick="{{ uAll }}" style="{{ uTabAll }}">All <span style="opacity: 0.6;">412</span></div>
+            <div onClick="{{ uVerified }}" style="{{ uTabVerified }}">Verified <span style="opacity: 0.6;">168</span></div>
+            <div onClick="{{ uPending }}" style="{{ uTabPending }}">Pending ID <span style="opacity: 0.6;">3</span></div>
+            <div onClick="{{ uSuspended }}" style="{{ uTabSuspended }}">Suspended <span style="opacity: 0.6;">4</span></div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>PERSON</div><div>CONTACT</div><div>LISTINGS</div><div>JOINED</div><div>STATUS</div><div></div>
+            </div>
+            <sc-for list="{{ userRows }}" as="row" hint-placeholder-count="6">
+              <div style="display: grid; grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px; padding: 12px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ row.avatarBg }}; color: {{ row.avatarColor }}; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">{{ row.initials }}</div>
+                  <div>
+                    <div style="font-weight: 700; color: #16233A;">{{ row.name }}</div>
+                    <div style="font-size: 11px; color: #8B94A3;">{{ row.village }}</div>
+                  </div>
+                </div>
+                <div style="font-size: 11.5px; line-height: 1.5;">{{ row.phone }}<br/><span style="color: #8B94A3;">{{ row.email }}</span></div>
+                <div>{{ row.listings }}</div>
+                <div style="font-size: 11.5px; color: #8B94A3;">{{ row.joined }}</div>
+                <div><div style="{{ row.statusStyle }}">{{ row.status }}</div></div>
+                <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                  <div onClick="{{ openEditUser }}" style="{{ btnGhost }}">Edit</div>
+                  <div onClick="{{ stop }}" style="{{ row.actionStyle }}">{{ row.action }}</div>
+                  <div onClick="{{ openDeleteUser }}" title="Delete account" style="border: 1px solid #E9C9C2; background: #FFFFFF; color: #A8483A; font-size: 12px; font-weight: 700; padding: 7px 9px; border-radius: 8px; cursor: pointer;">Delete</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 11.5px; color: #8B94A3;">Deleting an account removes their listings and personal details. Apple and Google both require this, so it stays available to the owner and manager.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onListings }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 9px; padding: 9px 12px; width: 250px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C8697" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
+              <span style="color: #8B94A3; font-size: 12.5px;">Title, seller or village</span>
+            </div>
+            <div onClick="{{ lLive }}" style="{{ lTabLive }}">Live <span style="opacity: 0.6;">148</span></div>
+            <div onClick="{{ lSold }}" style="{{ lTabSold }}">Sold <span style="opacity: 0.6;">62</span></div>
+            <div onClick="{{ lDown }}" style="{{ lTabDown }}">Taken down <span style="opacity: 0.6;">9</span></div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">Newest first</div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div>LISTING</div><div>SELLER</div><div>CATEGORY</div><div>PRICE</div><div>VIEWS</div><div></div>
+            </div>
+            <sc-for list="{{ listingRows }}" as="row" hint-placeholder-count="6">
+              <div style="display: grid; grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px; padding: 12px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 38px; height: 38px; border-radius: 8px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+                  <div>
+                    <div style="font-weight: 700; color: #16233A;">{{ row.title }}</div>
+                    <div style="font-size: 11px; color: #8B94A3;">{{ row.posted }}</div>
+                  </div>
+                  <sc-if value="{{ row.featured }}" hint-placeholder-val="{{ false }}">
+                    <div style="background: #FBF0DC; color: #8A5B0E; font-size: 9px; font-weight: 800; padding: 2px 5px; border-radius: 4px;">FEATURED</div>
+                  </sc-if>
+                </div>
+                <div style="font-size: 12px;">{{ row.seller }}</div>
+                <div>
+                  <div onClick="{{ openRecat }}" style="display: inline-flex; align-items: center; gap: 4px; background: #F4F2EC; color: #3A4553; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 6px; cursor: pointer;">{{ row.category }} <span style="color: #8B94A3; font-size: 9px;">▾</span></div>
+                </div>
+                <div style="font-weight: 700; color: #16233A;">{{ row.price }}</div>
+                <div style="font-size: 12px; color: #8B94A3;">{{ row.views }}</div>
+                <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                  <div onClick="{{ stop }}" style="{{ btnGhost }}">Edit</div>
+                  <div onClick="{{ stop }}" style="{{ btnGhost }}">Feature</div>
+                  <div onClick="{{ stop }}" style="{{ btnGhost }}">Sold</div>
+                  <div onClick="{{ openTakedown }}" style="border: 1px solid #E9C9C2; background: #FFFFFF; color: #A8483A; font-size: 12px; font-weight: 700; padding: 7px 10px; border-radius: 8px; cursor: pointer;">Take down</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onReports }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="background: #F7E4E0; border: 1px solid #E9C9C2; border-radius: 12px; padding: 12px 15px; display: flex; align-items: flex-start; gap: 10px;">
+            <span style="font-size: 14px;">⚑</span>
+            <div style="font-size: 12.5px; color: #7A3225; line-height: 1.5;">Anything a user reports lands here. Each one has three outcomes — leave it alone, take the listing down, or suspend the account. The person who reported it gets told either way.</div>
+          </div>
+          <sc-for list="{{ reportRows }}" as="row" hint-placeholder-count="2">
+            <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 15px 16px; display: flex; gap: 14px;">
+              <div style="width: 66px; height: 66px; border-radius: 10px; background: {{ row.thumb }}; flex-shrink: 0;"></div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="font-size: 14px; font-weight: 700; color: #16233A;">{{ row.subject }}</div>
+                  <div style="background: #F7E4E0; color: #A8483A; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px;">{{ row.reason }}</div>
+                </div>
+                <div style="font-size: 12.5px; color: #3A4553; line-height: 1.5;">“{{ row.note }}”</div>
+                <div style="font-size: 11.5px; color: #8B94A3;">Reported by {{ row.reporter }} · {{ row.age }} · seller has {{ row.priors }}</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 7px; width: 168px;">
+                <div onClick="{{ stop }}" style="background: #A8483A; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 0; border-radius: 8px; text-align: center; cursor: pointer;">Suspend account</div>
+                <div onClick="{{ stop }}" style="border: 1px solid #E9C9C2; color: #A8483A; background: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 0; border-radius: 8px; text-align: center; cursor: pointer;">Take listing down</div>
+                <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; color: #3A4553; background: #FFFFFF; font-size: 12.5px; font-weight: 600; padding: 9px 0; border-radius: 8px; text-align: center; cursor: pointer;">Nothing wrong</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onCategories }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="background: #E4EDF9; border: 1px solid #CBDCF2; border-radius: 12px; padding: 12px 15px; display: flex; align-items: flex-start; gap: 10px;">
+            <span style="font-size: 14px;">🛈</span>
+            <div style="font-size: 12.5px; color: #123A66; line-height: 1.5;">You control these yourself — no developer needed. Drag to reorder, rename, hide one you are not ready for, or add a new one. Hiding keeps existing listings safe; they just stop showing under that heading.</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div onClick="{{ stop }}" style="background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 14px; border-radius: 9px; cursor: pointer;">+ Add a category</div>
+            <div style="flex: 1;"></div>
+            <div style="font-size: 12px; color: #8B94A3;">Order here is the order people see</div>
+          </div>
+          <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; overflow: hidden;">
+            <div style="display: grid; grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px; padding: 11px 16px; background: #FBFAF6; border-bottom: 1px solid #EFEDE4; font-size: 10.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">
+              <div></div><div>CATEGORY</div><div>USED IN</div><div>SUB-LEVELS</div><div>SHOWING</div><div></div>
+            </div>
+            <sc-for list="{{ catRows }}" as="row" hint-placeholder-count="7">
+              <div style="display: grid; grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px; padding: 11px 16px; border-bottom: 1px solid #F4F2EC; align-items: center; font-size: 12.5px; color: #3A4553;">
+                <div style="color: #C6CDD9; cursor: grab; font-size: 14px;">⠿</div>
+                <div style="display: flex; align-items: center; gap: 9px;">
+                  <div style="width: 28px; height: 28px; border-radius: 8px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 14px;">{{ row.icon }}</div>
+                  <div style="font-weight: 700; color: #16233A;">{{ row.name }}</div>
+                </div>
+                <div style="font-size: 12px; color: #8B94A3;">{{ row.count }} listings</div>
+                <div style="font-size: 12px;">{{ row.subs }}</div>
+                <div><div style="{{ row.liveStyle }}">{{ row.live }}</div></div>
+                <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                  <div onClick="{{ stop }}" style="{{ btnGhost }}">Rename</div>
+                  <div onClick="{{ stop }}" style="{{ btnGhost }}">{{ row.toggleLabel }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 11.5px; color: #8B94A3;">Sub-levels under Vehicles and Real Estate are set by us for now — everything else is a single level, which is all the island needs.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ onPlaceholder }}" hint-placeholder-val="{{ false }}">
+        <div style="background: #FFFFFF; border: 1px solid #E4E1D6; border-radius: 13px; padding: 60px 40px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="width: 52px; height: 52px; border-radius: 14px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 22px;">{{ phIcon }}</div>
+          <div style="font-size: 15px; font-weight: 800; color: #16233A;">{{ pageTitle }}</div>
+          <div style="font-size: 12.5px; color: #8B94A3; text-align: center; max-width: 420px; line-height: 1.55;">{{ phBody }}</div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <sc-if value="{{ addShopOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAddShop }}" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,22,33,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+      <div onClick="{{ stop }}" style="width: 560px; max-height: 84%; overflow-y: auto; background: #FFFFFF; border-radius: 16px; padding: 22px 24px 24px; box-shadow: 0 24px 60px rgba(16,22,33,0.35);">
+        <div style="font-size: 17px; font-weight: 800; color: #16233A;">Add a business</div>
+        <div style="font-size: 12.5px; color: #8B94A3; margin-top: 4px;">You can set this up for them — most shop owners will not do it themselves.</div>
+
+        <div style="display: flex; flex-direction: column; gap: 13px; margin-top: 18px;">
+          <div style="display: flex; gap: 12px;">
+            <div style="width: 74px; height: 74px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; flex-shrink: 0;">
+              <span style="font-size: 17px; color: #8B94A3;">+</span>
+              <span style="font-size: 9.5px; color: #8B94A3; font-weight: 600;">Logo</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">BUSINESS NAME</div>
+                <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #C2C9D4;">e.g. Bliss Spa</div>
+              </div>
+              <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                  <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">CATEGORY</div>
+                  <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #3A4553; display: flex; justify-content: space-between;">Services <span style="color: #8B94A3;">▾</span></div>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">VILLAGE</div>
+                  <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #3A4553; display: flex; justify-content: space-between;">Salem <span style="color: #8B94A3;">▾</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">WHAT THEY DO</div>
+            <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #C2C9D4;">Short line shown under the name</div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">PHONE / WHATSAPP</div>
+              <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #C2C9D4;">+1 664 …</div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">THEIR OWN WEBSITE</div>
+              <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #C2C9D4;">Optional</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 6px;">WHAT PEOPLE CAN DO HERE</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; border: 1.5px solid #0E3F80; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; font-weight: 700; color: #16233A; cursor: pointer;">Contact</div>
+              <div style="flex: 1; border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; color: #3A4553; cursor: pointer;">Order</div>
+              <div style="flex: 1; border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; color: #3A4553; cursor: pointer;">Book</div>
+              <div style="flex: 1; border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 0; text-align: center; font-size: 12.5px; color: #3A4553; cursor: pointer;">Website</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">PLAN</div>
+              <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #3A4553; display: flex; justify-content: space-between;">Presence — EC$150/mo <span style="color: #8B94A3;">▾</span></div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 11px; font-weight: 700; color: #8B94A3; margin-bottom: 4px;">BILLING STARTS</div>
+              <div style="border: 1px solid #E4E1D6; border-radius: 9px; padding: 10px 12px; font-size: 13px; color: #3A4553; display: flex; justify-content: space-between;">1 October <span style="color: #8B94A3;">▾</span></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 9px; background: #F7F6F0; border-radius: 10px; padding: 11px 13px;">
+            <div style="width: 34px; height: 20px; border-radius: 10px; background: #0E3F80; position: relative; flex-shrink: 0;">
+              <div style="position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF;"></div>
+            </div>
+            <div style="font-size: 12.5px; color: #3A4553;">Show straight away — otherwise it saves as a draft</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 9px; margin-top: 20px;">
+          <div onClick="{{ closeAddShop }}" style="flex: 1; border: 1px solid #E4E1D6; border-radius: 10px; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 600; color: #3A4553; cursor: pointer;">Cancel</div>
+          <div onClick="{{ closeAddShop }}" style="flex: 1.4; background: #0E3F80; color: #FFFFFF; border-radius: 10px; padding: 12px 0; text-align: center; font-size: 13px; font-weight: 700; cursor: pointer;">Create business page</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ rejectOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeReject }}" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,22,33,0.5); display: flex; align-items: center; justify-content: center; z-index: 50;">
+      <div onClick="{{ stop }}" style="width: 440px; background: #FFFFFF; border-radius: 16px; padding: 20px 22px 22px; box-shadow: 0 24px 60px rgba(16,22,33,0.35);">
+        <div style="font-size: 16px; font-weight: 800; color: #16233A;">Why are you rejecting this?</div>
+        <div style="font-size: 12.5px; color: #8B94A3; margin-top: 5px; line-height: 1.5;">The seller gets told, so they can fix it and try again instead of messaging you.</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+          <div style="border: 1.5px solid #0E3F80; border-radius: 10px; padding: 11px 13px; font-size: 13px; font-weight: 600; color: #16233A; cursor: pointer;">Photos are unclear or missing</div>
+          <div style="border: 1px solid #E4E1D6; border-radius: 10px; padding: 11px 13px; font-size: 13px; color: #3A4553; cursor: pointer;">Price or details incomplete</div>
+          <div style="border: 1px solid #E4E1D6; border-radius: 10px; padding: 11px 13px; font-size: 13px; color: #3A4553; cursor: pointer;">Wrong category</div>
+          <div style="border: 1px solid #E4E1D6; border-radius: 10px; padding: 11px 13px; font-size: 13px; color: #3A4553; cursor: pointer;">Not allowed on Access MNI</div>
+          <div style="border: 1px solid #E4E1D6; border-radius: 10px; padding: 11px 13px; font-size: 13px; color: #8B94A3; cursor: pointer;">Something else — write a note</div>
+        </div>
+        <div style="display: flex; gap: 9px; margin-top: 18px;">
+          <div onClick="{{ closeReject }}" style="flex: 1; border: 1px solid #E4E1D6; border-radius: 10px; padding: 11px 0; text-align: center; font-size: 13px; font-weight: 600; color: #3A4553; cursor: pointer;">Cancel</div>
+          <div onClick="{{ closeReject }}" style="flex: 1; background: #A8483A; color: #FFFFFF; border-radius: 10px; padding: 11px 0; text-align: center; font-size: 13px; font-weight: 700; cursor: pointer;">Reject &amp; notify</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:940}}">
+class Component extends DCLogic {
+  state = { page: 'dash', qTab: 'all', roleIdx: 0, rejectOpen: false, range: 'month', lb: 'sellers', uTab: 'all', lTab: 'live', addShopOpen: false };
+
+  _rangeData() {
+    const map = {
+      today:   { label: 'today', caps: 'TODAY', dates: 'Tue 1 September', total: 'EC$310', shops: 'EC$150', ads: 'EC$150', fees: 'EC$10', delta: '↑ 4%', compare: 'vs yesterday', listings: '6' },
+      week:    { label: 'this week', caps: 'THIS WEEK', dates: '26 Aug – 1 Sept', total: 'EC$1,240', shops: 'EC$600', ads: 'EC$450', fees: 'EC$190', delta: '↑ 11%', compare: 'vs last week', listings: '19' },
+      month:   { label: 'this month', caps: 'THIS MONTH', dates: '1 – 30 September', total: 'EC$4,860', shops: 'EC$2,700', ads: 'EC$1,450', fees: 'EC$710', delta: '↑ 18%', compare: 'vs August', listings: '74' },
+      quarter: { label: 'this quarter', caps: 'THIS QUARTER', dates: 'Jul – Sept', total: 'EC$13,420', shops: 'EC$7,800', ads: 'EC$3,650', fees: 'EC$1,970', delta: '↑ 26%', compare: 'vs Apr–Jun', listings: '206' },
+    };
+    return map[this.state.range] || map.month;
+  }
+
+  _lbRows() {
+    const t = (a, b) => 'repeating-linear-gradient(135deg,' + a + ' 0 7px,' + b + ' 7px 14px)';
+    const sets = {
+      sellers: {
+        cols: ['SELLER', 'LISTINGS', 'SOLD', 'VALUE'],
+        rows: [
+          { name: 'Denroy A.', sub: 'Look Out · verified', c2: '14', c3: '9', c4: 'EC$61,400', thumb: t('#DDE3EC', '#D3DAE6') },
+          { name: 'Alvira R.', sub: 'Salem · verified', c2: '11', c3: '7', c4: 'EC$8,900', thumb: t('#DDE6DD', '#D2DDD3') },
+          { name: 'Kenrick B.', sub: 'Cudjoe Head · verified', c2: '23', c3: '18', c4: 'EC$1,240', thumb: t('#E7EDE2', '#DCE4D6') },
+          { name: 'Merle J.', sub: 'Brades', c2: '6', c3: '4', c4: 'EC$920', thumb: t('#E2EAE4', '#D7E1DA') },
+          { name: 'Courtney W.', sub: 'Look Out', c2: '5', c3: '2', c4: 'EC$640', thumb: t('#E6E1D4', '#DED8C9') },
+        ],
+      },
+      shops: {
+        cols: ['SHOP', 'PLAN', 'PAGE VIEWS', 'PAID'],
+        rows: [
+          { name: "Ram's Supermarket", sub: 'Salem · Groceries', c2: 'Presence', c3: '1,420', c4: 'EC$450', thumb: t('#DDE6DD', '#D2DDD3') },
+          { name: "Shanice's Wig Studio", sub: 'Salem · Services', c2: 'Bookable', c3: '870', c4: 'EC$600', thumb: t('#F0E2E6', '#E7D6DC') },
+          { name: 'JW Nails', sub: 'Brades · Services', c2: 'Bookable', c3: '790', c4: 'EC$400', thumb: t('#EDE7F6', '#E3DBF0') },
+          { name: 'M.S. Osborne Ltd', sub: 'Brades · Hardware', c2: 'Presence', c3: '610', c4: 'EC$300', thumb: t('#E4E1D6', '#DAD6C9') },
+          { name: 'Hilltop Coffee House', sub: "St Peter's · Eats", c2: 'Presence', c3: '540', c4: 'EC$150', thumb: t('#E6DED4', '#DCD3C7') },
+        ],
+      },
+      cats: {
+        cols: ['CATEGORY', 'LISTINGS', 'VIEWS', 'SOLD'],
+        rows: [
+          { name: 'Vehicles', sub: '18 live', c2: '18', c3: '1,840', c4: '6', thumb: t('#DDE3EC', '#D3DAE6') },
+          { name: 'Real Estate', sub: '12 live', c2: '12', c3: '1,215', c4: '3', thumb: t('#DDE6F2', '#D3DBE7') },
+          { name: 'Farm & Produce', sub: '34 live', c2: '34', c3: '906', c4: '28', thumb: t('#E7EDE2', '#DCE4D6') },
+          { name: 'Home & Garden', sub: '29 live', c2: '29', c3: '742', c4: '11', thumb: t('#E6E1D4', '#DED8C9') },
+          { name: 'Tools & Power', sub: '16 live', c2: '16', c3: '498', c4: '7', thumb: t('#E4E1D6', '#DAD6C9') },
+        ],
+      },
+      villages: {
+        cols: ['VILLAGE', 'SELLERS', 'LISTINGS', 'VALUE'],
+        rows: [
+          { name: 'Salem', sub: 'Busiest', c2: '48', c3: '52', c4: 'EC$24,800', thumb: t('#DDE6DD', '#D2DDD3') },
+          { name: 'Brades', sub: '', c2: '41', c3: '44', c4: 'EC$19,200', thumb: t('#E2EAE4', '#D7E1DA') },
+          { name: 'Look Out', sub: '', c2: '26', c3: '28', c4: 'EC$16,400', thumb: t('#DDE3EC', '#D3DAE6') },
+          { name: 'Cudjoe Head', sub: '', c2: '19', c3: '22', c4: 'EC$3,100', thumb: t('#E7EDE2', '#DCE4D6') },
+          { name: "St Peter's", sub: '', c2: '14', c3: '15', c4: 'EC$2,700', thumb: t('#E6DED4', '#DCD3C7') },
+        ],
+      },
+    };
+    return sets[this.state.lb] || sets.sellers;
+  }
+
+  _users() {
+    const rows = [
+      { name: 'Denroy Allen', village: 'Look Out', initials: 'DA', phone: '+1 664 491 2210', email: 'denroy.a@gmail.com', listings: '14', joined: 'Mar 2026', st: 'verified' },
+      { name: 'Marcia Joseph', village: "St Peter's", initials: 'MJ', phone: '+1 664 492 8845', email: 'marciaj@hotmail.com', listings: '0', joined: 'Yesterday', st: 'pending' },
+      { name: 'Kenrick Browne', village: 'Cudjoe Head', initials: 'KB', phone: '+1 664 493 1170', email: 'kbrowne@gmail.com', listings: '23', joined: 'Jan 2026', st: 'verified' },
+      { name: 'Alvira Ryan', village: 'Salem', initials: 'AR', phone: '+1 664 491 6602', email: 'alvira.r@gmail.com', listings: '11', joined: 'Feb 2026', st: 'verified' },
+      { name: 'Trevor Sweeney', village: 'Brades', initials: 'TS', phone: '+1 664 494 3319', email: 'tsween@gmail.com', listings: '2', joined: 'Aug 2026', st: 'suspended' },
+      { name: 'Courtney White', village: 'Look Out', initials: 'CW', phone: '+1 664 492 5541', email: 'cwhite@gmail.com', listings: '5', joined: 'Jun 2026', st: 'basic' },
+    ];
+    const st = {
+      verified: ['#E7F1EA', '#1E6B49', 'Verified'],
+      pending: ['#FBF0DC', '#8A5B0E', 'ID waiting'],
+      suspended: ['#F7E4E0', '#A8483A', 'Suspended'],
+      basic: ['#F4F2EC', '#3A4553', 'Signed up'],
+    };
+    return rows.map((r) => {
+      const [bg, fg, label] = st[r.st];
+      const suspend = r.st === 'suspended';
+      return {
+        ...r,
+        status: label,
+        statusStyle: 'display:inline-block;background:' + bg + ';color:' + fg + ';font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;',
+        action: suspend ? 'Restore' : 'Suspend',
+        actionStyle: 'border:1px solid #E4E1D6;background:#FFFFFF;color:' + (suspend ? '#1E6B49' : '#3A4553') + ';font-size:12px;font-weight:600;padding:7px 10px;border-radius:8px;cursor:pointer;white-space:nowrap;',
+        avatarBg: r.st === 'suspended' ? '#F7E4E0' : '#E4EDF9',
+        avatarColor: r.st === 'suspended' ? '#A8483A' : '#0E3F80',
+      };
+    });
+  }
+
+  _listings() {
+    const t = (a, b) => 'repeating-linear-gradient(135deg,' + a + ' 0 7px,' + b + ' 7px 14px)';
+    return [
+      { title: 'Land Cruiser, 2018', seller: 'Denroy A.', category: 'Vehicles', price: 'EC$68,500', views: '412', posted: '2 days ago', featured: true, thumb: t('#DDE3EC', '#D3DAE6') },
+      { title: 'Room to rent, Salem', seller: 'Alvira R.', category: 'Real Estate', price: 'EC$900/mo', views: '188', posted: '6 hrs ago', featured: false, thumb: t('#DDE6DD', '#D2DDD3') },
+      { title: 'Fresh mango crate', seller: 'Kenrick B.', category: 'Farm & Produce', price: 'EC$25', views: '96', posted: 'Yesterday', featured: false, thumb: t('#E7EDE2', '#DCE4D6') },
+      { title: 'Dining table, seats 6', seller: 'Merle J.', category: 'Home & Garden', price: 'EC$1,050', views: '74', posted: '3 days ago', featured: false, thumb: t('#E6E1D4', '#DED8C9') },
+      { title: 'Honda generator, 3kW', seller: 'Courtney W.', category: 'Tools & Power', price: 'EC$1,650', views: '141', posted: '4 days ago', featured: false, thumb: t('#E4E1D6', '#DAD6C9') },
+      { title: 'Toyota Yaris — daily hire', seller: 'Trevor S.', category: 'Vehicles', price: 'EC$140/day', views: '52', posted: '5 days ago', featured: false, thumb: t('#DDE6F2', '#D3DBE7') },
+    ];
+  }
+
+  _reports() {
+    const t = (a, b) => 'repeating-linear-gradient(135deg,' + a + ' 0 8px,' + b + ' 8px 16px)';
+    return [
+      { subject: 'Generator — “brand new, still boxed”', reason: 'MISLEADING', note: 'Went to look at it, the thing is used and the box was taped back up. Photos are from the internet.', reporter: 'Alvira R.', age: '4 hrs ago', priors: '1 earlier report', thumb: t('#E4E1D6', '#DAD6C9') },
+      { subject: 'Trevor Sweeney', reason: 'NO SHOW', note: 'Took a deposit on WhatsApp and never turned up. Second time now.', reporter: 'Courtney W.', age: 'Yesterday', priors: '2 earlier reports', thumb: t('#F7E4E0', '#EFD6D0') },
+    ];
+  }
+
+  _cats() {
+    return [
+      { name: 'Vehicles', icon: '🚗', count: 18, subs: '5 sub-levels', live: true },
+      { name: 'Real Estate', icon: '🏠', count: 12, subs: '4 sub-levels', live: true },
+      { name: 'Home & Garden', icon: '🛋️', count: 29, subs: '—', live: true },
+      { name: 'Farm & Produce', icon: '🥬', count: 34, subs: '—', live: true },
+      { name: 'Tools & Power', icon: '🔧', count: 16, subs: '—', live: true },
+      { name: 'Electronics', icon: '📱', count: 21, subs: '—', live: true },
+      { name: 'Services', icon: '🛠️', count: 18, subs: '—', live: true },
+      { name: 'Boats & Marine', icon: '⛵', count: 0, subs: '—', live: false },
+    ].map((r) => ({
+      ...r,
+      live: r.live ? 'Showing' : 'Hidden',
+      liveStyle: r.live
+        ? 'display:inline-block;background:#E7F1EA;color:#1E6B49;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;'
+        : 'display:inline-block;background:#F4F2EC;color:#8B94A3;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;',
+      toggleLabel: r.live ? 'Hide' : 'Show',
+    }));
+  }
+
+  _nav(on) {
+    return 'display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:9px;margin-bottom:2px;font-size:13px;cursor:pointer;'
+      + (on ? 'background:rgba(255,255,255,0.12);color:#FFFFFF;font-weight:700;' : 'color:rgba(230,238,249,0.72);font-weight:500;');
+  }
+  _pill(on, urgent) {
+    const bg = urgent ? '#C0392B' : (on ? '#F0B454' : 'rgba(255,255,255,0.16)');
+    const fg = urgent ? '#FFFFFF' : (on ? '#2A1D06' : 'rgba(230,238,249,0.8)');
+    return 'background:' + bg + ';color:' + fg + ';font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:9px;';
+  }
+  _lbTab(on) {
+    return 'font-size:11.5px;font-weight:' + (on ? '700' : '600') + ';padding:5px 10px;border-radius:7px;cursor:pointer;'
+      + (on ? 'background:#16233A;color:#FFFFFF;' : 'background:#F4F2EC;color:#3A4553;');
+  }
+  _qTab(on) {
+    return 'font-size:12.5px;font-weight:' + (on ? '700' : '600') + ';padding:8px 13px;border-radius:9px;cursor:pointer;'
+      + (on ? 'background:#16233A;color:#FFFFFF;' : 'background:#FFFFFF;border:1px solid #E4E1D6;color:#3A4553;');
+  }
+  _tag(kind) {
+    const map = {
+      listing: ['#E4EDF9', '#0E3F80', 'LISTING'],
+      id: ['#EDE7F6', '#5B3FA8', 'SELLER ID'],
+      ad: ['#FBF0DC', '#8A5B0E', 'ADVERT'],
+      wanted: ['#E7F1EA', '#1E6B49', 'WANTED'],
+      job: ['#F4F2EC', '#3A4553', 'JOB'],
+    };
+    const [bg, fg, label] = map[kind] || map.listing;
+    return { style: 'background:' + bg + ';color:' + fg + ';font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;', label };
+  }
+  _status(kind) {
+    const map = {
+      way: ['#FBF0DC', '#8A5B0E', 'On the way'],
+      wait: ['#F7E4E0', '#A8483A', 'Needs driver'],
+      packed: ['#E4EDF9', '#0E3F80', 'Packed'],
+      done: ['#E7F1EA', '#1E6B49', 'Delivered'],
+    };
+    const [bg, fg, label] = map[kind];
+    return { style: 'display:inline-block;background:' + bg + ';color:' + fg + ';font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:5px;', label };
+  }
+  _dCard(on) {
+    return 'background:#FFFFFF;border:1px solid ' + (on ? '#0E3F80' : '#E4E1D6') + ';border-radius:13px;padding:14px 16px;cursor:pointer;'
+      + (on ? 'box-shadow:inset 0 0 0 1px #0E3F80, 0 0 0 3px rgba(14,63,128,0.09);' : '');
+  }
+  _btn(primary) {
+    return primary
+      ? 'background:#0E3F80;color:#FFFFFF;font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;'
+      : 'border:1px solid #E4E1D6;background:#FFFFFF;color:#3A4553;font-size:12px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;';
+  }
+  _adCard(on) { return 'background:#FFFFFF;border:' + (on ? '1.5px solid #0E3F80' : '1px solid #E4E1D6') + ';border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:11px;cursor:pointer'; }
+  _adRadio(on) { return 'width:18px;height:18px;border-radius:50%;flex-shrink:0;border:' + (on ? '5px solid #0E3F80' : '2px solid #C6CDD9') + ';background:#FFFFFF'; }
+  _plan(tier) {
+    const map = { paid: ['#16233A', '#FFFFFF', 'Bookable'], basic: ['#F4F2EC', '#3A4553', 'Presence'], free: ['#FFFFFF', '#8B94A3', 'Free'] };
+    const [bg, fg, label] = map[tier];
+    const border = tier === 'free' ? 'border:1px solid #E4E1D6;' : '';
+    return { style: 'display:inline-block;background:' + bg + ';color:' + fg + ';' + border + 'font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:5px;', label };
+  }
+  _adCard(on) { return 'background:#FFFFFF;border:' + (on ? '1.5px solid #0E3F80' : '1px solid #E4E1D6') + ';border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:11px;cursor:pointer'; }
+  _adRadio(on) { return 'width:18px;height:18px;border-radius:50%;flex-shrink:0;border:' + (on ? '5px solid #0E3F80' : '2px solid #C6CDD9') + ';background:#FFFFFF'; }
+  _pay(kind) {
+    const map = {
+      paid: ['#E7F1EA', '#1E6B49', 'Paid · 1 Sept'],
+      due: ['#F7E4E0', '#A8483A', 'Overdue 12 days'],
+      soon: ['#FBF0DC', '#8A5B0E', 'Due in 3 days'],
+      none: ['#FFFFFF', '#8B94A3', 'No charge'],
+    };
+    const [bg, fg, label] = map[kind];
+    return { style: 'display:inline-block;background:' + bg + ';color:' + fg + ';font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:5px;', label };
+  }
+  _roleTag(role) {
+    const map = {
+      Owner: ['#16233A', '#FFFFFF'],
+      Manager: ['#E4EDF9', '#0E3F80'],
+      Technical: ['#EDE7F6', '#5B3FA8'],
+      Driver: ['#F4F2EC', '#3A4553'],
+    };
+    const [bg, fg] = map[role] || map.Manager;
+    return 'display:inline-block;background:' + bg + ';color:' + fg + ';font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:5px;';
+  }
+
+  _queue() {
+    const t = (k) => this._tag(k);
+    const rows = [
+      { kind: 'listing', title: 'Toyota Hilux, 2016', detail: 'EC$42,000 · Vehicles · 8 photos', meta: 'Denroy A. · verified seller · Look Out', age: '2 days', urgent: true, thumb: 'repeating-linear-gradient(135deg,#DDE3EC 0 8px,#D3DAE6 8px 16px)', flagged: false },
+      { kind: 'id', title: 'Marcia J. — photo ID', detail: 'Driving licence · matches account name', meta: 'Wants to sell in Home & Garden', age: '1 day', urgent: true, thumb: 'repeating-linear-gradient(135deg,#E6E1D4 0 8px,#DED8C9 8px 16px)', flagged: false },
+      { kind: 'ad', title: "Kari's Bake — Cake Fantasy Day", detail: 'Home screen slot · 3 days from Wed', meta: 'EC$150 · paid by Serra', age: '1 day', urgent: true, thumb: 'repeating-linear-gradient(135deg,#F2E4CB 0 8px,#EBDBBE 8px 16px)', flagged: false },
+      { kind: 'listing', title: 'Room to rent, Salem', detail: 'EC$900/month · Real Estate · 4 photos', meta: 'Alvira R. · new seller · Salem', age: '6 hrs', urgent: false, thumb: 'repeating-linear-gradient(135deg,#DDE6DD 0 8px,#D2DDD3 8px 16px)', flagged: true },
+      { kind: 'wanted', title: 'Looking for a plumber, urgent', detail: 'Budget EC$400 · needed this week', meta: 'Merle J. · Brades', age: '4 hrs', urgent: false, thumb: 'repeating-linear-gradient(135deg,#E2EAE4 0 8px,#D7E1DA 8px 16px)', flagged: false },
+      { kind: 'job', title: 'Delivery driver — full time', detail: 'EC$20/hr · island-wide', meta: 'Access MNI · own posting', age: '3 hrs', urgent: false, thumb: 'repeating-linear-gradient(135deg,#E4E1D6 0 8px,#DAD6C9 8px 16px)', flagged: false },
+      { kind: 'listing', title: 'Fresh breadfruit, dozen', detail: 'EC$30 · Farm & Produce · 2 photos', meta: 'Kenrick B. · verified seller · Cudjoe Head', age: '1 hr', urgent: false, thumb: 'repeating-linear-gradient(135deg,#E7EDE2 0 8px,#DCE4D6 8px 16px)', flagged: false },
+    ];
+    return rows.map((r) => {
+      const tag = t(r.kind);
+      return {
+        ...r,
+        tag: tag.label,
+        tagStyle: tag.style,
+        ageColor: r.urgent ? '#A8483A' : '#8B94A3',
+      };
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const page = s.page;
+    const roles = [
+      { name: 'Cherise Aymer', initials: 'CA', role: 'Owner' },
+      { name: 'Delroy Weekes', initials: 'DW', role: 'Manager' },
+    ];
+    const me = roles[s.roleIdx % roles.length];
+
+    const titles = {
+      dash: ['Dashboard', 'Tuesday 1 September'],
+      queue: ['Approvals', '12 waiting · 3 over a day old'],
+      deliveries: ['Deliveries', 'Today · 11 orders'],
+      reports: ['Reports', '2 open'],
+      shops: ['Shops & billing', '24 businesses · 18 paid'],
+      ads: ['Adverts', '3 running · 2 booked'],
+      users: ['Users', '412 accounts'],
+      listings: ['All listings', '148 live'],
+      categories: ['Categories', '8 set up · 1 hidden'],
+      team: ['Team & roles', '3 people'],
+      log: ['Activity log', 'Last 7 days'],
+      settings: ['Settings & fees', 'Owner only'],
+    };
+    const [pageTitle, pageSub] = titles[page] || titles.dash;
+
+    const adSlot = s.adSlot || 'open';
+    const adRate = { open: 150, deals: 60, results: 40 }[adSlot];
+    const takenDays = [1, 2, 8, 9, 15, 22, 23];
+    const myDays = [3, 4, 5];
+    const adCalendar = [];
+    for (let d = 1; d <= 30; d++) {
+      const on = takenDays.includes(d), my = myDays.includes(d);
+      adCalendar.push({
+        day: d,
+        style: 'font-size:11px;font-weight:' + (on || my ? '800' : '600') + ';text-align:center;padding:7px 0;border-radius:6px;cursor:pointer;'
+          + (my ? 'background:#F0B454;color:#2A1D06;' : on ? 'background:#16233A;color:#FFFFFF;' : 'background:#EFEDE4;color:#7C8697;'),
+      });
+    }
+    const adRowsRaw = [
+      { business: "Kari's Bake Meraki", slot: 'Opens the app', dates: '3–5 Sept', paid: 'EC$450', st: 'paid', thumb: 'repeating-linear-gradient(135deg,#F2E4CB 0 6px,#EBDBBE 6px 12px)' },
+      { business: "Ram's Supermarket", slot: 'Deals row', dates: '1–7 Sept', paid: 'EC$420', st: 'paid', thumb: 'repeating-linear-gradient(135deg,#DDE6DD 0 6px,#D2DDD3 6px 12px)' },
+      { business: 'M.S. Osborne Ltd', slot: 'Hardware category', dates: '8–10 Sept', paid: 'EC$120', st: 'due', thumb: 'repeating-linear-gradient(135deg,#E4E1D6 0 6px,#DAD6C9 6px 12px)' },
+      { business: 'JW Nails', slot: 'Deals row', dates: '15 Sept', paid: 'EC$60', st: 'draft', thumb: 'repeating-linear-gradient(135deg,#EDE7F6 0 6px,#E3DBF0 6px 12px)' },
+    ];
+    const adStatus = (k) => {
+      const map = { paid: ['#E7F1EA', '#1E6B49', 'Paid'], due: ['#F7E4E0', '#A8483A', 'Unpaid'], draft: ['#F4F2EC', '#8B94A3', 'Draft'] };
+      const [bg, fg, label] = map[k];
+      return { style: 'display:inline-block;margin-top:3px;background:' + bg + ';color:' + fg + ';font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:4px;', label };
+    };
+
+    const placeholders = {
+      settings: ['⚙', 'Your fees, the payout schedule, payment providers, and what needs approving before it goes live.'],
+    };
+    const ph = placeholders[page];
+
+    const queueAll = this._queue();
+    const filtered = s.qTab === 'all' ? queueAll
+      : s.qTab === 'listings' ? queueAll.filter((r) => ['listing', 'wanted', 'job'].includes(r.kind))
+      : s.qTab === 'ids' ? queueAll.filter((r) => r.kind === 'id')
+      : queueAll.filter((r) => r.kind === 'ad');
+
+    const dRows = [
+      { ref: '#EM-4821', items: 'Grocery run · 6 items', route: "Ram's, Salem → Salem", driver: 'Kelvin B.', driverInitials: 'KB', st: 'way', action: 'Track', primary: false },
+      { ref: '#EM-4820', items: 'Cinnamon rolls ×2', route: "Hilltop, St Peter's → Brades", driver: 'Junior W.', driverInitials: 'JW', st: 'way', action: 'Track', primary: false },
+      { ref: '#EM-4819', items: 'Hardware · 3 items', route: 'Osborne, Brades → Olveston', driver: null, driverInitials: '', st: 'wait', action: 'Assign', primary: true },
+      { ref: '#EM-4818', items: 'Produce box', route: 'Aravins, Brades → Look Out', driver: null, driverInitials: '', st: 'wait', action: 'Assign', primary: true },
+      { ref: '#EM-4815', items: 'Bed set', route: 'Salem → Cudjoe Head', driver: 'Kelvin B.', driverInitials: 'KB', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4814', items: 'Grocery run · 11 items', route: "Victor's, Davy Hill → Brades", driver: 'Junior W.', driverInitials: 'JW', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4813', items: 'Paint &amp; brushes', route: 'Osborne, Brades → Salem', driver: 'Kelvin B.', driverInitials: 'KB', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4812', items: 'Bread &amp; pastries ×3', route: "Hilltop, St Peter's → Look Out", driver: 'Marva D.', driverInitials: 'MD', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4811', items: 'Fan, standing', route: 'BBC, Brades → Olveston', driver: 'Junior W.', driverInitials: 'JW', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4810', items: 'Produce box', route: 'Aravins, Brades → Davy Hill', driver: 'Marva D.', driverInitials: 'MD', st: 'done', action: 'View', primary: false },
+      { ref: '#EM-4809', items: 'Cooking gas bottle', route: 'Salem → Cudjoe Head', driver: 'Kelvin B.', driverInitials: 'KB', st: 'done', action: 'View', primary: false },
+    ];
+
+    const sRows = [
+      { name: "Ram's Supermarket", village: 'Salem', category: 'Groceries', tier: 'basic', fee: 'EC$150', pay: 'paid', thumb: 'repeating-linear-gradient(135deg,#DDE6DD 0 7px,#D2DDD3 7px 14px)' },
+      { name: "Shanice's Wig Studio", village: 'Salem', category: 'Services', tier: 'paid', fee: 'EC$200', pay: 'paid', thumb: 'repeating-linear-gradient(135deg,#F0E2E6 0 7px,#E7D6DC 7px 14px)' },
+      { name: 'JW Nails', village: 'Brades', category: 'Services', tier: 'paid', fee: 'EC$200', pay: 'soon', thumb: 'repeating-linear-gradient(135deg,#EDE7F6 0 7px,#E3DBF0 7px 14px)' },
+      { name: 'M.S. Osborne Ltd', village: 'Brades', category: 'Hardware', tier: 'basic', fee: 'EC$150', pay: 'due', thumb: 'repeating-linear-gradient(135deg,#E4E1D6 0 7px,#DAD6C9 7px 14px)' },
+      { name: 'Island Momentos', village: 'Little Bay', category: 'PRIME', tier: 'free', fee: '—', pay: 'none', thumb: 'repeating-linear-gradient(135deg,#F2E4CB 0 7px,#EBDBBE 7px 14px)' },
+      { name: 'Hilltop Coffee House', village: "St Peter's", category: 'Eats', tier: 'basic', fee: 'EC$150', pay: 'due', thumb: 'repeating-linear-gradient(135deg,#E6DED4 0 7px,#DCD3C7 7px 14px)' },
+    ];
+
+    const tRows = [
+      { name: 'Cherise Aymer', email: 'cherise@accessmni.com', initials: 'CA', role: 'Owner', can: 'Everything, including fees and payouts', lastActive: 'Online now', dark: true },
+      { name: 'Delroy Weekes', email: 'delroy@accessmni.com', initials: 'DW', role: 'Manager', can: 'Approvals, deliveries, shops, users', lastActive: '10 minutes ago', dark: false },
+      { name: 'Kelvin Boatswain', email: 'kelvin@accessmni.com', initials: 'KB', role: 'Driver', can: 'Only his own deliveries', lastActive: '2 minutes ago', dark: false },
+    ];
+
+    const lRows = [
+      { who: 'Delroy W.', initials: 'DW', what: 'Approved “Fresh breadfruit, dozen” from Kenrick B.', when: '9:41 am' },
+      { who: 'Delroy W.', initials: 'DW', what: 'Rejected “Two puppies” — not allowed on Access MNI', when: '9:32 am' },
+      { who: 'Kelvin B.', initials: 'KB', what: 'Marked #EM-4815 delivered', when: '9:20 am' },
+      { who: 'Cherise A.', initials: 'CA', what: 'Changed the shop fee for Services to EC$200', when: '8:58 am' },
+      { who: 'Delroy W.', initials: 'DW', what: 'Verified Marcia J. after checking her ID', when: '8:40 am' },
+      { who: 'Cherise A.', initials: 'CA', what: 'Connected the Serra payment account', when: 'Fri 4:12 pm' },
+      { who: 'Cherise A.', initials: 'CA', what: 'Invited Kelvin Boatswain as a driver', when: 'Fri 3:30 pm' },
+      { who: 'Delroy W.', initials: 'DW', what: 'Suspended an account for repeat fake listings', when: 'Thu 11:05 am' },
+    ];
+
+    const rd = this._rangeData();
+    const lb = this._lbRows();
+    const nav = (p) => this._nav(page === p);
+    const go = (p) => () => this.setState({ page: p, rejectOpen: false });
+
+    return {
+      meName: me.name, meInitials: me.initials, meRole: me.role,
+      cycleRole: () => this.setState({ roleIdx: (s.roleIdx + 1) % roles.length }),
+
+      pageTitle, pageSub,
+      onDash: page === 'dash',
+      onQueue: page === 'queue',
+      onDeliveries: page === 'deliveries',
+      onShops: page === 'shops',
+      onAds: page === 'ads',
+      pickSlotOpen: () => this.setState({ adSlot: 'open' }),
+      pickSlotDeals: () => this.setState({ adSlot: 'deals' }),
+      pickSlotResults: () => this.setState({ adSlot: 'results' }),
+      adSlotOpenCard: this._adCard(adSlot === 'open'),
+      adSlotDealsCard: this._adCard(adSlot === 'deals'),
+      adSlotResultsCard: this._adCard(adSlot === 'results'),
+      adRadioOpen: this._adRadio(adSlot === 'open'),
+      adRadioDeals: this._adRadio(adSlot === 'deals'),
+      adRadioResults: this._adRadio(adSlot === 'results'),
+      adTotal: 'EC$' + (adRate * 3),
+      adCalendar,
+      adRows: adRowsRaw.map((r) => { const st = adStatus(r.st); return { ...r, status: st.label, statusStyle: st.style }; }),
+      onTeam: page === 'team',
+      onLog: page === 'log',
+      onUsers: page === 'users',
+      onListings: page === 'listings',
+      onReports: page === 'reports',
+      onCategories: page === 'categories',
+      btnGhost: this._btn(false),
+
+      rangeLabel: rd.label, rangeLabelCaps: rd.caps, rangeDates: rd.dates,
+      mTotal: rd.total, mShops: rd.shops, mAds: rd.ads, mFees: rd.fees,
+      mDelta: rd.delta, mCompare: rd.compare, mListings: rd.listings,
+      rToday: () => this.setState({ range: 'today' }), rWeek: () => this.setState({ range: 'week' }),
+      rMonth: () => this.setState({ range: 'month' }), rQuarter: () => this.setState({ range: 'quarter' }),
+      rTabToday: this._qTab(s.range === 'today'), rTabWeek: this._qTab(s.range === 'week'),
+      rTabMonth: this._qTab(s.range === 'month'), rTabQuarter: this._qTab(s.range === 'quarter'),
+
+      lbSellers: () => this.setState({ lb: 'sellers' }), lbShops: () => this.setState({ lb: 'shops' }),
+      lbCats: () => this.setState({ lb: 'cats' }), lbVillages: () => this.setState({ lb: 'villages' }),
+      lbTabSellers: this._lbTab(s.lb === 'sellers'), lbTabShops: this._lbTab(s.lb === 'shops'),
+      lbTabCats: this._lbTab(s.lb === 'cats'), lbTabVillages: this._lbTab(s.lb === 'villages'),
+      lbColName: lb.cols[0], lbCol2: lb.cols[1], lbCol3: lb.cols[2], lbCol4: lb.cols[3],
+      lbRows: lb.rows.map((r, i) => ({ ...r, rank: i + 1 })),
+
+      userRows: this._users(),
+      uAll: () => this.setState({ uTab: 'all' }), uVerified: () => this.setState({ uTab: 'verified' }),
+      uPending: () => this.setState({ uTab: 'pending' }), uSuspended: () => this.setState({ uTab: 'suspended' }),
+      uTabAll: this._qTab(s.uTab === 'all'), uTabVerified: this._qTab(s.uTab === 'verified'),
+      uTabPending: this._qTab(s.uTab === 'pending'), uTabSuspended: this._qTab(s.uTab === 'suspended'),
+      openEditUser: () => {}, openDeleteUser: () => {},
+
+      listingRows: this._listings(),
+      lLive: () => this.setState({ lTab: 'live' }), lSold: () => this.setState({ lTab: 'sold' }),
+      lDown: () => this.setState({ lTab: 'down' }),
+      lTabLive: this._qTab(s.lTab === 'live'), lTabSold: this._qTab(s.lTab === 'sold'),
+      lTabDown: this._qTab(s.lTab === 'down'),
+      openRecat: () => {}, openTakedown: () => this.setState({ rejectOpen: true }),
+
+      reportRows: this._reports(),
+      catRows: this._cats(),
+      goCategories: go('categories'),
+      navCategories: nav('categories'),
+
+      addShopOpen: !!s.addShopOpen,
+      openAddShop: () => this.setState({ addShopOpen: true }),
+      closeAddShop: () => this.setState({ addShopOpen: false }),
+      onPlaceholder: !!ph,
+      phIcon: ph ? ph[0] : '',
+      phBody: ph ? ph[1] : '',
+
+      navDash: nav('dash'), navQueue: nav('queue'), navDeliveries: nav('deliveries'), navReports: nav('reports'),
+      navShops: nav('shops'), navAds: nav('ads'), navUsers: nav('users'), navListings: nav('listings'),
+      navTeam: nav('team'), navLog: nav('log'), navSettings: nav('settings'),
+      pillQueue: this._pill(page === 'queue', true),
+      pillDeliveries: this._pill(page === 'deliveries', false),
+      pillReports: this._pill(page === 'reports', false),
+
+      goDash: go('dash'), goQueue: go('queue'), goDeliveries: go('deliveries'), goReports: go('reports'),
+      goShops: go('shops'), goAds: go('ads'), goUsers: go('users'), goListings: go('listings'),
+      goTeam: go('team'), goLog: go('log'), goSettings: go('settings'),
+
+      qTabAll: this._qTab(s.qTab === 'all'), qTabListings: this._qTab(s.qTab === 'listings'),
+      qTabIds: this._qTab(s.qTab === 'ids'), qTabAds: this._qTab(s.qTab === 'ads'),
+      qAll: () => this.setState({ qTab: 'all' }), qListings: () => this.setState({ qTab: 'listings' }),
+      qIds: () => this.setState({ qTab: 'ids' }), qAds: () => this.setState({ qTab: 'ads' }),
+
+      queueRows: filtered,
+      dashQueue: queueAll.slice(0, 4),
+
+      dFilterWait: () => this.setState({ dFilter: s.dFilter === 'wait' ? null : 'wait' }),
+      dFilterWay: () => this.setState({ dFilter: s.dFilter === 'way' ? null : 'way' }),
+      dFilterDone: () => this.setState({ dFilter: s.dFilter === 'done' ? null : 'done' }),
+      dFilterAll: () => this.setState({ dFilter: null }),
+      dCardWait: this._dCard(s.dFilter === 'wait'),
+      dCardWay: this._dCard(s.dFilter === 'way'),
+      dCardDone: this._dCard(s.dFilter === 'done'),
+      dFiltered: !!s.dFilter,
+      dFilterLabel: { wait: 'unassigned orders', way: 'orders on the way', done: 'delivered today' }[s.dFilter] || '',
+      dCount: (() => { const n = dRows.filter((r) => !s.dFilter || r.st === s.dFilter).length; return n + (n === 1 ? ' order' : ' orders'); })(),
+      deliveryRows: dRows.filter((r) => !s.dFilter || r.st === s.dFilter).map((r) => {
+        const st = this._status(r.st);
+        return {
+          ...r,
+          hasDriver: !!r.driver,
+          needsDriver: !r.driver,
+          status: st.label,
+          statusStyle: st.style,
+          actionStyle: this._btn(r.primary),
+        };
+      }),
+
+      shopRows: sRows.map((r) => {
+        const plan = this._plan(r.tier);
+        const pay = this._pay(r.pay);
+        return { ...r, plan: plan.label, planStyle: plan.style, payStatus: pay.label, payStyle: pay.style };
+      }),
+
+      teamRows: tRows.map((r) => ({
+        ...r,
+        roleStyle: this._roleTag(r.role),
+        avatarBg: r.dark ? '#16233A' : '#E4EDF9',
+        avatarColor: r.dark ? '#FFFFFF' : '#0E3F80',
+      })),
+
+      logRows: lRows.map((r) => ({
+        ...r,
+        avatarBg: r.who === 'Cherise A.' ? '#16233A' : '#E4EDF9',
+        avatarColor: r.who === 'Cherise A.' ? '#FFFFFF' : '#0E3F80',
+      })),
+
+      rejectOpen: !!s.rejectOpen,
+      openReject: () => this.setState({ rejectOpen: true }),
+      closeReject: () => this.setState({ rejectOpen: false }),
+      stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+    };
+  }
+}
+</script>
+</body>
+</html>

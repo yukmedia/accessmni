@@ -59,6 +59,25 @@ it back into a one-shot.
   its own page — which is why the admin design becomes `docs/admin.html` and the
   desktop panel loads it inline.
 
+### index.html carries both shells
+
+`index.html` is the link people open and forward, and on a phone it was serving
+the desktop layout — desktop header, no bottom nav, big half-empty tiles — while
+the mobile app design sat in the same document, hidden.
+
+It now carries both. **Under 760px it is the phone app filling the screen; at
+760 and up it is the web app filling the browser.** Which shell shows is decided
+in CSS, not script, so a rotation is instant and there is no state for a
+re-render to undo. Both shells are the design's own; nothing is redrawn.
+
+`phone.html` still exists and is unchanged — the link already shared. On a phone
+the two now look the same, which is the point. To see the desktop layout on a
+phone, use `phone-and-web.html`.
+
+Filling a handset also means overriding `zoom`, not just width: `_fitShells()`
+scales the phone shell by `(viewport - padding) / 390`, which left 366px of app
+in a 390px window. Both phone views pin it to `zoom: 1`.
+
 ### The web page's breakpoints are retuned, not overridden
 
 The design is responsive, but its breakpoints are written for the canvas.

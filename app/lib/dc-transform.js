@@ -49,6 +49,20 @@ const FINDERS = `
   var NO_SCROLLBARS =
     '* { scrollbar-width: none; -ms-overflow-style: none; }' +
     '*::-webkit-scrollbar { display: none; width: 0; height: 0; }';
+
+  /* Filling a real handset takes overriding the zoom as well as the size:
+     _fitShells() scales the phone shell by (viewport - padding) / 390 so it
+     sits inside the canvas with a margin, which on an actual phone leaves the
+     app letterboxed — 366px of app in a 390px window. */
+  var PHONE_FILL = [
+    '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
+    '  #emPhoneFrame {',
+    '    zoom: 1 !important; margin: 0 !important;',
+    '    width: 100vw !important; max-width: none !important;',
+    '    height: 100vh !important; height: 100dvh !important;',
+    '    border-radius: 0 !important; box-shadow: none !important;',
+    '  }'
+  ].join('\\n');
 `;
 
 /* The trim has to survive the runtime, not just win a race with it.
@@ -68,7 +82,19 @@ ${FINDERS}
 ${body}
   }
 
-  function run() { try { apply(); } catch (e) { /* never break the page */ } }
+  /* Never break the page — but say so once. Swallowing this silently is how a
+     reference to a build-time constant from inside this browser script went
+     unnoticed: the ids it had already set made the transform look applied
+     while the stylesheet it never reached was missing. */
+  var told = false;
+  function run() {
+    try { apply(); } catch (e) {
+      if (!told && window.console && console.error) {
+        told = true;
+        console.error('[dc-transform] trim failed, page left untrimmed:', e);
+      }
+    }
+  }
 
   run();
 
@@ -101,14 +127,9 @@ const PHONE = wrapRuntime(`
     addCss('emPhoneCss', [
       '#emStage { padding: 30px 20px !important; min-height: 100vh; }',
       NO_SCROLLBARS,
-      '@media (max-width: 700px) {',
+      '@media (max-width: 759.98px) {',
       '  body { background: #FBF8F1 !important; }',
-      '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
-      '  #emPhoneFrame {',
-      '    width: 100vw !important; max-width: none !important;',
-      '    height: 100vh !important; height: 100dvh !important;',
-      '    border-radius: 0 !important; box-shadow: none !important;',
-      '  }',
+      PHONE_FILL,
       '}'
     ].join('\\n'));
     return true;
@@ -157,14 +178,21 @@ function patchWebBreakpoints(html, report) {
   return html;
 }
 
-// Web only, filling the browser. Drops the drawn browser-window mock and the
-// canvas furniture around it, and lets the retuned breakpoints do the rest.
+/* index.html is the link people actually open, and on a phone it was serving
+   the desktop layout: desktop header, no bottom nav, big half-empty tiles —
+   while the mobile app design sat in the same document, hidden.
+
+   So this page carries both. Under 760px it is the phone app filling the
+   screen; at 760 and up it is the web app filling the browser. Which shell
+   shows is decided in CSS rather than script, so a rotation or a resize is
+   instant and there is no state for a re-render to undo. Both shells are the
+   design's own — nothing is redrawn, only chosen between. */
 const WEB = wrapRuntime(`
     var box = webBox();
     var phone = findPhone();
     if (!box || !phone) return false;
-    phone.style.display = 'none';
 
+    phone.id = 'emPhoneFrame';
     var sec = stage(box);
     if (sec) sec.id = 'emStage';
 
@@ -172,6 +200,7 @@ const WEB = wrapRuntime(`
     // furniture, not part of the product.
     var wrap = webWrap();
     if (wrap) {
+      wrap.id = 'emWebWrap';
       for (var i = 0; i < wrap.children.length; i++) {
         var c = wrap.children[i];
         if (c !== box.parentElement && /Web app/i.test(c.textContent || '')) c.style.display = 'none';
@@ -198,13 +227,23 @@ const WEB = wrapRuntime(`
       if (/#E7E4DD/i.test(st) || bgc === 'rgb(231, 228, 221)') first.style.display = 'none';
     }
 
-    // Width and zoom are left to the design's own _fitShells — retuned at build
-    // time by patchWebBreakpoints — so only the canvas dressing is stripped.
+    /* Above the breakpoint, width and zoom are left to the design's own
+       _fitShells — retuned at build time by patchWebBreakpoints — so only the
+       canvas dressing is stripped. Below it, the web shell steps aside for the
+       phone one. Both hide rules carry !important because the design sets
+       display inline. */
     addCss('emWebCss', [
       'body { background: #FBF8F1 !important; }',
       '#emStage { padding: 0 !important; display: block !important; min-height: 100vh; }',
       NO_SCROLLBARS,
-      '#webAppScaleBox { border-radius: 0 !important; box-shadow: none !important; }'
+      '#webAppScaleBox { border-radius: 0 !important; box-shadow: none !important; }',
+      '@media (min-width: 760px) {',
+      '  #emPhoneFrame { display: none !important; }',
+      '}',
+      '@media (max-width: 759.98px) {',
+      '  #emWebWrap { display: none !important; }',
+      PHONE_FILL,
+      '}'
     ].join('\\n'));
     return true;
 `);

@@ -6886,6 +6886,20 @@ class Component extends DCLogic {
     '* { scrollbar-width: none; -ms-overflow-style: none; }' +
     '*::-webkit-scrollbar { display: none; width: 0; height: 0; }';
 
+  /* Filling a real handset takes overriding the zoom as well as the size:
+     _fitShells() scales the phone shell by (viewport - padding) / 390 so it
+     sits inside the canvas with a margin, which on an actual phone leaves the
+     app letterboxed — 366px of app in a 390px window. */
+  var PHONE_FILL = [
+    '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
+    '  #emPhoneFrame {',
+    '    zoom: 1 !important; margin: 0 !important;',
+    '    width: 100vw !important; max-width: none !important;',
+    '    height: 100vh !important; height: 100dvh !important;',
+    '    border-radius: 0 !important; box-shadow: none !important;',
+    '  }'
+  ].join('\n');
+
   function apply() {
 
     var phone = findPhone();
@@ -6898,21 +6912,28 @@ class Component extends DCLogic {
     addCss('emPhoneCss', [
       '#emStage { padding: 30px 20px !important; min-height: 100vh; }',
       NO_SCROLLBARS,
-      '@media (max-width: 700px) {',
+      '@media (max-width: 759.98px) {',
       '  body { background: #FBF8F1 !important; }',
-      '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
-      '  #emPhoneFrame {',
-      '    width: 100vw !important; max-width: none !important;',
-      '    height: 100vh !important; height: 100dvh !important;',
-      '    border-radius: 0 !important; box-shadow: none !important;',
-      '  }',
+      PHONE_FILL,
       '}'
     ].join('\n'));
     return true;
 
   }
 
-  function run() { try { apply(); } catch (e) { /* never break the page */ } }
+  /* Never break the page — but say so once. Swallowing this silently is how a
+     reference to a build-time constant from inside this browser script went
+     unnoticed: the ids it had already set made the transform look applied
+     while the stylesheet it never reached was missing. */
+  var told = false;
+  function run() {
+    try { apply(); } catch (e) {
+      if (!told && window.console && console.error) {
+        told = true;
+        console.error('[dc-transform] trim failed, page left untrimmed:', e);
+      }
+    }
+  }
 
   run();
 

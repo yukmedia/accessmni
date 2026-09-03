@@ -170,6 +170,30 @@ const FINDERS = `
     '    width: 100% !important; max-width: 100% !important;',
     '    min-width: 0 !important; flex-shrink: 1 !important;',
     '  }',
+
+    /* The account menu is position: absolute; right: 0, anchored to the avatar
+       itself. On a desktop header the avatar is the last thing before the right
+       edge, so a 246px menu hanging left of it lands on screen. Once the header
+       wraps, the avatar moves inboard — its right edge falls to 208px at 390 and
+       181px at 320 — and the menu goes off the left of the screen with it: 8px
+       at 430, 38px at 390, 65px at 320, clipping the name, "Your profile" and
+       "Log out" to half-letters.
+
+       The anchor is the bug, not the offset. The badge cluster it sits in is
+       tagged data-r="hdrpush" and its right edge *is* the header's content edge
+       at every width, so the menu is re-anchored to that: right: 0 now means the
+       right of the header rather than the right of a 48px avatar. Releasing the
+       avatar wrapper's own position: relative is what hands the menu up to it.
+
+       :has() picks the one cluster holding the account control — the marker is
+       used twice — and keeps top: 42px meaningful, since the cluster and the
+       avatar share a top edge to within a few pixels. */
+    '  html #webAppScaleBox[data-narrow] [data-r="hdrpush"]:has(> [style*="gap: 9px"]) {',
+    '    position: relative !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="hdrpush"] > [style*="gap: 9px"] {',
+    '    position: static !important;',
+    '  }',
     '}',
 
     /* An iPhone SE is 320px wide. The badge cluster — message, wishlist, cart,

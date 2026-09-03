@@ -6941,6 +6941,31 @@ class Component extends DCLogic {
     '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
     '  }',
     '  #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
+
+    /* The footer is the worst offender at phone width. The design's narrow rule
+       gives every column flex-basis:100%, so five stacked blocks run it from
+       335px to 976px — nearly three screenfuls of links under a 6400px page.
+       Two-up for the four link columns (the brand block keeps its full width)
+       and phone-scale padding bring it back under 600.
+
+       The header is the same problem, smaller: desktop gaps and padding wrap it
+       into four rows, 262px of a 844px screen before any content.
+
+       Each is prefixed with html so it outranks the design's own rule on the
+       same element rather than merely tying with it. Source order cannot settle
+       a tie here: the runtime re-inserts its stylesheet on every render, which
+       lands after this one, so an equal-specificity override wins until the
+       first re-render and then quietly stops. */
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="hdr"] {',
+    '    gap: 12px !important; padding: 12px 0 !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="frow"] { gap: 22px 14px !important; }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="fcol"] {',
+    '    flex-basis: calc(50% - 7px) !important; max-width: calc(50% - 7px) !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="hdrwrap"][style*="margin-top: 64px"] {',
+    '    margin-top: 28px !important; padding: 26px 16px 20px !important;',
+    '  }',
     '}'
   ].join('\n');
 

@@ -83,6 +83,19 @@ broken mid-word is never right at any width.
 **If the design tags those rows `data-r="stack"`, delete these rules.** They
 exist only because the markers are missing.
 
+The footer needed the opposite of stacking. The design's narrow rule gives every
+footer column `flex-basis: 100%`, so five stacked blocks ran it from 335px to
+**976px** — nearly three screenfuls of links. The four link columns are now
+two-up, the brand block keeps its full width, and the padding is phone-scale:
+658px. The header got the same treatment more gently — desktop gaps and padding
+had it wrapping to 262px before any content.
+
+**Specificity matters here, not source order.** These override rules the design
+already sets on the same elements. An equal-specificity override does not hold:
+the runtime re-inserts its stylesheet on every render, landing after this one,
+so the override wins until the first re-render and then quietly stops. Each of
+these rules is prefixed with `html` to outrank rather than tie.
+
 Filling a handset also means overriding `zoom`, not just width: `_fitShells()`
 scales the phone shell by `(viewport - padding) / 390`, which left 366px of app
 in a 390px window on `phone.html`. That view now pins it to `zoom: 1`.

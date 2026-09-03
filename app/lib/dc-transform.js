@@ -173,7 +173,7 @@ const FINDERS = `
     '}',
 
     /* An iPhone SE is 320px wide. The badge cluster — message, wishlist, cart,
-       avatar, "+ Sell an item" — carries flex-shrink: 0 and a 20px gap, an
+       avatar, "+ Post an ad" — carries flex-shrink: 0 and a 20px gap, an
        intrinsic 344px that the design's narrow rules never touch. It overflows
        by exactly (360 - viewport width)px down to 320, where it runs 40px past
        the edge. Tightening the gap to 8px reclaims 48px, which is enough at

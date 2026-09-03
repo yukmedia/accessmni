@@ -13,10 +13,10 @@
 <body>
 <x-dc>
 <helmet>
-<script src="./image-slot.js"></script>
 <meta name="design_doc_mode" content="canvas">
 <meta name="ext-resource-dependency" content="assets/listing-vehicle-suv.jpg" data-resource-id="imgVehicle" />
-<meta name="ext-resource-dependency" content="assets/listing-dining-set.jpg" data-resource-id="imgHome" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1617806118233-18e1de247200?w=400&h=300&fit=crop&auto=format" data-resource-id="imgHome" />
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&h=300&fit=crop&auto=format" data-resource-id="imgRoom" />
 <meta name="ext-resource-dependency" content="assets/listing-mango-crate.jpg" data-resource-id="imgMango" />
 <meta name="ext-resource-dependency" content="assets/listing-bed-set.jpg" data-resource-id="imgBed" />
 <meta name="ext-resource-dependency" content="assets/listing-vehicle-suv.jpg" data-resource-id="carHero0" />
@@ -24,6 +24,7 @@
 <meta name="ext-resource-dependency" content="assets/listing-car-wheel.jpg" data-resource-id="carHero2" />
 <meta name="ext-resource-dependency" content="assets/listing-car-engine.jpg" data-resource-id="carHero3" />
 <meta name="ext-resource-dependency" content="assets/listing-yaris-hire.jpg" data-resource-id="imgYaris" />
+<meta name="ext-resource-dependency" content="assets/ad-karis-bake-750.jpeg" data-resource-id="adFlyer" />
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,11 +34,22 @@
 #webAppScaleBox[data-narrow="1"] { box-sizing: border-box; overflow-wrap: anywhere; }
 #webAppScaleBox[data-narrow="1"] img { max-width: 100% !important; }
 #webAppScaleBox[data-narrow="1"] svg { max-width: 100% !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="stack"] { flex-direction: column !important; gap: 18px !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="stack"] { align-items: stretch !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="stack"] > * { box-sizing: border-box !important; min-width: 0 !important; width: 100% !important; max-width: 100% !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="stack"] > [data-r~="side"] { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; position: static !important; top: auto !important; flex-shrink: 1 !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="stack"] > [data-r~="dside"] { order: -1 !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] { flex-direction: column !important; gap: 18px !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="hero"] { box-sizing: border-box !important; padding: 26px 20px !important; align-items: stretch !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="heroh1"] { font-size: 27px !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="hero"] > * { flex: none !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="hdr"] { justify-content: space-between !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="toolbar"] { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="hdrpush"] { margin-left: 0 !important; width: 100% !important; justify-content: space-between !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="admodal"] { width: calc(100% - 36px) !important; max-width: 400px !important; max-height: 76% !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="adscrim"] { padding-top: 90px !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="nav"] > [data-r="spacer"] { display: none !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="admodal"] { width: calc(100% - 32px) !important; max-width: 420px !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] { align-items: stretch !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] > * { box-sizing: border-box !important; min-width: 0 !important; width: 100% !important; max-width: 100% !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] > [data-r~="side"] { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; position: static !important; top: auto !important; flex-shrink: 1 !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] > [data-r~="dside"] { order: -1 !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="stack"] > [data-r~="fside"] { order: 2 !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="g4"], #webAppScaleBox[data-narrow="1"] [data-r="g3"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="g2"], #webAppScaleBox[data-narrow="1"] [data-r="g5"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="cards"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
@@ -45,13 +57,10 @@
 #webAppScaleBox[data-narrow="1"] [data-r="g5"] > *, #webAppScaleBox[data-narrow="1"] [data-r="cards"] > * { min-width: 0 !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="nav"] { flex-wrap: wrap !important; gap: 16px !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="hdr"] { flex-wrap: wrap !important; gap: 14px !important; }
-#webAppScaleBox[data-narrow="1"] [data-r="hdr"] > [style*="flex: 1"] { flex-basis: 100% !important; order: 3 !important; min-width: 0 !important; }
+#webAppScaleBox[data-narrow="1"] [data-r="hdrsearch"] { flex-basis: 100% !important; order: 3 !important; min-width: 0 !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="hdrwrap"] { padding-left: 16px !important; padding-right: 16px !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="pad"] { padding-left: 16px !important; padding-right: 16px !important; }
-#webAppScaleBox[data-narrow="1"] [style*="width: 300px"], #webAppScaleBox[data-narrow="1"] [style*="width: 320px"], #webAppScaleBox[data-narrow="1"] [style*="width: 340px"],
-#webAppScaleBox[data-narrow="1"] [style*="width: 360px"], #webAppScaleBox[data-narrow="1"] [style*="width: 380px"], #webAppScaleBox[data-narrow="1"] [style*="width: 424px"],
-#webAppScaleBox[data-narrow="1"] [style*="width: 460px"], #webAppScaleBox[data-narrow="1"] [style*="width: 520px"], #webAppScaleBox[data-narrow="1"] [style*="width: 620px"],
-#webAppScaleBox[data-narrow="1"] [style*="width: 720px"], #webAppScaleBox[data-narrow="1"] [style*="width: 900px"] { max-width: 100% !important; }
+#webAppScaleBox[data-narrow="1"] [data-r~="wcap"] { max-width: 100% !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="titlerow"] { flex-wrap: wrap !important; row-gap: 6px !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="frow"] { flex-wrap: wrap !important; gap: 24px !important; }
 #webAppScaleBox[data-narrow="1"] [data-r="fcol"], #webAppScaleBox[data-narrow="1"] [data-r="fbrand"] { min-width: 0 !important; max-width: 100% !important; flex-basis: 100% !important; }
@@ -127,7 +136,7 @@
               <div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 <div onClick="{{ openAdShop }}" style="width: 168px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 7px; left: 7px; background: rgba(16,22,33,0.6); color: #FFFFFF; font-size: 8px; font-weight: 800; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; z-index: 1;">SPONSORED</div>
-                  <div style="height: 104px; background: url('assets/ad-karis-bake.jpeg') center 18%/cover;"></div>
+                  <div style="height: 104px; background: url('assets/ad-karis-bake-750.jpeg') center 18%/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 3px;">
                     <div style="font-size: 12.5px; font-weight: 800; color: #16233A; line-height: 1.2;">Cake Fantasy Day</div>
                     <div style="font-size: 10.5px; color: #8B94A3;">Kari's Bake Meraki · Salem</div>
@@ -168,10 +177,10 @@
               <div style="display: flex; gap: 11px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
                 <div onClick="{{ openDetail }}" style="width: 148px; flex-shrink: 0; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 7px; left: 7px; background: #0E3F80; color: #FFFFFF; font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; z-index: 1;">NEW</div>
-                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1617806118233-18e1de247200?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 100px; background: url('https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=400&h=300&fit=crop&auto=format') center/cover;"></div>
                   <div style="padding: 9px 10px 11px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-size: 15px; font-weight: 800; color: #16233A;">EC$450</div>
-                    <div style="font-size: 11.5px; color: #3A4553;">Dining table, seats 6</div>
+                    <div style="font-size: 11.5px; color: #3A4553;">Fridge, 7 cu ft</div>
                     <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
                       <div style="font-size: 10px; color: #8B94A3; white-space: nowrap;">Brades · 2h</div>
                       <div style="font-size: 9px; background: #E4EDF9; color: #0E3F80; font-weight: 700; padding: 1px 5px; border-radius: 3px; white-space: nowrap; flex-shrink: 0;">TRUSTED SELLER</div>
@@ -406,7 +415,7 @@
                         <div style="font-size: 12.5px; color: #8B94A3; line-height: 1.5;">No listings in this category right now. Try another category, or post what you're looking for.</div>
                         <div style="display: flex; gap: 8px; margin-top: 4px;">
                           <div onClick="{{ clearFilters }}" style="border: 1px solid #E8E4D9; border-radius: 10px; padding: 9px 14px; font-size: 12.5px; font-weight: 700; color: #3A4553; cursor: pointer;">Show everything</div>
-                          <div onClick="{{ pickWanted }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 10px; padding: 9px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;">Post a Wanted</div>
+                          <div onClick="{{ pickWanted }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 10px; padding: 9px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;">Submit Wanted ad</div>
                         </div>
                       </div>
                     </sc-if>
@@ -1940,7 +1949,7 @@
           <div onClick="{{ stop }}" style="width: 100%; background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 0 0 26px;">
             <div style="width: 36px; height: 4px; border-radius: 2px; background: #C6CDD9; margin: 10px auto 4px;"></div>
             <div style="padding: 8px 20px 4px;">
-              <div style="font-size: 17px; font-weight: 800; color: #16233A;">What are you posting?</div>
+              <div style="font-size: 17px; font-weight: 800; color: #16233A;">What are you advertising?</div>
               <div style="font-size: 12px; color: #8B94A3; margin-top: 3px;">Everything is checked by our team before it goes live.</div>
             </div>
             <div style="padding: 12px 18px 0; display: flex; flex-direction: column; gap: 9px;">
@@ -1948,15 +1957,15 @@
                 <div style="width: 42px; height: 42px; border-radius: 11px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">🏷️</div>
                 <div style="flex: 1;">
                   <div style="font-size: 14px; font-weight: 700; color: #16233A;">Something to sell or rent</div>
-                  <div style="font-size: 11.5px; color: #8B94A3;">Items, vehicles, property, rooms</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">Items, vehicles, property, rooms · 5% fee when it sells</div>
                 </div>
                 <div style="background: #E7F1EA; color: #1E6B49; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">FREE</div>
               </div>
-              <div onClick="{{ openSell }}" style="border: 1px solid #E8E4D9; border-radius: 14px; padding: 13px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+              <div onClick="{{ openPostWanted }}" style="border: 1px solid #E8E4D9; border-radius: 14px; padding: 13px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
                 <div style="width: 42px; height: 42px; border-radius: 11px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">🙋</div>
                 <div style="flex: 1;">
                   <div style="font-size: 14px; font-weight: 700; color: #16233A;">Something you're looking for</div>
-                  <div style="font-size: 11.5px; color: #8B94A3;">Post a Wanted ask with your budget</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">Set a budget and let people come to you</div>
                 </div>
                 <div style="background: #E7F1EA; color: #1E6B49; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">FREE</div>
               </div>
@@ -1964,7 +1973,7 @@
                 <div style="width: 42px; height: 42px; border-radius: 11px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">💼</div>
                 <div style="flex: 1;">
                   <div style="font-size: 14px; font-weight: 700; color: #16233A;">A job opening</div>
-                  <div style="font-size: 11.5px; color: #8B94A3;">Runs for 30 days</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">Runs for 30 days · applications to your inbox</div>
                 </div>
                 <div style="background: #FBF0DC; color: #8A5B0E; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">EC$40</div>
               </div>
@@ -1972,7 +1981,7 @@
                 <div style="width: 42px; height: 42px; border-radius: 11px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">🛒</div>
                 <div style="flex: 1;">
                   <div style="font-size: 14px; font-weight: 700; color: #16233A;">A page for my business</div>
-                  <div style="font-size: 11.5px; color: #8B94A3;">Shop, service or agency</div>
+                  <div style="font-size: 11.5px; color: #8B94A3;">A shop, service or agency page</div>
                 </div>
                 <div style="background: #FBF0DC; color: #8A5B0E; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">FROM EC$150/MO</div>
               </div>
@@ -1986,9 +1995,17 @@
           <div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">
             <div onClick="{{ goHome }}" style="width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">‹</div>
             <div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Post a job</div>
-            <div style="background: #FBF0DC; color: #8A5B0E; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 5px;">EC$40</div>
+            <div onClick="{{ stop }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div>
           </div>
           <div style="flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 15px; scrollbar-width: none;">
+            <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
+              <div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>
+              <div style="flex: 1;">
+                <div style="color: #FFFFFF; font-size: 13.5px; font-weight: 700;">Fill this in for me</div>
+                <div style="color: rgba(230,238,249,0.75); font-size: 11.5px; margin-top: 1px;">Describe the role in a sentence — AI drafts the rest</div>
+              </div>
+              <div style="color: #F0B454; font-size: 15px;">›</div>
+            </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
               <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">THE ROLE</div>
@@ -2060,8 +2077,17 @@
           <div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">
             <div onClick="{{ goHome }}" style="width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">‹</div>
             <div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Set up your business page</div>
+            <div onClick="{{ stop }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div>
           </div>
           <div style="flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 16px; scrollbar-width: none;">
+            <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
+              <div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>
+              <div style="flex: 1;">
+                <div style="color: #FFFFFF; font-size: 13.5px; font-weight: 700;">Fill this in for me</div>
+                <div style="color: rgba(230,238,249,0.75); font-size: 11.5px; margin-top: 1px;">Give your business name — AI drafts your description</div>
+              </div>
+              <div style="color: #F0B454; font-size: 15px;">›</div>
+            </div>
 
             <div style="display: flex; flex-direction: column; gap: 9px;">
               <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">CHOOSE YOUR PLAN</div>
@@ -2145,10 +2171,12 @@
         <div style="display: flex; flex-direction: column; height: 100%;">
           <div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">
             <div onClick="{{ back }}" style="width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">✕</div>
-            <div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Sell something</div>
-            <div style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div>
+            <div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Post an ad</div>
+            <div onClick="{{ stop }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div>
           </div>
-          <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: none;">
+
+          <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 18px; scrollbar-width: none;">
+
             <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
               <div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>
               <div style="flex: 1;">
@@ -2157,55 +2185,83 @@
               </div>
               <div style="color: #F0B454; font-size: 15px;">›</div>
             </div>
-            <div style="display: flex; gap: 10px;">
-              <div style="width: 92px; height: 92px; border-radius: 14px; border: 1.5px dashed #C6CDD9; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;">
-                <div style="font-size: 20px; color: #0E3F80;">+</div>
-                <div style="font-size: 10.5px; color: #7C8697;">Add photo</div>
-              </div>
-              <div style="width: 92px; height: 92px; border-radius: 14px; background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=120&h=120&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
-              <div style="width: 92px; height: 92px; border-radius: 14px; background: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=120&h=120&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
-            </div>
+
             <div style="display: flex; flex-direction: column; gap: 9px;">
-              <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">Workshop tool lot</div>
-              <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 13.5px; color: #8B94A3; line-height: 1.45;">Say what it is, how old, any faults…</div>
-              <div style="display: flex; gap: 9px;">
-                <div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">EC$ 1,850</div>
-                <div style="flex: 1; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #8B94A3;">Salem ⌄</div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Photos</div>
+                <div style="font-size: 11px; color: #8B94A3;">2 of 10 · first is the cover</div>
               </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Condition</div>
-              <div style="display: flex; gap: 7px;">
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">New</div>
-                <div style="background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px;">Like new</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">Used</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">For parts</div>
+              <div style="display: flex; gap: 8px;">
+                <div onClick="{{ stop }}" style="width: 96px; height: 96px; border-radius: 13px; border: 1.5px dashed #C6CDD9; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; flex-shrink: 0;">
+                  <div style="width: 30px; height: 30px; border-radius: 50%; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #0E3F80;">+</div>
+                  <div style="font-size: 10.5px; font-weight: 700; color: #0E3F80;">Add</div>
+                </div>
+                <div style="width: 96px; height: 96px; border-radius: 13px; background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=140&h=140&fit=crop&auto=format') center/cover; flex-shrink: 0; position: relative;">
+                  <div style="position: absolute; bottom: 5px; left: 5px; background: rgba(16,22,33,0.72); color: #FFFFFF; font-size: 8.5px; font-weight: 800; padding: 2px 5px; border-radius: 4px;">COVER</div>
+                </div>
+                <div style="width: 96px; height: 96px; border-radius: 13px; background: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=140&h=140&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
               </div>
+              <div style="font-size: 10.5px; color: #8B94A3;">Clear daylight photos sell fastest. Show any faults.</div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">How can buyers get it?</div>
-              <div style="display: flex; gap: 7px;">
-                <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px;">Pickup</div>
-                <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px;">I'll drop it</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">Pickup point</div>
-              </div>
-            </div>
+
             <div style="display: flex; flex-direction: column; gap: 8px;">
               <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Category</div>
               <div style="display: flex; flex-wrap: wrap; gap: 7px;">
-                <div style="background: #FBF0DC; border: 1.5px solid #E09E3B; color: #8A5B0E; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px;">Tools &amp; power</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">Home</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">Farm</div>
-                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px;">Vehicles</div>
+                <div style="background: #FBF0DC; border: 1.5px solid #E09E3B; color: #8A5B0E; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Tools &amp; power</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Home</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Farm &amp; produce</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Vehicles</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Electronics</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Real estate</div>
               </div>
             </div>
-            <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 14px; padding: 12px 13px; display: flex; align-items: center; gap: 11px;">
-              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #C6CDD9;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 13px;">
+              <div>
+                <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Title</div>
+                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">Workshop tool lot</div>
+                <div style="font-size: 10.5px; color: #8B94A3; margin-top: 5px;">Brand and model help buyers find it.</div>
+              </div>
+              <div>
+                <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Description</div>
+                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #A8B0BE; min-height: 84px; line-height: 1.5;">Say what it is, how old, any faults…</div>
+                
+              </div>
+              <div style="display: flex; gap: 9px;">
+                <div style="flex: 1.4;">
+                  <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Price</div>
+                  <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">EC$ 1,850</div>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div>
+                  <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">Salem ⌄</div>
+                </div>
+              </div>
+              <div onClick="{{ stop }}" style="background: #F7F6F0; border-radius: 12px; padding: 12px 13px; display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #C6CDD9; flex-shrink: 0;"></div>
+                <div style="flex: 1; font-size: 12.5px; color: #3A4553;">Open to offers</div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Condition</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">New</div><div style="background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Like new</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Used</div><div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">For parts</div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">How can buyers get it?</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 7px;">
+                <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px; cursor: pointer;">✓ Pickup</div>
+                <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 12.5px; font-weight: 700; padding: 8px 13px; border-radius: 999px; cursor: pointer;">✓ I'll drop it</div>
+                <div style="background: #FFFFFF; border: 1px solid #E8E4D9; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 8px 13px; border-radius: 999px; cursor: pointer;">Pickup point</div>
+              </div>
+            </div>
+
+            <div onClick="{{ stop }}" style="background: #FFFFFF; border: 1.5px solid #E09E3B; border-radius: 14px; padding: 13px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
+              <div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #E09E3B; flex-shrink: 0;"></div>
               <div style="flex: 1;">
                 <div style="font-size: 13px; font-weight: 700; color: #16233A;">Boost to the top for a week</div>
-                <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">EC$10 · paid at checkout</div>
+                <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">EC$10 · seen about 4× more often</div>
               </div>
             </div>
+
             <div style="background: #F7F6F0; border-radius: 14px; padding: 13px 14px; display: flex; flex-direction: column; gap: 7px;">
               <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">IF THIS SELLS</div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Sale price</span><span>EC$1,850</span></div>
@@ -2214,13 +2270,18 @@
               <div style="display: flex; justify-content: space-between; font-size: 14.5px; font-weight: 800; color: #16233A;"><span>You keep</span><span>EC$1,757.50</span></div>
               <div style="font-size: 11px; color: #8B94A3; margin-top: 2px;">No fee unless it sells — listing is free.</div>
             </div>
+
+            <div style="display: flex; align-items: flex-start; gap: 9px; background: #E4EDF9; border-radius: 12px; padding: 12px 13px;">
+              <span style="font-size: 13px;">🛈</span>
+              <div style="font-size: 11.5px; color: #123A66; line-height: 1.45;">Cherise checks new listings before they go live — usually within a few hours.</div>
+            </div>
           </div>
+
           <div style="background: #FFFFFF; border-top: 1px solid #E8E4D9; padding: 12px 18px 26px;">
-            <div onClick="{{ submitListing }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Post listing — free</div>
+            <div onClick="{{ submitListing }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Submit listing</div>
           </div>
         </div>
       </sc-if>
-
       <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; flex-direction: column; height: 100%;">
           <div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 10px;">
@@ -2289,7 +2350,7 @@
       <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; flex-direction: column; height: 100%; background: #0E3F80;">
           <div style="height: 40%; position: relative; flex-shrink: 0;">
-            <image-slot id="loginHero" shape="rect" placeholder="Drop a Montserrat photo — coastline, Little Bay, or the volcano"></image-slot>
+            <div style="position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&auto=format') center/cover;"></div>
             <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,92,63,0.15) 0%, #0E3F80 100%); pointer-events: none;"></div>
             <div onClick="{{ goHome }}" style="position: absolute; top: 46px; right: 20px; width: 32px; height: 32px; border-radius: 50%; background: rgba(28,42,34,0.5); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer;">✕</div>
           </div>
@@ -2685,8 +2746,17 @@
           <div style="padding: 46px 18px 12px; border-bottom: 1px solid #E8E4D9; display: flex; align-items: center; gap: 12px;">
             <div onClick="{{ back }}" style="width: 32px; height: 32px; border-radius: 50%; background: #FFFFFF; border: 1px solid #E8E4D9; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #16233A; cursor: pointer;">✕</div>
             <div style="flex: 1; font-size: 15px; font-weight: 700; color: #16233A;">Post a Wanted ad</div>
+            <div onClick="{{ stop }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">Save draft</div>
           </div>
           <div style="flex: 1; overflow-y: auto; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px; scrollbar-width: none;">
+            <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 14px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
+              <div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px;">✨</div>
+              <div style="flex: 1;">
+                <div style="color: #FFFFFF; font-size: 13.5px; font-weight: 700;">Fill this in for me</div>
+                <div style="color: rgba(230,238,249,0.75); font-size: 11.5px; margin-top: 1px;">Say it your way — AI tidies it up and suggests a budget</div>
+              </div>
+              <div style="color: #F0B454; font-size: 15px;">›</div>
+            </div>
             <div style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 12px; padding: 13px 14px; font-size: 14px; color: #16233A;">What are you looking for?</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
               <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Reference photo (optional)</div>
@@ -2727,7 +2797,7 @@
             </div>
           </div>
           <div style="background: #FFFFFF; border-top: 1px solid #E8E4D9; padding: 12px 18px 26px;">
-            <div onClick="{{ back }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Post Wanted ad — free</div>
+            <div onClick="{{ submitWanted }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 15px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Submit Wanted ad</div>
           </div>
         </div>
       </sc-if>
@@ -2762,8 +2832,8 @@
       <sc-if value="{{ isPending }}" hint-placeholder-val="{{ false }}">
         <div style="display: flex; flex-direction: column; height: 100%; align-items: center; justify-content: center; padding: 40px 30px; text-align: center; gap: 16px;">
           <div style="width: 64px; height: 64px; border-radius: 50%; background: #FBF0DC; display: flex; align-items: center; justify-content: center; font-size: 28px;">⏳</div>
-          <div style="font-size: 19px; font-weight: 800; color: #16233A;">Submitted for review</div>
-          <div style="font-size: 13.5px; color: #7C8697; line-height: 1.55; max-width: 280px;">Your listing goes live once our team approves it — usually within a few hours. We check photos and pricing to keep the marketplace trustworthy.</div>
+          <div style="font-size: 19px; font-weight: 800; color: #16233A;">{{ pendingTitle }}</div>
+          <div style="font-size: 13.5px; color: #7C8697; line-height: 1.55; max-width: 280px;">{{ pendingBody }}</div>
           <div onClick="{{ goHome }}" style="margin-top: 8px; background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 30px; font-size: 14.5px; font-weight: 700; cursor: pointer;">Back to home</div>
         </div>
       </sc-if>
@@ -2950,15 +3020,41 @@
       <sc-if value="{{ isSaved }}" hint-placeholder-val="{{ true }}">
         <div style="display: flex; flex-direction: column; height: 100%;">
           <div style="padding: 46px 20px 12px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">Saved</div>
-          </div>
-          <div style="padding: 0 20px; border-bottom: 1px solid #E8E4D9; display: flex; gap: 18px;">
-            <div onClick="{{ savedPickItems }}" style="{{ savedTabItems }}">Items ({{ savedTotal }})</div>
-            <div onClick="{{ savedPickSearches }}" style="{{ savedTabSearches }}">Searches (2)</div>
+            <div>
+              <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #16233A; line-height: 1.1;">Saved</div>
+              <div style="font-size: 12px; color: #8B94A3; margin-top: 3px;">{{ savedTotal }} items · 2 searches</div>
+            </div>
           </div>
 
+
           <sc-if value="{{ savedOnItems }}" hint-placeholder-val="{{ true }}">
-          <div style="padding: 12px 20px 10px; display: flex; flex-direction: column; gap: 9px;">
+          <div style="padding: 12px 0 4px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="padding: 0 20px; display: flex; align-items: baseline; justify-content: space-between;">
+              <div style="font-size: 12.5px; font-weight: 800; color: #16233A;">Your saved searches</div>
+              <div onClick="{{ savedPickSearches }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">Manage</div>
+            </div>
+            <div style="display: flex; gap: 9px; overflow-x: auto; scrollbar-width: none; padding: 0 20px 2px;">
+              <div onClick="{{ openBrowse }}" style="flex-shrink: 0; min-width: 168px; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 13px; padding: 11px 12px; display: flex; flex-direction: column; gap: 5px; cursor: pointer;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                  <div style="font-size: 12.5px; font-weight: 700; color: #16233A;">Vehicles under EC$70k</div>
+                  <div style="background: #C0392B; color: #FFFFFF; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 999px; flex-shrink: 0;">2 new</div>
+                </div>
+                <div style="font-size: 10.5px; color: #8B94A3;">Island-wide · alerts on</div>
+              </div>
+              <div onClick="{{ openBrowse }}" style="flex-shrink: 0; min-width: 168px; background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 13px; padding: 11px 12px; display: flex; flex-direction: column; gap: 5px; cursor: pointer;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                  <div style="font-size: 12.5px; font-weight: 700; color: #16233A;">Fridges, Salem</div>
+                  <div style="font-size: 10.5px; color: #8B94A3; flex-shrink: 0;">No new</div>
+                </div>
+                <div style="font-size: 10.5px; color: #8B94A3;">Home &amp; Garden · alerts on</div>
+              </div>
+              <div onClick="{{ openBrowse }}" style="flex-shrink: 0; width: 116px; border: 1.5px dashed #C6D0C9; border-radius: 13px; padding: 11px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                <div style="font-size: 17px; color: #0E3F80;">+</div>
+                <div style="font-size: 11px; font-weight: 700; color: #0E3F80; text-align: center;">Save a search</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 6px 20px 10px; display: flex; flex-direction: column; gap: 9px;">
             <div style="display: flex; align-items: center; gap: 8px; background: #F4F2EC; border-radius: 10px; padding: 9px 12px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C8697" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
               <input value="{{ savedQuery }}" onInput="{{ onSavedInput }}" placeholder="Search your saved items" style="border: none; outline: none; background: transparent; flex: 1; font-size: 13px; color: #16233A;" />
@@ -2977,7 +3073,7 @@
             <div style="{{ savedGridStyle }}">
               <sc-for list="{{ savedItems }}" as="item" hint-placeholder-count="4">
                 <div onClick="{{ openDetail }}" style="{{ savedCardStyle }}">
-                  <div style="height: 104px; background: url('{{ item.img }}') center/cover; position: relative; flex-shrink: 0; {{ savedImgStyle }} {{ item.imgDim }}">
+                  <div style="height: 104px; background: {{ item.bg }} center/cover; position: relative; flex-shrink: 0; {{ savedImgStyle }} {{ item.imgDim }}">
                     <div onClick="{{ stop }}" style="position: absolute; top: 7px; right: 7px; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #0E3F80;">♥</div>
                     <sc-if value="{{ item.flagText }}" hint-placeholder-val="{{ false }}">
                       <div style="position: absolute; top: 7px; left: 7px; background: {{ item.flagBg }}; color: {{ item.flagColor }}; font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 4px;">{{ item.flagText }}</div>
@@ -3010,6 +3106,7 @@
 
           <sc-if value="{{ savedOnSearches }}" hint-placeholder-val="{{ false }}">
           <div style="flex: 1; min-height: 0; overflow-y: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none;">
+            <div onClick="{{ savedPickItems }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ Back to saved</div>
             <div onClick="{{ openBrowse }}" style="background: #FFFFFF; border: 1px solid #E8E4D9; border-radius: 15px; padding: 13px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
               <div style="width: 38px; height: 38px; border-radius: 10px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E3F80" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg></div>
               <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
@@ -3157,7 +3254,7 @@
                   <sc-for list="{{ admMovingRows }}" as="row" hint-placeholder-count="4">
                     <div style="padding: 10px 13px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F4F2EC;">
                       <div style="font-size: 11px; font-weight: 800; color: #A8B0BE; width: 13px;">{{ row.rank }}</div>
-                      <div style="width: 34px; height: 34px; border-radius: 8px; background: url('{{ row.img }}') center/cover; flex-shrink: 0;"></div>
+                      <div style="width: 34px; height: 34px; border-radius: 8px; background: {{ row.bg }} center/cover; flex-shrink: 0;"></div>
                       <div style="flex: 1; min-width: 0;">
                         <div style="font-size: 12.5px; font-weight: 600; color: #16233A;">{{ row.name }}</div>
                         <div style="font-size: 10.5px; color: #8B94A3; margin-top: 1px;">{{ row.sub }}</div>
@@ -3194,6 +3291,10 @@
                       </div>
                       <div style="font-size: 11.5px; color: #3A4553;">{{ row.detail }}</div>
                       <div style="font-size: 11px; color: #8B94A3;">{{ row.meta }} · {{ row.age }}</div>
+                      <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px;">
+                        <div style="{{ row.aiStyle }}">{{ row.aiLabel }}</div>
+                        <div style="font-size: 10.5px; color: #8B94A3;">{{ row.aiReason }}</div>
+                      </div>
                     </div>
                   </div>
                   <div style="display: flex; gap: 8px;">
@@ -3609,7 +3710,7 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
               </div>
               <div style="position: absolute; top: 12px; left: 12px; background: rgba(16,22,33,0.55); color: #FFFFFF; font-size: 8.5px; font-weight: 800; letter-spacing: 0.08em; padding: 4px 8px; border-radius: 5px; z-index: 2;">SPONSORED</div>
-              <img src="assets/ad-karis-bake.jpeg" alt="Kari's Bake Meraki — Cake Fantasy Day" style="width: 100%; display: block;" />
+              <img src="assets/ad-karis-bake-750.jpeg" alt="Kari's Bake Meraki — Cake Fantasy Day" style="width: 100%; display: block;" />
             </div>
             <div style="padding: 13px 14px 15px; display: flex; flex-direction: column; gap: 10px;">
               <div style="display: flex; align-items: center; gap: 9px;">
@@ -3690,12 +3791,75 @@
               <div style="font-size: 16px; font-weight: 800; color: #16233A;">AI listing assist</div>
             </div>
             <div style="font-size: 13.5px; color: #4A5A52; line-height: 1.5;">Take or upload a photo of your item — AI suggests a title, category, condition and fair price based on similar Montserrat listings. You review and edit before posting.</div>
-            <div style="border: 1.5px dashed #C6CDD9; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-              <div style="font-size: 24px; color: #0E3F80;">📷</div>
-              <div style="font-size: 13px; font-weight: 700; color: #16233A;">Take a photo</div>
-              <div style="font-size: 11.5px; color: #8B94A3;">or choose from your library</div>
-            </div>
-            <div onClick="{{ closeAiAssist }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Continue</div>
+            <sc-if value="{{ aiStepInput }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ aiRun }}" style="border: 1.5px dashed #C6CDD9; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
+                <div style="font-size: 24px; color: #0E3F80;">📷</div>
+                <div style="font-size: 13px; font-weight: 700; color: #16233A;">Take a photo</div>
+                <div style="font-size: 11.5px; color: #8B94A3;">or choose from your library</div>
+              </div>
+              <div onClick="{{ aiRun }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Continue</div>
+            </sc-if>
+
+            <sc-if value="{{ aiStepResult }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 11px; background: #E7F1EA; border-radius: 12px; padding: 11px 13px;">
+                <div style="width: 52px; height: 52px; border-radius: 10px; background: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=140&h=140&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div style="font-size: 12.5px; font-weight: 700; color: #1E6B49;">Here's what we found</div>
+                  <div style="font-size: 11.5px; color: #3F6B55; margin-top: 1px;">Change anything before you post — nothing is saved yet.</div>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F2EC;">
+                <div style="width: 74px; flex-shrink: 0; font-size: 11px; font-weight: 700; color: #8B94A3; padding-top: 2px;">Title</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13.5px; font-weight: 600; color: #16233A; line-height: 1.4;">Cordless drill set, 18V</div>
+                  <div style="font-size: 11px; color: #8B94A3; margin-top: 2px;">Brand and model help buyers find it</div>
+                </div>
+                <div onClick="{{ stop }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer; flex-shrink: 0; padding-top: 2px;">Edit</div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F2EC;">
+                <div style="width: 74px; flex-shrink: 0; font-size: 11px; font-weight: 700; color: #8B94A3; padding-top: 2px;">Category</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13.5px; font-weight: 600; color: #16233A; line-height: 1.4;">Tools &amp; Power</div>
+                  
+                </div>
+                <div onClick="{{ stop }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer; flex-shrink: 0; padding-top: 2px;">Edit</div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F2EC;">
+                <div style="width: 74px; flex-shrink: 0; font-size: 11px; font-weight: 700; color: #8B94A3; padding-top: 2px;">Condition</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13.5px; font-weight: 600; color: #16233A; line-height: 1.4;">Used — good</div>
+                  
+                </div>
+                <div onClick="{{ stop }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer; flex-shrink: 0; padding-top: 2px;">Edit</div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F2EC;">
+                <div style="width: 74px; flex-shrink: 0; font-size: 11px; font-weight: 700; color: #8B94A3; padding-top: 2px;">Suggested price</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13.5px; font-weight: 600; color: #16233A; line-height: 1.4;">EC$420 – 520</div>
+                  <div style="font-size: 11px; color: #8B94A3; margin-top: 2px;">Based on 6 similar Montserrat listings. You set the final price.</div>
+                </div>
+                <div onClick="{{ stop }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer; flex-shrink: 0; padding-top: 2px;">Edit</div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F4F2EC;">
+                <div style="width: 74px; flex-shrink: 0; font-size: 11px; font-weight: 700; color: #8B94A3; padding-top: 2px;">Description</div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13.5px; font-weight: 600; color: #16233A; line-height: 1.4;">Cordless 18V drill set with two batteries, charger and carry case. Light wear on the case, drill works well.</div>
+                  
+                </div>
+                <div onClick="{{ stop }}" style="font-size: 11.5px; font-weight: 700; color: #0E3F80; cursor: pointer; flex-shrink: 0; padding-top: 2px;">Edit</div>
+              </div>
+              </div>
+
+              <div style="display: flex; align-items: flex-start; gap: 9px; background: #FBF0DC; border-radius: 12px; padding: 11px 13px;">
+                <span style="font-size: 13px;">🛈</span>
+                <div style="font-size: 11.5px; color: #6B4405; line-height: 1.45;">AI suggestions are a starting point, not a valuation. Check the price and details are right for your item.</div>
+              </div>
+
+              <div onClick="{{ aiAccept }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 13px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Use these details</div>
+              <div onClick="{{ aiRetry }}" style="text-align: center; font-size: 13px; font-weight: 600; color: #0E3F80; cursor: pointer;">Try another photo</div>
+            </sc-if>
           </div>
         </div>
       </sc-if>
@@ -3726,14 +3890,14 @@
         </div>
       </sc-if>
       <sc-if value="{{ deskAdOpen }}" hint-placeholder-val="{{ false }}">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,22,33,0.72); display: flex; align-items: flex-start; justify-content: center; padding-top: 196px; z-index: 60;">
-          <div style="width: 620px; max-height: 88%; overflow: hidden; background: #FFFFFF; border-radius: 22px; box-shadow: 0 30px 70px rgba(9,14,24,0.5); display: flex; flex-direction: column;">
+        <div data-r="adscrim" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(16,22,33,0.72); display: flex; align-items: flex-start; justify-content: center; padding-top: 196px; z-index: 60;">
+          <div data-r="wcap admodal" style="width: 620px; max-height: 88%; overflow: hidden; background: #FFFFFF; border-radius: 22px; box-shadow: 0 30px 70px rgba(9,14,24,0.5); display: flex; flex-direction: column;">
             <div style="position: relative;">
               <div onClick="{{ closeDeskAd }}" style="position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; background: rgba(16,22,33,0.55); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
               </div>
               <div style="position: absolute; top: 14px; left: 14px; background: rgba(16,22,33,0.55); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.08em; padding: 4px 9px; border-radius: 5px; z-index: 2;">SPONSORED</div>
-              <img src="assets/ad-karis-bake.jpeg" alt="Kari's Bake Meraki — Cake Fantasy Day" style="width: 100%; display: block;" />
+              <img src="assets/ad-karis-bake-750.jpeg" alt="Kari's Bake Meraki — Cake Fantasy Day" style="width: 100%; display: block;" />
             </div>
             <div style="padding: 20px 24px 24px; display: flex; flex-direction: column; gap: 14px;">
               <div style="display: flex; align-items: center; gap: 12px;">
@@ -3749,20 +3913,19 @@
       <sc-if value="{{ deskAdminOff }}" hint-placeholder-val="{{ true }}">
 
       <div data-r="hdrwrap" style="background: #0E3F80; padding: 0 44px;">
-        <div data-r="hdr" style="display: flex; align-items: center; gap: 28px; padding: 18px 0;">
-          <div onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 11px; cursor: pointer;">
-            <div style="width: 36px; height: 36px; border-radius: 11px; background: #F0B454; position: relative;">
+        <div data-r="hdr" style="display: flex; align-items: center; gap: 22px; padding: 16px 0;">
+          <div onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0;">
+            <div style="width: 32px; height: 32px; border-radius: 10px; background: #F0B454; position: relative;">
               <div style="position: absolute; top: 7px; left: 9px; width: 9px; height: 9px; border-radius: 50%; background: #0B4630;"></div>
               <div style="position: absolute; top: 7px; left: 18px; width: 9px; height: 9px; border-radius: 50%; background: #0B4630;"></div>
               <div style="position: absolute; top: 16px; left: 13.5px; width: 9px; height: 9px; border-radius: 50%; background: #0B4630;"></div>
               <div style="position: absolute; top: 24px; left: 17px; width: 2px; height: 7px; background: #0B4630;"></div>
             </div>
             <div style="display: flex; flex-direction: column; line-height: 1;">
-              <div style="color: #FFFFFF; font-weight: 800; font-size: 20px; letter-spacing: -0.01em;">Access MNI</div>
-              <div style="color: rgba(230,238,249,0.7); font-size: 10px; font-weight: 600; letter-spacing: 0.16em; margin-top: 4px;">MONTSERRAT · WEST INDIES</div>
+              <div style="color: #FFFFFF; font-weight: 800; font-size: 17px; letter-spacing: -0.01em;">Access MNI</div>
             </div>
           </div>
-          <div style="flex: 1; display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 12px; padding: 13px 16px; min-width: 260px;">
+          <div data-r="hdrsearch" style="flex: 1; max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 11px; background: #FFFFFF; border-radius: 12px; padding: 14px 18px; min-width: 260px; box-shadow: 0 2px 10px -4px rgba(9,20,45,0.35);">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#7C8697" stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/></svg>
             <input value="{{ searchQuery }}" onInput="{{ onSearchInput }}" onChange="{{ onSearchInput }}" placeholder="{{ deskSearchPlaceholder }}" style="border: none; outline: none; background: transparent; flex: 1; font-size: 14.5px; color: #16233A;" />
             <sc-if value="{{ searchHintOn }}" hint-placeholder-val="{{ false }}">
@@ -3770,7 +3933,7 @@
             </sc-if>
             <div style="width: 1px; height: 19px; background: #E2DED2; flex-shrink: 0;"></div><div onClick="{{ startVoice }}" title="Search by voice" style="{{ micWrap }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ micIconColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
           </div>
-          <div style="margin-left: auto; display: flex; align-items: center; gap: 20px; flex-shrink: 0;">
+          <div data-r="hdrpush" style="display: flex; align-items: center; gap: 17px; flex-shrink: 0;">
             <div onClick="{{ openMessages }}" title="Messages" style="position: relative; flex-shrink: 0; cursor: pointer; display: flex; align-items: center;">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E6EEF9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.8-.9L3 20.5l1.6-4.9A8.4 8.4 0 0 1 12 3.1a8.4 8.4 0 0 1 9 8.4z"/></svg>
               <div style="position: absolute; top: -5px; right: -7px; min-width: 18px; height: 18px; border-radius: 9px; background: #C0392B; color: #FFFFFF; font-size: 10.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #0E3F80;">3</div>
@@ -3807,7 +3970,7 @@
                 </div>
               </sc-if>
             </div>
-            <div onClick="{{ openSell }}" style="background: #F0B454; color: #2A1D06; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 11px; cursor: pointer;">+ Sell an item</div>
+            <div onClick="{{ openDeskPostPick }}" style="background: #F0B454; color: #2A1D06; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 11px; cursor: pointer;">+ Post an ad</div>
           </div>
         </div>
         <div data-r="nav" style="display: flex; gap: 26px; padding-bottom: 14px;">
@@ -3816,7 +3979,7 @@
           <div onClick="{{ pickJobs }}" style="{{ deskTabJobs }}">Jobs</div>
           <div onClick="{{ pickShops }}" style="{{ deskTabShops }}">Shops</div>
           <div onClick="{{ pickTravel }}" style="{{ deskTabTravel }}">Travel <span style="font-size: 8px; font-weight: 800; color: #F0B454;">SOON</span></div>
-          <div style="flex: 1;"></div>
+          <div data-r="spacer" style="flex: 1;"></div>
           <div onClick="{{ openPolicies }}" style="display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: rgba(230,238,249,0.72); cursor: pointer; padding: 0 4px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 2.2-3 4"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg>
             Help
@@ -3829,7 +3992,7 @@
         <sc-if value="{{ deskDetailOn }}" hint-placeholder-val="{{ false }}">
         <div style="max-width: 1300px; margin: 0 auto 16px; width: 100%; display: flex; align-items: center;">
           <div onClick="{{ deskCloseDetail }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ Back to Market</div>
-          <div style="flex: 1;"></div>
+          <div data-r="spacer" style="flex: 1;"></div>
           <div style="display: flex; align-items: center; gap: 6px;">
             <div onClick="{{ toggleSaveDetail }}" style="display: flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 9px; font-size: 13px; font-weight: 700; color: {{ detailHeartColor }}; cursor: pointer;" style-hover="background: #EFEDE4;">
               <span style="font-size: 14px;">{{ detailHeart }}</span>{{ detailSaveLabel }}
@@ -3887,7 +4050,7 @@
               <div style="position: absolute; bottom: 10px; left: 12px; background: rgba(255,255,255,0.9); font-size: 11px; font-weight: 700; color: #16233A; padding: 4px 9px; border-radius: 6px;">General area · {{ deskDetailLocation }}</div>
             </div>
           </div>
-          <div data-r="side dside" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+          <div data-r="wcap side dside" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
             <div>
               <div style="font-size: 13px; font-weight: 700; color: #0E3F80; background: #E4EDF9; display: inline-block; padding: 4px 10px; border-radius: 6px; margin-bottom: 10px;">{{ deskDetailCatLabel }}</div>
               <div style="font-size: 28px; font-weight: 800; color: #17231D;">{{ deskDetailTitle }}</div>
@@ -4008,7 +4171,7 @@
 
         <sc-if value="{{ deskGateOn }}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; justify-content: center; padding: 40px 0;">
-            <div style="width: 520px; background: #FFFFFF; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
+            <div data-r="wcap" style="width: 520px; background: #FFFFFF; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
               <div style="width: 56px; height: 56px; border-radius: 16px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px;">🔒</div>
               <div style="font-size: 21px; font-weight: 800; color: #17231D;">Sign in to reply</div>
               <div style="font-size: 14px; color: #7C8697; line-height: 1.6; margin-top: 8px;">Create a free account to see who posted this ad, send offers and get replies. Verified members get a badge buyers trust.</div>
@@ -4082,7 +4245,7 @@
                   <div style="background: #FFFFFF; border: 1px solid #E4E7E2; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px;">Mon–Sat, 9–5</div>
                   <div style="background: #FFFFFF; border: 1px solid #E4E7E2; color: #3A4553; font-size: 12.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px;">Pickup only</div>
                 </div>
-                <div style="font-size: 14px; color: #4A5A52; line-height: 1.65; max-width: 620px;">Handmade Montserrat crafts, jewelry and souvenirs — a PRIME-exhibiting local favourite. Stop by the shop in Little Bay or message ahead to reserve a piece.</div>
+                <div data-r="wcap" style="font-size: 14px; color: #4A5A52; line-height: 1.65; max-width: 620px;">Handmade Montserrat crafts, jewelry and souvenirs — a PRIME-exhibiting local favourite. Stop by the shop in Little Bay or message ahead to reserve a piece.</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div style="font-size: 17px; font-weight: 800; color: #17231D;">Featured items</div>
                   <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
@@ -4145,20 +4308,31 @@
 
         <sc-if value="{{ deskHomeOn }}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; flex-direction: column; gap: 34px;">
-            <div style="background: #0E3F80; border-radius: 20px; padding: 44px 46px; display: flex; align-items: center; gap: 40px;">
+            <div data-r="stack hero" style="background: #0E3F80; border-radius: 20px; padding: 44px 46px; display: flex; align-items: center; gap: 40px;">
               <div style="flex: 1.2; display: flex; flex-direction: column; gap: 16px;">
                 <div style="color: #F0B454; font-size: 12px; font-weight: 800; letter-spacing: 0.14em;">MONTSERRAT · WEST INDIES</div>
-                <div style="color: #FFFFFF; font-size: 40px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;">Buy, sell and find work<br/>across the island.</div>
+                <div data-r="heroh1" style="color: #FFFFFF; font-size: 40px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;">Buy, sell and find work<br/>across the island.</div>
             
             
-                <div style="color: rgba(230,238,249,0.82); font-size: 15px; line-height: 1.55; max-width: 460px;">One place for listings, wanted ads and island jobs — with protected payment and local pickup or delivery.</div>
+                <div data-r="wcap" style="color: rgba(230,238,249,0.82); font-size: 15px; line-height: 1.55; max-width: 460px;">One place for listings, wanted ads and island jobs — with protected payment and local pickup or delivery.</div>
                 <div style="display: flex; gap: 12px; margin-top: 6px;">
                   <div onClick="{{ openBrowse }}" style="background: #F0B454; color: #2A1D06; font-size: 14.5px; font-weight: 700; padding: 14px 24px; border-radius: 12px; cursor: pointer;">Browse Market</div>
-                  <div onClick="{{ openSell }}" style="border: 1.5px solid rgba(255,255,255,0.5); color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 14px 24px; border-radius: 12px; cursor: pointer;">Sell an item</div>
+                  <div onClick="{{ openDeskPostPick }}" style="border: 1.5px solid rgba(255,255,255,0.5); color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 14px 24px; border-radius: 12px; cursor: pointer;">Post an ad</div>
                 </div>
               </div>
-              <div style="flex: 1; height: 260px; border-radius: 16px; overflow: hidden; position: relative; background: #DDE6DE;">
-                <image-slot id="deskHero" placeholder="Drop a Montserrat photo here — a village street, the market, or the hills" style="position: absolute; inset: 0;" radius="16"></image-slot>
+              <div style="flex: 1; height: 260px; border-radius: 16px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6px; background: #0B3468;">
+                <div style="background: url('assets/listing-vehicle-suv.jpg') center/cover; position: relative;">
+                  <div style="position: absolute; bottom: 7px; left: 8px; background: rgba(11,52,104,0.72); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;">VEHICLES</div>
+                </div>
+                <div style="background: url('assets/listing-mango-crate.jpg') center/cover; position: relative;">
+                  <div style="position: absolute; bottom: 7px; left: 8px; background: rgba(11,52,104,0.72); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;">PRODUCE</div>
+                </div>
+                <div style="background: url('assets/listing-bed-set.jpg') center/cover; position: relative;">
+                  <div style="position: absolute; bottom: 7px; left: 8px; background: rgba(11,52,104,0.72); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;">HOME</div>
+                </div>
+                <div style="background: url('https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&h=300&fit=crop&auto=format') center/cover; position: relative;">
+                  <div style="position: absolute; bottom: 7px; left: 8px; background: rgba(11,52,104,0.72); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px;">MADE HERE</div>
+                </div>
               </div>
             </div>
             <div data-r="g5" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
@@ -4192,7 +4366,7 @@
               <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
                 <div onClick="{{ openAdShop }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 8px 20px -14px rgba(23,35,29,0.3); overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 10px; left: 10px; background: rgba(16,22,33,0.62); color: #FFFFFF; font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 5px; z-index: 1;">SPONSORED</div>
-                  <div style="height: 168px; background: url('assets/ad-karis-bake.jpeg') center 18%/cover;"></div>
+                  <div style="height: 168px; background: url('assets/ad-karis-bake-750.jpeg') center 18%/cover;"></div>
                   <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 5px;">
                     <div style="font-size: 17px; font-weight: 800; color: #17231D;">Cake Fantasy Day</div>
                     <div style="font-size: 13px; color: #3A4553;">Kari's Bake Meraki · Salem</div>
@@ -4210,11 +4384,11 @@
                 </div>
                 <div onClick="{{ deskOpenDetail }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 8px 20px -14px rgba(23,35,29,0.3); overflow: hidden; cursor: pointer; position: relative;">
                   <div style="position: absolute; top: 10px; left: 10px; background: #0E3F80; color: #FFFFFF; font-size: 9.5px; font-weight: 800; padding: 3px 8px; border-radius: 5px; z-index: 1;">−EC$150</div>
-                  <div style="height: 168px; background: url('https://images.unsplash.com/photo-1617806118233-18e1de247200?w=500&h=350&fit=crop&auto=format') center/cover;"></div>
+                  <div style="height: 168px; background: url('https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?w=500&h=350&fit=crop&auto=format') center/cover;"></div>
                   <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 5px;">
-                    <div style="display: flex; align-items: baseline; gap: 8px;"><div style="font-size: 18px; font-weight: 800; color: #17231D;">EC$1,050</div><div style="font-size: 13px; color: #A8B0BE; text-decoration: line-through;">1,200</div></div>
-                    <div style="font-size: 13px; color: #3A4553;">Dining table, seats 6</div>
-                    <div style="font-size: 12px; color: #7C8697;">Brades · price dropped</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;"><div style="font-size: 18px; font-weight: 800; color: #17231D;">EC$450</div><div style="font-size: 13px; color: #A8B0BE; text-decoration: line-through;">600</div></div>
+                    <div style="font-size: 13px; color: #3A4553;">Fridge, 7 cu ft</div>
+                    <div style="font-size: 12px; color: #7C8697;">Salem · price dropped</div>
                   </div>
                 </div>
               </div>
@@ -4261,7 +4435,7 @@
             </div>
             <div style="background: #16233A; border-radius: 18px; padding: 32px 36px; display: flex; align-items: center; justify-content: space-between; gap: 30px;">
               <div><div style="color: #FFFFFF; font-size: 22px; font-weight: 800;">Selling is free to list</div><div style="color: rgba(230,238,249,0.8); font-size: 14px; margin-top: 6px;">We only take a small cut when you get paid through the app.</div></div>
-              <div onClick="{{ openSell }}" style="background: #F0B454; color: #2A1D06; font-size: 14.5px; font-weight: 700; padding: 14px 26px; border-radius: 12px; cursor: pointer; white-space: nowrap;">Post a listing</div>
+              <div onClick="{{ openDeskPostPick }}" style="background: #F0B454; color: #2A1D06; font-size: 14.5px; font-weight: 700; padding: 14px 26px; border-radius: 12px; cursor: pointer; white-space: nowrap;">Post an ad</div>
             </div>
 <div style="display: flex; flex-direction: column; gap: 14px;">
               <div style="display: flex; align-items: baseline; justify-content: space-between;">
@@ -4334,7 +4508,7 @@
           <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; padding: 4px 0 8px;">
             <div data-r="stack" style="width: 100%; display: flex; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07), 0 18px 44px -28px rgba(23,35,29,0.4); min-height: 600px;">
               <div style="flex: 1.25; background: url('https://images.unsplash.com/photo-1590523278191-995cbcda646b?w=1000&h=1200&fit=crop&auto=format') center/cover; min-height: 620px;"></div>
-              <div data-r="side" style="width: 520px; flex-shrink: 0; padding: 58px 60px; display: flex; flex-direction: column; gap: 18px; justify-content: center;">
+              <div data-r="wcap side" style="width: 520px; flex-shrink: 0; padding: 58px 60px; display: flex; flex-direction: column; gap: 18px; justify-content: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                   <div style="width: 32px; height: 32px; border-radius: 10px; background: #0E3F80;"></div>
                   <div style="font-size: 17px; font-weight: 800; color: #17231D;">Access MNI</div>
@@ -4360,7 +4534,7 @@
           <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;">
             <div style="font-size: 22px; font-weight: 800; color: #17231D;">Inbox</div>
             <div data-r="stack" style="display: flex; gap: 20px;">
-              <div data-r="side" style="width: 320px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07); min-height: 620px;">
+              <div data-r="wcap side" style="width: 320px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07); min-height: 620px;">
                 <div style="display: flex; gap: 16px; padding: 12px 16px 0; border-bottom: 1px solid #F0EDE3;">
                   <div onClick="{{ pickMsgTab }}" style="{{ deskMsgTabM }}">Messages <span style="opacity:0.55;">3</span></div>
                   <div onClick="{{ pickNotifTab }}" style="{{ deskMsgTabN }}">Alerts <span style="opacity:0.55;">5</span></div>
@@ -4430,9 +4604,39 @@
         <sc-if value="{{ deskSavedOn }}" hint-placeholder-val="{{ false }}">
           <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;">
             <div style="display: flex; align-items: baseline; gap: 12px;">
-              <div style="font-size: 22px; font-weight: 800; color: #17231D;">Saved items</div>
-              <div style="font-size: 13px; color: #7C8697;">4 saved · 1 price drop</div>
+              <div style="font-size: 22px; font-weight: 800; color: #17231D;">Saved</div>
+              <div style="font-size: 13px; color: #7C8697;">4 items · 2 searches · 1 price drop</div>
             </div>
+
+            <div style="display: flex; flex-direction: column; gap: 11px;">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <div style="font-size: 15px; font-weight: 800; color: #16233A;">Your saved searches</div>
+                <div onClick="{{ stop }}" style="font-size: 12.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">Manage alerts</div>
+              </div>
+              <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                <div onClick="{{ pickSellers }}" style="background: #FFFFFF; border-radius: 14px; padding: 15px 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 7px; cursor: pointer;" style-hover="box-shadow: 0 4px 14px -6px rgba(23,35,29,0.2);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #16233A;">Vehicles under EC$70k</div>
+                    <div style="background: #C0392B; color: #FFFFFF; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; flex-shrink: 0;">2 new</div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Island-wide · alerts on</div>
+                </div>
+                <div onClick="{{ pickSellers }}" style="background: #FFFFFF; border-radius: 14px; padding: 15px 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 7px; cursor: pointer;" style-hover="box-shadow: 0 4px 14px -6px rgba(23,35,29,0.2);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #16233A;">Fridges, Salem</div>
+                    <div style="font-size: 11.5px; color: #8B94A3; flex-shrink: 0;">No new</div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Home &amp; Garden · alerts on</div>
+                </div>
+                <div onClick="{{ pickSellers }}" style="border: 1.5px dashed #C6D0C9; border-radius: 14px; padding: 15px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer;">
+                  <div style="font-size: 20px; color: #0E3F80;">+</div>
+                  <div style="font-size: 12.5px; font-weight: 700; color: #0E3F80;">Save a search</div>
+                  <div style="font-size: 11px; color: #8B94A3; text-align: center;">Get told when something matches</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size: 15px; font-weight: 800; color: #16233A; margin-top: 4px;">Saved items</div>
             <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: stretch;">
               <div onClick="{{ deskOpenDetail }}" style="background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(23,35,29,0.07); cursor: pointer; position: relative;">
                 <div style="position: absolute; top: 9px; left: 9px; background: #0E3F80; color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 4px; z-index: 1;">−EC$200</div>
@@ -4468,11 +4672,6 @@
                   <div style="font-size: 11.5px; color: #8B94A3; margin-top: 3px;">Cudjoe Head · 5 hrs ago</div>
                 </div>
               </div>
-            </div>
-            <div style="background: #FFFFFF; border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
-              <div style="width: 36px; height: 36px; border-radius: 10px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 16px;">★</div>
-              <div style="flex: 1;"><div style="font-size: 13.5px; font-weight: 700; color: #16233A;">Saved search · vehicles under EC$70,000</div><div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">3 new matches this week</div></div>
-              <div onClick="{{ pickSellers }}" style="border: 1px solid #E4E1D6; font-size: 12.5px; font-weight: 700; color: #0E3F80; padding: 9px 15px; border-radius: 9px; cursor: pointer;">View matches</div>
             </div>
           </div>
         </sc-if>
@@ -4526,7 +4725,7 @@
                 </div>
               </div>
             </div>
-            <div data-r="side" style="width: 340px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 20px;">
+            <div data-r="wcap side" style="width: 340px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 12px; position: sticky; top: 20px;">
               <div style="font-size: 15px; font-weight: 800; color: #16233A;">Order summary</div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Items (2)</span><span>EC$64</span></div>
               <div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Delivery, Ram's</span><span>EC$10</span></div>
@@ -4594,7 +4793,7 @@
         <sc-if value="{{ deskProfileOn }}" hint-placeholder-val="{{ false }}">
           <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
             <div data-r="stack" style="display: flex; gap: 24px; align-items: flex-start;">
-            <div data-r="side" style="width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;">
+            <div data-r="wcap side" style="width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;">
               <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; align-items: center; gap: 10px;">
                 <div style="width: 84px; height: 84px; border-radius: 50%; background: repeating-linear-gradient(135deg, #2E7256 0 6px, #276549 6px 12px);"></div>
                 <div style="font-size: 17px; font-weight: 800; color: #16233A;">Cherise Aymer</div>
@@ -4623,7 +4822,7 @@
               <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); overflow: hidden;">
                 <div style="padding: 15px 18px; border-bottom: 1px solid #F0EDE3; display: flex; align-items: center;">
                   <div style="flex: 1; font-size: 15px; font-weight: 800; color: #16233A;">Your listings</div>
-                  <div onClick="{{ openSell }}" style="background: #F0B454; color: #2A1D06; font-size: 12.5px; font-weight: 700; padding: 8px 14px; border-radius: 9px; cursor: pointer;">+ New listing</div>
+                  <div onClick="{{ openDeskPostPick }}" style="background: #F0B454; color: #2A1D06; font-size: 12.5px; font-weight: 700; padding: 8px 14px; border-radius: 9px; cursor: pointer;">+ Post an ad</div>
                 </div>
                 <div style="padding: 14px 18px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: center; gap: 14px;">
                   <div style="width: 56px; height: 56px; border-radius: 10px; background: url('https://images.unsplash.com/photo-1617806118233-18e1de247200?w=200&h=200&fit=crop&auto=format') center/cover; flex-shrink: 0;"></div>
@@ -4649,58 +4848,543 @@
           </div>
         </sc-if>
 
-        <sc-if value="{{ deskSellOn }}" hint-placeholder-val="{{ false }}">
-          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px;">
-            <div style="font-size: 22px; font-weight: 800; color: #17231D;">Create a listing</div>
-            <div style="background: #E4EDF9; border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; gap: 12px;">
-              <div style="width: 34px; height: 34px; border-radius: 9px; background: #0E3F80; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800;">AI</div>
-              <div style="flex: 1;"><div style="font-size: 13.5px; font-weight: 700; color: #123A66;">Let AI write it for you</div><div style="font-size: 11.5px; color: #2C5C93; margin-top: 2px;">Add photos and we will suggest a title, description and price.</div></div>
-              <div style="background: #0E3F80; color: #FFFFFF; font-size: 12.5px; font-weight: 700; padding: 9px 15px; border-radius: 9px; cursor: pointer;">Try it</div>
+        <sc-if value="{{ deskSetUpShopOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
+            <div onClick="{{ openBrowse }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ Back</div>
+            <div>
+              <div style="font-size: 22px; font-weight: 800; color: #17231D;">Set up your business page</div>
+              <div style="font-size: 13px; color: #7C8697; margin-top: 4px;">A page on Access MNI that the whole island can find — with your hours, location and contact.</div>
             </div>
-            <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
-              <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div>
-                  <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 7px;">Photos</div>
-                  <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
-                    <div style="height: 104px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;"><div style="font-size: 20px; color: #0E3F80;">＋</div><div style="font-size: 11px; color: #8B94A3;">Add photo</div></div>
-                    <div style="height: 104px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
-                    <div style="height: 104px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
-                    <div style="height: 104px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
+            <div data-r="stack" style="display: flex; gap: 22px; align-items: flex-start;">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+                <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+                  <div style="width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">✨</div>
+                  <div style="flex: 1;">
+                    <div style="color: #FFFFFF; font-size: 15px; font-weight: 700;">Let AI write your business page</div>
+                    <div style="color: rgba(230,238,249,0.78); font-size: 12.5px; margin-top: 2px;">Give us your business name and we will draft the description and categories.</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.95); color: #16233A; font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px;">Try it</div>
+                </div>
+
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Choose your plan</div>
+                  <div onClick="{{ pickPlanPresence }}" style="{{ planPresenceCard }}">
+                    <div style="flex: 1;">
+                      <div style="font-size: 15px; font-weight: 700; color: #16233A;">Presence</div>
+                      <div style="font-size: 12.5px; color: #7C8697; line-height: 1.5; margin-top: 3px;">Your page, photos, hours, location and WhatsApp. People find you and get in touch directly.</div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div style="font-size: 17px; font-weight: 800; color: #16233A;">EC$150</div>
+                      <div style="font-size: 11.5px; color: #8B94A3;">a month</div>
+                    </div>
+                    <div style="{{ planRadioPresence }}"></div>
+                  </div>
+                  <div onClick="{{ pickPlanBookable }}" style="{{ planBookableCard }}">
+                    <div style="flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 7px;">
+                        <div style="font-size: 15px; font-weight: 700; color: #16233A;">Bookable</div>
+                        <div style="background: #FBF0DC; color: #8A5B0E; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 4px;">SOON</div>
+                      </div>
+                      <div style="font-size: 12.5px; color: #7C8697; line-height: 1.5; margin-top: 3px;">Everything in Presence, plus customers book appointments and pay through the app.</div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div style="font-size: 17px; font-weight: 800; color: #16233A;">EC$200</div>
+                      <div style="font-size: 11.5px; color: #8B94A3;">a month</div>
+                    </div>
+                    <div style="{{ planRadioBookable }}"></div>
                   </div>
                 </div>
-                <div data-r="g2" style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
-                  <div><div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Title</div><div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 13px; font-size: 13.5px; color: #8B94A3;">e.g. Dining table, seats 6</div></div>
-                  <div><div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Price (EC$)</div><div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 13px; font-size: 13.5px; color: #8B94A3;">0.00</div></div>
-                </div>
-                <div data-r="g2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                  <div><div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Category</div><div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 13px; font-size: 13.5px; color: #8B94A3;">Choose a category ⌄</div></div>
-                  <div><div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div><div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 13px; font-size: 13.5px; color: #8B94A3;">Salem ⌄</div></div>
-                </div>
-                <div><div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Description</div><div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 13px; font-size: 13.5px; color: #8B94A3; min-height: 78px;">Condition, age, anything a buyer should know…</div></div>
-                <div>
-                  <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 7px;">How will the buyer get it?</div>
-                  <div style="display: flex; gap: 10px;">
-                    <div style="flex: 1; border: 1.5px solid #0E3F80; border-radius: 11px; padding: 12px 14px; font-size: 13px; font-weight: 600; color: #16233A;">Pickup only</div>
-                    <div style="flex: 1; border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 13px; color: #3A4553;">Delivery available</div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">About the business</div>
+                  <div data-r="g2" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Business name</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">e.g. Victor's Supermarket</div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Category</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Groceries</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Describe the business</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 13px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF; min-height: 108px; line-height: 1.55;">What you sell or do, and anything that makes you different…</div>
+                  </div>
+                  <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Davy Hill</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Phone</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">+1 664 </div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Email</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">you@example.com</div>
+                    
+                  </div>
                   </div>
                 </div>
-                <div style="background: #F7F6F0; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
-                  <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em; color: #6C7585;">WHAT YOU KEEP</div>
-                  <div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Sale price</span><span>EC$1,050.00</span></div>
-                  <div style="display: flex; justify-content: space-between; font-size: 13px; color: #3A4553;"><span>Access MNI fee (5%)</span><span>−EC$52.50</span></div>
-                  <div style="border-top: 1px solid #E8E4D9; padding-top: 8px; display: flex; justify-content: space-between; font-size: 14.5px; font-weight: 800; color: #16233A;"><span>You receive</span><span>EC$997.50</span></div>
-                  <div style="font-size: 11px; color: #8B94A3;">Paid to your Serra account once the buyer confirms.</div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Photos</div>
+                  <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+                    <div onClick="{{ stop }}" style="height: 108px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer;">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #0E3F80;">+</div>
+                      <div style="font-size: 11px; font-weight: 700; color: #0E3F80;">Logo</div>
+                    </div>
+                    <div onClick="{{ stop }}" style="height: 108px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer;">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #0E3F80;">+</div>
+                      <div style="font-size: 11px; font-weight: 700; color: #0E3F80;">Cover photo</div>
+                    </div>
+                    <div style="height: 108px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
+                    <div style="height: 108px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
+                  </div>
                 </div>
-                <div style="background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 11px; padding: 12px 14px; font-size: 12px; color: #6B4405;">🛈 Listings are checked by our team before they go live — usually within a few hours.</div>
-                <div style="display: flex; gap: 11px;">
-                  <div onClick="{{ openBrowse }}" style="border: 1px solid #E4E1D6; font-size: 14px; font-weight: 700; color: #3A4553; padding: 13px 22px; border-radius: 11px; cursor: pointer;">Save as draft</div>
-                  <div onClick="{{ openProfile }}" style="flex: 1; background: #0E3F80; color: #FFFFFF; font-size: 14.5px; font-weight: 700; padding: 13px 0; border-radius: 11px; text-align: center; cursor: pointer;">Submit for approval</div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Opening hours</div>
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Days</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Mon – Sat</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Opens</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>8:00 am</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Closes</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>7:00 pm</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                    </div>
+                    <div onClick="{{ stop }}" style="font-size: 12.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">+ Add different hours for another day</div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-r="side" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 9px;">
+                  <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #6C7585;">WHAT YOU PAY</div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #3A4553;"><span>{{ planName }} plan · first month</span><span style="font-weight: 700; color: #16233A;">{{ planPrice }}</span></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #3A4553;"><span>Then monthly, cancel anytime</span><span>{{ planPrice }}</span></div>
+                  <div style="height: 1px; background: #EDE9DD; margin: 3px 0;"></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #16233A;"><span>Due today</span><span>{{ planPrice }}</span></div>
+                  <div style="font-size: 11.5px; color: #8B94A3; line-height: 1.5; margin-top: 4px; padding-top: 9px; border-top: 1px solid #EDE9DD;">Paid now. Our team checks your page within a day — if we can't approve it, you're refunded in full.</div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 10px;">
+                  <div onClick="{{ openShopSubmitted }}" style="background: #16233A; color: #FFFFFF; border-radius: 12px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Pay {{ planPrice }} with</span>
+                    <span style="background: #FFFFFF; color: #16233A; font-size: 12.5px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">Serra</span>
+                  </div>
+                  <div onClick="{{ openPaymentMethods }}" style="text-align: center; font-size: 12.5px; font-weight: 600; color: #0E3F80; cursor: pointer;">Or pay by card</div>
+                  <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 13.5px; font-weight: 700; color: #3A4553; cursor: pointer;">Save as draft</div>
+                  <div onClick="{{ openWhatsapp }}" style="text-align: center; font-size: 12.5px; font-weight: 600; color: #0E3F80; cursor: pointer;">Talk to us first</div>
+
                 </div>
               </div>
             </div>
           </div>
         </sc-if>
 
+        <sc-if value="{{ deskPostJobOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
+            <div onClick="{{ openBrowse }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ Back</div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;">
+              <div>
+                <div style="font-size: 22px; font-weight: 800; color: #17231D;">Post a job</div>
+                <div style="font-size: 13px; color: #7C8697; margin-top: 4px;">Runs for 30 days. Applications come straight to your inbox.</div>
+              </div>
+              <div style="background: #FBF0DC; color: #8A5B0E; font-size: 13px; font-weight: 800; padding: 8px 14px; border-radius: 8px; white-space: nowrap;">EC$40</div>
+            </div>
+            <div data-r="stack" style="display: flex; gap: 22px; align-items: flex-start;">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+                <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+                  <div style="width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">✨</div>
+                  <div style="flex: 1;">
+                    <div style="color: #FFFFFF; font-size: 15px; font-weight: 700;">Let AI write the job post</div>
+                    <div style="color: rgba(230,238,249,0.78); font-size: 12.5px; margin-top: 2px;">Tell us the role in a sentence — we will draft the duties and requirements.</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.95); color: #16233A; font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px;">Try it</div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">The role</div>
+                  <div data-r="g2" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Job title</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">e.g. Delivery driver</div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Business or your name</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">e.g. Ram's Supermarket</div>
+                    
+                  </div>
+                  </div>
+                  <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Salem</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Category</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Retail</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Start</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>As soon as possible</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 9px;">
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585;">Hours</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                      <div onClick="{{ pickJobFull }}" style="{{ jobTypeFull }}">Full-time</div>
+                      <div onClick="{{ pickJobPart }}" style="{{ jobTypePart }}">Part-time</div>
+                      <div onClick="{{ pickJobCasual }}" style="{{ jobTypeCasual }}">Casual</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Pay</div>
+                  <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Amount</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">EC$ 18</div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Per</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Hour</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Or</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Negotiable</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Jobs that show a rate get about three times more applications.</div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Details</div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">What the job involves</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF; min-height: 108px; line-height: 1.55;">Day-to-day duties, shifts, anything a candidate should know…</div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">What you are looking for</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF; min-height: 108px; line-height: 1.55;">Experience, licences, availability…</div>
+                    
+                  </div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">How should people apply?</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 13px; font-weight: 700; padding: 9px 15px; border-radius: 999px; cursor: pointer;">✓ In the app</div>
+                    <div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">WhatsApp</div>
+                    <div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Come in person</div>
+                  </div>
+                </div>
+              </div>
+              <div data-r="side" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 9px;">
+                  <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #6C7585;">WHAT YOU PAY</div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #3A4553;"><span>Job listing · 30 days</span><span>EC$40</span></div>
+                  <div style="height: 1px; background: #EDE9DD; margin: 3px 0;"></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #16233A;"><span>Total</span><span>EC$40</span></div>
+                  <div style="font-size: 11.5px; color: #8B94A3; line-height: 1.5; margin-top: 4px; padding-top: 9px; border-top: 1px solid #EDE9DD;">Paid now. Our team checks your job within a day — if we can't approve it, you're refunded in full.</div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 10px;">
+                  <div onClick="{{ openJobSubmitted }}" style="background: #16233A; color: #FFFFFF; border-radius: 12px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span>Pay EC$40 with</span>
+                    <span style="background: #FFFFFF; color: #16233A; font-size: 12.5px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">Serra</span>
+                  </div>
+                  <div onClick="{{ openPaymentMethods }}" style="text-align: center; font-size: 12.5px; font-weight: 600; color: #0E3F80; cursor: pointer;">Or pay by card</div>
+
+                  <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 13.5px; font-weight: 700; color: #3A4553; cursor: pointer;">Save as draft</div>
+                  <div style="font-size: 11.5px; color: #8B94A3; line-height: 1.5; text-align: center;">Cherise checks new jobs before they go live — usually within a few hours.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ deskPostWantedOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
+            <div onClick="{{ openBrowse }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ Back</div>
+            <div>
+              <div style="font-size: 22px; font-weight: 800; color: #17231D;">Post a Wanted ad</div>
+              <div style="font-size: 13px; color: #7C8697; margin-top: 4px;">Free to post. Tell the island what you're after and let people come to you.</div>
+            </div>
+            <div data-r="stack" style="display: flex; gap: 22px; align-items: flex-start;">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+                <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+                  <div style="width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">✨</div>
+                  <div style="flex: 1;">
+                    <div style="color: #FFFFFF; font-size: 15px; font-weight: 700;">Let AI write your ask</div>
+                    <div style="color: rgba(230,238,249,0.78); font-size: 12.5px; margin-top: 2px;">Say it in your own words and we will tidy it up and suggest a fair budget.</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.95); color: #16233A; font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px;">Try it</div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">What are you looking for?</div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Title</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">e.g. Working washing machine</div>
+                    <div style="font-size: 11px; color: #8B94A3; margin-top: 5px;">Be specific — it gets better replies.</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Details</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF; min-height: 108px; line-height: 1.55;">Brand, size, condition you'll accept…</div>
+                    
+                  </div>
+                  <div data-r="g3" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Category</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Goods</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Salem</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Needed by</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>This week</span><span style="color: #8B94A3;">⌄</span></div>
+                  </div>
+                  </div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Your budget</div>
+                  <div data-r="g2" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Minimum</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">EC$ 0</div>
+                    
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Maximum</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF;">EC$ 600</div>
+                    
+                  </div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Sellers see the range, not your exact figure. Leave blank if you'd rather they suggest a price.</div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">Reference photo</div>
+                  <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+                    <div onClick="{{ stop }}" style="height: 108px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer;">
+                      <div style="width: 32px; height: 32px; border-radius: 50%; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #0E3F80;">+</div>
+                      <div style="font-size: 11px; font-weight: 700; color: #0E3F80;">Add photo</div>
+                    </div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Optional — a picture of something similar helps people know what you mean.</div>
+                </div>
+              </div>
+              <div data-r="side" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 10px;">
+                  <div style="background: #E7F1EA; color: #1E6B49; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; align-self: flex-start;">FREE TO POST</div>
+                  <div style="font-size: 13px; color: #3A4553; line-height: 1.6;">Wanted ads are always free. There's no fee if someone sells you the thing you asked for.</div>
+                </div>
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 10px;">
+                  <div onClick="{{ submitWanted }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Submit Wanted ad</div>
+                  <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 13.5px; font-weight: 700; color: #3A4553; cursor: pointer;">Save as draft</div>
+                  <div style="font-size: 11.5px; color: #8B94A3; line-height: 1.5; text-align: center;">Only signed-in members can see who posted an ask and reply to it.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ deskFallbackOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 700px; margin: 0 auto; width: 100%; background: #FFFFFF; border-radius: 18px; padding: 52px 44px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+            <div style="width: 58px; height: 58px; border-radius: 16px; background: #E4EDF9; display: flex; align-items: center; justify-content: center;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0E3F80" stroke-width="1.9" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><line x1="10" y1="18.5" x2="14" y2="18.5"/></svg>
+            </div>
+            <div style="font-size: 19px; font-weight: 800; color: #17231D;">{{ deskFallbackTitle }}</div>
+            <div style="font-size: 13.5px; color: #7C8697; line-height: 1.6; max-width: 400px;">This screen is designed for the phone app. Open it in the phone view above to see it — the web version comes with the build.</div>
+            <div onClick="{{ goHome }}" style="margin-top: 6px; background: #0E3F80; color: #FFFFFF; font-size: 14px; font-weight: 700; padding: 12px 22px; border-radius: 11px; cursor: pointer;">Back to home</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ deskPostPickOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-size: 26px; font-weight: 800; color: #17231D; letter-spacing: -0.02em;">What are you advertising?</div>
+              <div style="font-size: 14.5px; color: #7C8697; margin-top: 6px;">Everything is checked by our team before it goes live.</div>
+            </div>
+            <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+              <div onClick="{{ openSell }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 12px; cursor: pointer;" style-hover="box-shadow: 0 6px 20px -8px rgba(23,35,29,0.22);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="width: 46px; height: 46px; border-radius: 12px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 21px;">🏷️</div>
+                  <div style="background: #E7F1EA; color: #1E6B49; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; white-space: nowrap;">FREE</div>
+                </div>
+                <div>
+                  <div style="font-size: 16px; font-weight: 700; color: #17231D; letter-spacing: -0.01em;">Something to sell or rent</div>
+                  <div style="font-size: 13px; color: #7C8697; margin-top: 4px; line-height: 1.45;">Items, vehicles, property and rooms — 5% fee only when it sells</div>
+                </div>
+              </div>
+              <div onClick="{{ openPostWanted }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 12px; cursor: pointer;" style-hover="box-shadow: 0 6px 20px -8px rgba(23,35,29,0.22);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="width: 46px; height: 46px; border-radius: 12px; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 21px;">🙋</div>
+                  <div style="background: #E7F1EA; color: #1E6B49; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; white-space: nowrap;">FREE</div>
+                </div>
+                <div>
+                  <div style="font-size: 16px; font-weight: 700; color: #17231D; letter-spacing: -0.01em;">Something you're looking for</div>
+                  <div style="font-size: 13px; color: #7C8697; margin-top: 4px; line-height: 1.45;">Set a budget and let people come to you</div>
+                </div>
+              </div>
+              <div onClick="{{ openPostJob }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 12px; cursor: pointer;" style-hover="box-shadow: 0 6px 20px -8px rgba(23,35,29,0.22);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="width: 46px; height: 46px; border-radius: 12px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 21px;">💼</div>
+                  <div style="background: #FBF0DC; color: #8A5B0E; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; white-space: nowrap;">EC$40</div>
+                </div>
+                <div>
+                  <div style="font-size: 16px; font-weight: 700; color: #17231D; letter-spacing: -0.01em;">A job opening</div>
+                  <div style="font-size: 13px; color: #7C8697; margin-top: 4px; line-height: 1.45;">Runs for 30 days — applications to your inbox</div>
+                </div>
+              </div>
+              <div onClick="{{ openSetUpShop }}" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 12px; cursor: pointer;" style-hover="box-shadow: 0 6px 20px -8px rgba(23,35,29,0.22);">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="width: 46px; height: 46px; border-radius: 12px; background: #F4F2EC; display: flex; align-items: center; justify-content: center; font-size: 21px;">🛒</div>
+                  <div style="background: #FBF0DC; color: #8A5B0E; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 6px; white-space: nowrap;">FROM EC$150/MO</div>
+                </div>
+                <div>
+                  <div style="font-size: 16px; font-weight: 700; color: #17231D; letter-spacing: -0.01em;">A page for my business</div>
+                  <div style="font-size: 13px; color: #7C8697; margin-top: 4px; line-height: 1.45;">A shop, service or agency the island can find</div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; background: #E4EDF9; border-radius: 13px; padding: 15px 17px;">
+              <span style="font-size: 15px;">🛈</span>
+              <div style="flex: 1; font-size: 13px; color: #123A66; line-height: 1.55;">Not sure which you need? Selling and Wanted are always free — you only pay if an item actually sells.</div>
+              <div onClick="{{ openWhatsapp }}" style="background: #FFFFFF; color: #0E3F80; font-size: 12.5px; font-weight: 700; padding: 9px 14px; border-radius: 9px; cursor: pointer; white-space: nowrap;">Ask us</div>
+            </div>
+          </div>
+        </sc-if>       <sc-if value="{{ deskSellOn }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
+            <div>
+              <div style="font-size: 22px; font-weight: 800; color: #17231D;">Create a listing</div>
+              <div style="font-size: 13px; color: #7C8697; margin-top: 4px;">Free to list. You only pay a fee when it sells.</div>
+            </div>
+
+            <div data-r="stack" style="display: flex; gap: 22px; align-items: flex-start;">
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 18px;">
+
+                <div onClick="{{ openAiAssist }}" style="background: linear-gradient(135deg, #16694A, #0E3F80); border-radius: 16px; padding: 18px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer;">
+                  <div style="width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;">✨</div>
+                  <div style="flex: 1;">
+                    <div style="color: #FFFFFF; font-size: 15px; font-weight: 700;">Let AI fill this in for you</div>
+                    <div style="color: rgba(230,238,249,0.78); font-size: 12.5px; margin-top: 2px;">Add your photos and we'll suggest the title, description and a fair price.</div>
+                  </div>
+                  <div style="background: rgba(255,255,255,0.95); color: #16233A; font-size: 13px; font-weight: 700; padding: 10px 16px; border-radius: 10px;">Try it</div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                    <div style="font-size: 15px; font-weight: 800; color: #16233A;">Photos</div>
+                    <div style="font-size: 12px; color: #8B94A3;">2 of 10 · drag to reorder, first is the cover</div>
+                  </div>
+                  <div data-r="g4" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+                    <div onClick="{{ stop }}" style="height: 116px; border-radius: 12px; border: 1.5px dashed #C6CDD9; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer;">
+                      <div style="width: 34px; height: 34px; border-radius: 50%; background: #E4EDF9; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #0E3F80;">+</div>
+                      <div style="font-size: 11.5px; font-weight: 700; color: #0E3F80;">Add photo</div>
+                    </div>
+                    <div style="height: 116px; border-radius: 12px; background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&h=240&fit=crop&auto=format') center/cover; position: relative;">
+                      <div style="position: absolute; bottom: 6px; left: 6px; background: rgba(16,22,33,0.72); color: #FFFFFF; font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 4px;">COVER</div>
+                    </div>
+                    <div style="height: 116px; border-radius: 12px; background: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=300&h=240&fit=crop&auto=format') center/cover;"></div>
+                    <div style="height: 116px; border-radius: 12px; background: #F7F6F0; border: 1px solid #EDE9DD;"></div>
+                  </div>
+                  <div style="font-size: 12px; color: #8B94A3;">Clear daylight photos sell fastest. Show any faults — it saves questions later.</div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 16px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">What is it?</div>
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585;">Category</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                      <div style="background: #FBF0DC; border: 1.5px solid #E09E3B; color: #8A5B0E; font-size: 13px; font-weight: 700; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Tools &amp; power</div><div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Home</div><div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Farm &amp; produce</div><div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Vehicles</div><div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Electronics</div><div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Real estate</div>
+                    </div>
+                    <div style="font-size: 11px; color: #8B94A3;">This decides which details we ask for.</div>
+                  </div>
+                  <div data-r="g2" style="display: grid; grid-template-columns: 2.6fr minmax(0, 1fr); gap: 14px;">
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Title</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF;">Workshop tool lot</div>
+                    <div style="font-size: 11px; color: #8B94A3; margin-top: 5px;">Brand and model help buyers find it.</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Price</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF;">EC$ 1,850</div>
+                    
+                  </div>
+                  </div>
+                  <div>
+                    <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Description</div>
+                    <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 13px 14px; font-size: 14px; color: #A8B0BE; background: #FFFFFF; min-height: 132px; line-height: 1.55;">Say what it is, how old it is, and anything a buyer should know…</div>
+                    <div style="font-size: 11px; color: #8B94A3; margin-top: 5px;">The more you say, the fewer questions you get. 0 / 1000</div>
+                    
+                  </div>
+                  <div data-r="g2" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+                    <div>
+                      <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Village</div>
+                      <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Salem</span><span style="color: #8B94A3;">⌄</span></div>
+                    </div>
+                    <div>
+                      <div style="font-size: 11.5px; font-weight: 700; color: #6C7585; margin-bottom: 6px;">Condition</div>
+                      <div style="border: 1px solid #E2DED2; border-radius: 11px; padding: 12px 14px; font-size: 14px; color: #16233A; background: #FFFFFF; display: flex; justify-content: space-between;"><span>Like new</span><span style="color: #8B94A3;">⌄</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 14px;">
+                  <div style="font-size: 15px; font-weight: 800; color: #16233A;">How can buyers get it?</div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 13px; font-weight: 700; padding: 9px 15px; border-radius: 999px; cursor: pointer;">✓ Pickup</div>
+                    <div style="background: #E4EDF9; border: 1.5px solid #0E3F80; color: #0E3F80; font-size: 13px; font-weight: 700; padding: 9px 15px; border-radius: 999px; cursor: pointer;">✓ I'll drop it off</div>
+                    <div style="background: #FFFFFF; border: 1px solid #E4E1D6; color: #3A4553; font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer;">Access MNI pickup point</div>
+                  </div>
+                  <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; border-radius: 12px; padding: 13px 14px; display: flex; align-items: center; gap: 11px; cursor: pointer;">
+                    <div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #C6CDD9; flex-shrink: 0;"></div>
+                    <div style="flex: 1; font-size: 13px; color: #3A4553;">Open to offers</div>
+                  </div>
+                </div>
+              </div>
+
+              <div data-r="side" style="width: 380px; flex-shrink: 0; align-self: flex-start; position: sticky; top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 9px;">
+                  <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #6C7585;">IF THIS SELLS</div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #3A4553;"><span>Sale price</span><span>EC$1,850</span></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: #3A4553;"><span>Access MNI fee (5%)</span><span>−EC$92.50</span></div>
+                  <div style="height: 1px; background: #EDE9DD; margin: 3px 0;"></div>
+                  <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #16233A;"><span>You keep</span><span>EC$1,757.50</span></div>
+                  <div style="font-size: 11.5px; color: #8B94A3; margin-top: 2px;">No fee unless it sells — listing is free.</div>
+                </div>
+
+                <div onClick="{{ stop }}" style="background: #FFFFFF; border: 1.5px solid #E09E3B; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                  <div style="width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #E09E3B; flex-shrink: 0;"></div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 13.5px; font-weight: 700; color: #16233A;">Boost to the top for a week</div>
+                    <div style="font-size: 12px; color: #8B94A3; margin-top: 2px;">EC$10 · seen about 4× more often</div>
+                  </div>
+                </div>
+
+                <div style="background: #FFFFFF; border-radius: 16px; padding: 22px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); display: flex; flex-direction: column; gap: 10px;">
+                  <div onClick="{{ submitListing }}" style="background: #0E3F80; color: #FFFFFF; border-radius: 12px; padding: 14px 0; text-align: center; font-size: 15px; font-weight: 700; cursor: pointer;">Submit listing</div>
+                  <div onClick="{{ stop }}" style="border: 1px solid #E4E1D6; border-radius: 12px; padding: 12px 0; text-align: center; font-size: 13.5px; font-weight: 700; color: #3A4553; cursor: pointer;">Save as draft</div>
+                  <div style="font-size: 11.5px; color: #8B94A3; line-height: 1.5; text-align: center;">Cherise checks new listings before they go live — usually within a few hours.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
         <sc-if value="{{ deskPoliciesOn }}" hint-placeholder-val="{{ false }}">
           <div style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 18px;">
             <div onClick="{{ back }}" style="font-size: 13px; font-weight: 700; color: #0E3F80; cursor: pointer;">‹ {{ backLabel }}</div>
@@ -4730,7 +5414,7 @@
                   </div>
                 </sc-for>
                           </div>
-              <div data-r="side" style="width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;">
+              <div data-r="wcap side" style="width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px;">
                 <div style="background: #FBF0DC; border: 1px solid #F0D9A8; border-radius: 14px; padding: 16px;">
                   <div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 15px;">🛡️</span><div style="font-size: 13.5px; font-weight: 700; color: #6B4405;">Staying safe</div></div>
                   <div style="font-size: 12.5px; color: #6B4405; line-height: 1.55; margin-top: 8px;">Keep offers and payment in the app. You are only charged once the seller confirms the sale, and every deal leaves a record. Cash arranged off the app has no record and no comeback.</div>
@@ -4783,7 +5467,7 @@
                 </div>
               </div>
             </div>
-            <div data-r="side" style="width: 340px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+            <div data-r="wcap side" style="width: 340px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 14px;">
               <div style="font-size: 15px; font-weight: 800; color: #16233A;">Show this on arrival</div>
               <div style="background: #16233A; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
                 <div data-r="g5" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
@@ -4861,7 +5545,7 @@
                 </div>
                 </div>
               </div>
-              <div data-r="side" style="width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
+              <div data-r="wcap side" style="width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
                 <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); overflow: hidden;">
                   <div style="padding: 15px 18px; border-bottom: 1px solid #F0EDE3; font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">PAYMENT &amp; PAYOUTS</div>
                   <div onClick="{{ openPaymentMethods }}" style="padding: 15px 18px; border-bottom: 1px solid #F4F2EC; display: flex; align-items: center; gap: 12px; cursor: pointer;">
@@ -4916,7 +5600,7 @@
                 </div>
                 <div onClick="{{ stop }}" style="border: 1.5px dashed #C6CDD9; border-radius: 14px; padding: 16px 0; text-align: center; font-size: 13.5px; font-weight: 700; color: #0E3F80; cursor: pointer;">+ Add a card or link Serra</div>
               </div>
-              <div data-r="side" style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
+              <div data-r="wcap side" style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
                 <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); overflow: hidden;">
                   <div style="padding: 15px 18px; border-bottom: 1px solid #F0EDE3; font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">HOW YOU GET PAID</div>
                   <div style="padding: 16px 18px; display: flex; align-items: center; gap: 14px;">
@@ -4978,7 +5662,7 @@
                 </div>
               </div>
 
-              <div data-r="side" style="width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
+              <div data-r="wcap side" style="width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
                 <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
                   <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3; align-self: flex-start;">HOW BUYERS SEE YOU</div>
                   <div style="width: 92px; height: 92px; border-radius: 50%; background: repeating-linear-gradient(135deg, #2E7256 0 6px, #276549 6px 12px); margin-top: 4px;"></div>
@@ -5031,7 +5715,7 @@
                   <div style="font-size: 14px; color: #3A4553; line-height: 1.9;">· Comfortable handling cash and giving change<br/>· Polite and patient with customers<br/>· Able to work Saturdays<br/>· Previous shop experience helps but is not required</div>
                 </div>
               </div>
-              <div data-r="side" style="width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 20px;">
+              <div data-r="wcap side" style="width: 360px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 20px;">
                 <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 12px;">
                   <div style="font-size: 15px; font-weight: 800; color: #16233A;">Apply for this job</div>
                   <div style="font-size: 12.5px; color: #8B94A3; line-height: 1.55;">Your name, village and phone number are shared with the employer.</div>
@@ -5088,7 +5772,7 @@
                   </div>
                 </div>
               </div>
-              <div data-r="side" style="width: 380px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 24px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 20px;">
+              <div data-r="wcap side" style="width: 380px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 24px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 20px;">
                 <div style="font-size: 16px; font-weight: 800; color: #16233A;">Choose a day</div>
                 <div style="display: flex; gap: 8px;">
                   <div onClick="{{ pickDay1 }}" style="{{ day1Style }}"><div style="font-size: 10px; font-weight: 700; opacity: 0.7;">TUE</div><div style="font-size: 17px; font-weight: 800;">2</div></div>
@@ -5153,7 +5837,7 @@
                   </div>
                 </div>
               </div>
-              <div data-r="side" style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
+              <div data-r="wcap side" style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px;">
                 <div style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 13px;">
                   <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">CONTACT</div>
                   <div style="font-size: 14px; font-weight: 600; color: #16233A;">+1 (664) 491-3040</div>
@@ -5215,7 +5899,7 @@
                   </div>
                 </div>
               </div>
-              <div data-r="side" style="width: 380px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 13px;">
+              <div data-r="wcap side" style="width: 380px; flex-shrink: 0; background: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 0 rgba(23,35,29,0.07); padding: 22px; display: flex; flex-direction: column; gap: 13px;">
                 <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #8B94A3;">CONTACT THE AGENCY</div>
                 <div style="font-size: 14px; font-weight: 600; color: #16233A;">+1 (664) 491-8080</div>
                 <div style="font-size: 13px; color: #7C8697;">Mon–Fri, 9am–4pm · viewings by appointment</div>
@@ -5228,7 +5912,7 @@
 
         <sc-if value="{{ deskSimpleOn }}" hint-placeholder-val="{{ false }}">
           <div style="display: flex; justify-content: center; padding: 60px 0;">
-            <div style="width: 520px; background: #FFFFFF; border-radius: 18px; padding: 44px; text-align: center; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
+            <div data-r="wcap" style="width: 520px; background: #FFFFFF; border-radius: 18px; padding: 44px; text-align: center; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
               <div style="font-size: 34px; margin-bottom: 12px;">{{ deskSimpleIcon }}</div>
               <div style="font-size: 20px; font-weight: 800; color: #17231D;">{{ deskSimpleTitle }}</div>
               <div style="font-size: 13.5px; color: #7C8697; line-height: 1.6; margin-top: 8px;">{{ deskSimpleBody }}</div>
@@ -5241,7 +5925,7 @@
         <sc-if value="{{ sellersOn }}" hint-placeholder-val="{{ true }}">
         <div data-r="stack" style="display: flex; gap: 32px;">
 
-        <div data-r="side" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
+        <div data-r="side fside" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
           <div style="background: #FFFFFF; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
             <div style="font-size: 14px; font-weight: 800; color: #17231D;">Category</div>
             <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #3A4553;">
@@ -5287,7 +5971,7 @@
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 18px;">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div data-r="toolbar" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; flex-direction: column; gap: 4px;">
               <div style="font-size: 22px; font-weight: 800; color: #17231D; letter-spacing: -0.01em;">What's new nearby</div>
               <div style="font-size: 13px; color: #7C8697;">412 listings from 186 neighbours</div>
@@ -5321,7 +6005,7 @@
         <sc-if value="{{ shopsOn }}" hint-placeholder-val="{{ false }}">
         <div data-r="stack" style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; gap: 32px;">
 
-        <div data-r="side" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
+        <div data-r="side fside" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
           <div style="background: #FFFFFF; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
             <div style="font-size: 14px; font-weight: 800; color: #17231D;">Category</div>
             <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #3A4553;">
@@ -5377,7 +6061,7 @@
         </sc-if>
         <sc-if value="{{ wantedOn }}" hint-placeholder-val="{{ false }}">
         <div data-r="stack" style="display: flex; gap: 32px;">
-        <div data-r="side" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
+        <div data-r="side fside" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
           <div style="background: #FFFFFF; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
             <div style="font-size: 14px; font-weight: 800; color: #17231D;">Category</div>
             <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #3A4553;">
@@ -5423,7 +6107,7 @@
         </sc-if>
         <sc-if value="{{ jobsOn }}" hint-placeholder-val="{{ false }}">
         <div data-r="stack" style="display: flex; gap: 32px;">
-        <div data-r="side" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
+        <div data-r="side fside" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
           <div style="background: #FFFFFF; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 0 rgba(23,35,29,0.07);">
             <div style="font-size: 14px; font-weight: 800; color: #17231D;">Job type</div>
             <div style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; color: #3A4553;">
@@ -5468,7 +6152,7 @@
         </sc-if>
         <sc-if value="{{ travelOn }}" hint-placeholder-val="{{ false }}">
         <div data-r="stack" style="display: flex; gap: 32px;">
-        <div data-r="side" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
+        <div data-r="side fside" style="width: 244px; flex-shrink: 0; display: flex; flex-direction: column; gap: 22px;">
           <div style="background: #16233A; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px;">
             <div style="width: 40px; height: 40px; border-radius: 10px; background: #F0B454; display: flex; align-items: center; justify-content: center; font-size: 18px;">✈️</div>
             <div style="color: #FFFFFF; font-size: 14.5px; font-weight: 800;">Fly here</div>
@@ -5546,10 +6230,10 @@
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M12 2a10 10 0 00-8.5 15.3L2 22l4.8-1.4A10 10 0 1012 2zm0 18a8 8 0 01-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1112 20zm4.4-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 01-3.2-2.8c-.1-.2 0-.3.1-.5l.6-.7c.1-.2.1-.3 0-.5l-.7-1.6c-.1-.3-.3-.3-.5-.3h-.5c-.2 0-.5.1-.7.4-.3.3-.9 1-.9 2.2 0 1.3.9 2.5 1 2.7.2.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5 0 1.6-.6 1.8-1.3.2-.6.2-1.2.2-1.3-.1-.2-.2-.2-.4-.3z"/></svg>
         </div>
       </div>
-      <div data-r="hdrwrap" style="background: #16233A; padding: 40px 44px 26px; margin-top: 64px;">
+      <div data-r="hdrwrap" style="background: #16233A; padding: 30px 44px 22px; margin-top: 48px;">
         <div data-r="frow" style="max-width: 1300px; margin: 0 auto; width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 48px;">
 
-          <div data-r="fbrand" style="flex: 1; min-width: 260px; max-width: 340px; display: flex; flex-direction: column; gap: 12px;">
+          <div data-r="wcap fbrand" style="flex: 1; min-width: 260px; max-width: 340px; display: flex; flex-direction: column; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 11px;">
               <div style="width: 34px; height: 34px; border-radius: 10px; background: #F0B454; position: relative;">
                 <div style="position: absolute; top: 8px; left: 9px; width: 8px; height: 8px; border-radius: 50%; background: #16233A;"></div>
@@ -5586,10 +6270,8 @@
 
           <div data-r="fcol" style="display: flex; flex-direction: column; gap: 9px; min-width: 150px;">
             <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.09em; color: rgba(230,238,249,0.42); margin-bottom: 2px;">FOR BUSINESSES</div>
-            <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Get your shop listed</div>
+            <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">List your business</div>
             <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Advertise with us</div>
-            <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Take bookings online</div>
-            <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Post a job</div>
           </div>
 
           <div data-r="fcol" style="display: flex; flex-direction: column; gap: 9px; min-width: 150px;">
@@ -5598,7 +6280,6 @@
             <div onClick="{{ openPolicies }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Refunds &amp; disputes</div>
             <div onClick="{{ openPolicies }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Terms of use</div>
             <div onClick="{{ openPolicies }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Privacy policy</div>
-            <div onClick="{{ openWhatsapp }}" style="font-size: 12.5px; color: rgba(230,238,249,0.78); cursor: pointer;" style-hover="color: #FFFFFF;">Report a problem</div>
           </div>
 
           <div data-r="fcol" style="display: flex; flex-direction: column; gap: 9px; min-width: 190px;">
@@ -5611,16 +6292,15 @@
               <svg width="18" height="18" viewBox="0 0 24 24"><path d="M3.6 2.4a1.4 1.4 0 00-.4 1v17.2a1.4 1.4 0 00.4 1l9.1-9.6z" fill="#34A853"/><path d="M16.3 15.5l-3.6-3.5 3.6-3.5 4.3 2.4c.9.5.9 1.7 0 2.2z" fill="#FBBC04"/><path d="M3.6 2.4l9.1 9.6 3.6-3.5L5.6 2.2a1.5 1.5 0 00-2 .2z" fill="#EA4335"/><path d="M3.6 21.6l9.1-9.6 3.6 3.5-10.7 6.3a1.5 1.5 0 01-2-.2z" fill="#4285F4"/></svg>
               <div style="flex: 1;"><div style="font-size: 8.5px; color: rgba(255,255,255,0.62); font-weight: 700; letter-spacing: 0.04em;">SOON ON</div><div style="font-size: 13.5px; color: #FFFFFF; font-weight: 600; letter-spacing: -0.01em;">Google Play</div></div>
             </div>
-            <div onClick="{{ openWhatsapp }}" style="font-size: 12px; color: rgba(230,238,249,0.62); line-height: 1.5; margin-top: 6px; cursor: pointer;">Support on WhatsApp<br/><span style="color: rgba(230,238,249,0.42);">Mon–Sat, 9am–5pm</span></div>
-            <div style="font-size: 12px; color: rgba(230,238,249,0.62); line-height: 1.5;">info@accessmni.com</div>
+            <div onClick="{{ openWhatsapp }}" style="font-size: 12px; color: rgba(230,238,249,0.62); line-height: 1.55; margin-top: 6px; cursor: pointer;">info@accessmni.com<br/><span style="color: rgba(230,238,249,0.42);">WhatsApp Mon–Sat, 9am–5pm</span></div>
           </div>
 
         </div>
-        <div style="max-width: 1300px; margin: 30px auto 0; width: 100%; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <div style="max-width: 1300px; margin: 22px auto 0; width: 100%; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
           <div style="font-size: 12px; color: rgba(230,238,249,0.5);">© 2026 Access MNI. All rights reserved.</div>
           <div style="font-size: 12px; color: rgba(230,238,249,0.3);">·</div>
           <div style="font-size: 12px; color: rgba(230,238,249,0.5);">Brades, Montserrat</div>
-          <div style="flex: 1;"></div>
+          <div data-r="spacer" style="flex: 1;"></div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <div style="font-size: 11px; color: rgba(230,238,249,0.42);">Payment partner</div>
             <div style="background: rgba(255,255,255,0.92); color: #16233A; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">Serra</div>
@@ -5645,7 +6325,12 @@ class Component extends DCLogic {
     const s = this.state;
     const hist = Array.isArray(s.hist) ? s.hist : [];
     const next = (s.screen && s.screen !== screen) ? [...hist, s.screen].slice(-20) : hist;
-    this.setState(Object.assign({ screen: screen, hist: next, notif: false, sortOpen: false, wantedGateOpen: false }, extra || {}));
+    // Every overlay/sheet closes on navigation — otherwise it stays pinned over the new screen.
+    const closeAll = { notif: false, sortOpen: false, wantedGateOpen: false, postPickOpen: false, deskAcct: false,
+      listingActionsOpen: false, confirmDeleteOpen: false, markSoldOpen: false, admRejectOpen: false,
+      reportOpen: false, blockOpen: false, shareOpen: false, reviewOpen: false, offlineOpen: false,
+      forgotOpen: false, qaOpen: false, aiAssistOpen: false, cartSummaryOpen: false };
+    this.setState(Object.assign({ screen: screen, hist: next }, closeAll, extra || {}));
   }
   goBack() {
     const hist = Array.isArray(this.state.hist) ? this.state.hist : [];
@@ -5741,6 +6426,7 @@ class Component extends DCLogic {
     return map[range] || map.month;
   }
   _admLbRows(kind) {
+    const tint = 'repeating-linear-gradient(135deg,#E4E1D6 0 7px,#DAD6C9 7px 14px)';
     const sets = {
       sellers: [
         { name: 'Denroy A.', sub: 'Look Out · 14 listings', value: 'EC$61,400' },
@@ -5761,7 +6447,7 @@ class Component extends DCLogic {
         { name: 'Home & Garden', sub: '29 live · 11 sold', value: '742' },
       ],
     };
-    return sets[kind] || sets.sellers;
+    return (sets[kind] || sets.sellers).map((r) => ({ ...r, bg: tint }));
   }
   _admSeg(on) {
     return on
@@ -5773,6 +6459,7 @@ class Component extends DCLogic {
       + (on ? 'background:#16233A;color:#FFFFFF;' : 'background:#FFFFFF;border:1px solid #E8E4D9;color:#3A4553;');
   }
   _obDot(on) { return 'width:' + (on ? '22px' : '7px') + ';height:7px;border-radius:4px;background:' + (on ? '#F0B454' : 'rgba(255,255,255,0.3)') + ';transition:width 0.2s'; }
+  _sellBar(on) { return 'flex: 1; height: 4px; border-radius: 2px; background: ' + (on ? '#0E3F80' : '#E4E1D6') + '; transition: background 0.2s'; }
   _payCard(on) { return 'background:#FFFFFF;border:' + (on ? '1.5px solid #0E3F80' : '1px solid #E8E4D9') + ';border-radius:14px;padding:12px 13px;display:flex;align-items:center;gap:12px;cursor:pointer'; }
   _payRadio(on) { return 'width:20px;height:20px;border-radius:50%;flex-shrink:0;border:' + (on ? '6px solid #0E3F80' : '2px solid #C6CDD9') + ';background:#FFFFFF'; }
   _shopVis(shopCat, cat) { return !shopCat || shopCat === 'all' || shopCat === cat; }
@@ -5808,7 +6495,7 @@ class Component extends DCLogic {
           "Ram's Supermarket": 'photo-1509440159596-0249088772ff',
           "Ashok's Supermarket": 'photo-1604719312566-8912e9227c6a',
           'Hilltop Coffee House': 'photo-1495474472287-4d71bcdd2085',
-          'M.S. Osborne Ltd': 'photo-1581147036324-c1c88bb6efd6',
+          'M.S. Osborne Ltd': 'photo-1587049352846-4a222e784d38',
           'BBC Radio & TV Ltd': 'photo-1504222490345-c075b6008014',
           'ESG Variety Ltd.': 'photo-1604719312566-8912e9227c6a',
           'Island Momentos': 'photo-1610701596007-11502861dcfa',
@@ -5960,11 +6647,11 @@ class Component extends DCLogic {
     const R = (window.__resources || {});
     return [
       { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#A8483A', img: R.imgVehicle || 'assets/listing-vehicle-suv.jpg', sponsored: true, price: 'EC$68,500', priceNum: 68500, title: 'Toyota Land Cruiser, 2018', seller: 'Courtney W.', location: 'Look Out', timeAgo: '1h', hoursAgo: 1, views: 41, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E' },
-      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgHome || 'assets/listing-dining-set.jpg', price: 'EC$2,200', priceNum: 2200, title: 'Dining table & 6 chairs', seller: 'Merle J.', location: 'Brades', timeAgo: '1d', hoursAgo: 24, views: 96, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E', urgency: 'MOVING SALE' },
+      { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgHome || 'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=400&h=300&fit=crop&auto=format', price: 'EC$2,200', priceNum: 2200, title: 'Dining table & 6 chairs', seller: 'Merle J.', location: 'Brades', timeAgo: '1d', hoursAgo: 24, views: 96, delivery: false, badgeText: 'PICKUP ONLY', badgeBg: '#FBF0DC', badgeColor: '#8A5B0E', urgency: 'MOVING SALE' },
       { cat: 'farm', catLabel: 'FARM & PRODUCE', catColor: '#2E7F8C', img: R.imgMango || 'assets/listing-mango-crate.jpg', price: 'EC$25', priceNum: 25, title: 'Fresh mango crate', seller: 'Kenrick B.', location: 'Cudjoe Head', timeAgo: '5h', hoursAgo: 5, views: 18, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
       { cat: 'home', catLabel: 'HOME & GARDEN', catColor: '#0E3F80', img: R.imgBed || 'assets/listing-bed-set.jpg', price: 'EC$3,800', priceNum: 3800, title: 'King bed set, solid wood', seller: 'Alvira R.', location: 'Salem', timeAgo: '3d', hoursAgo: 72, views: 112, delivery: true, badgeText: 'DELIVERY AVAIL.', badgeBg: '#E4EDF9', badgeColor: '#0E3F80' },
-      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgBed || 'assets/listing-bed-set.jpg', tag: 'FOR RENT', price: 'EC$1,500/mo', priceNum: 1500, title: 'Private room, Salem', seller: 'Marcus T.', location: 'Salem', timeAgo: '12h', hoursAgo: 12, views: 63, delivery: false },
-      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgYaris || 'assets/listing-yaris-hire.jpg', tag: 'FOR HIRE', price: 'EC$180/day', priceNum: 180, title: 'Toyota Yaris — car hire', seller: 'Janice R.', location: 'Brades', timeAgo: '2d', hoursAgo: 48, views: 29, delivery: false },
+      { cat: 'rentals', catLabel: 'REAL ESTATE', catColor: '#5B6FBA', img: R.imgRoom || 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&h=300&fit=crop&auto=format', tag: 'FOR RENT', price: 'EC$1,500/mo', priceNum: 1500, title: 'Private room, Salem', seller: 'Marcus T.', location: 'Salem', timeAgo: '12h', hoursAgo: 12, views: 63, delivery: false },
+      { cat: 'vehicles', catLabel: 'VEHICLES', catColor: '#5B6FBA', img: R.imgYaris || 'assets/listing-yaris-hire.jpg', tag: 'FOR HIRE', price: 'EC$180/day', priceNum: 180, title: 'Toyota Yaris — car hire', seller: 'Janice R.', location: 'Brades', timeAgo: '2d', hoursAgo: 48, views: 29, delivery: false },
     ];
   }
   _bg(u) { return "url('" + u + "') center/cover"; }
@@ -6062,7 +6749,7 @@ class Component extends DCLogic {
       savedGridStyle: s.savedListView ? 'display:flex;flex-direction:column;gap:10px' : 'display:grid;grid-template-columns:1fr 1fr;gap:12px',
       savedCardStyle: s.savedListView ? 'background:#FFFFFF;border:1px solid #E8E4D9;border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:row' : 'background:#FFFFFF;border:1px solid #E8E4D9;border-radius:16px;overflow:hidden;cursor:pointer',
       savedImgStyle: s.savedListView ? 'width:116px;height:auto;min-height:100px;' : '',
-      savedItems: this._savedItems(s.savedQuery, s.savedCat),
+      savedItems: this._savedItems(s.savedQuery, s.savedCat).map((i) => ({ ...i, bg: 'url("' + i.img + '")' })),
       savedTotal: this._savedData().length,
       savedNoResults: this._savedItems(s.savedQuery, s.savedCat).length === 0,
       isProfile: s.screen === 'profile', isCollect: s.screen === 'collect', isCart: s.screen === 'cart',
@@ -6198,9 +6885,9 @@ class Component extends DCLogic {
       openAdmReject: () => this.setState({ admRejectOpen: true }),
       closeAdmReject: () => this.setState({ admRejectOpen: false }),
       admQueue: [
-        { title: 'Toyota Hilux, 2016', detail: 'EC$42,000 · Vehicles · 8 photos', meta: 'Denroy A. · Look Out', age: '2 days', tag: 'LISTING', tagStyle: 'background:#E4EDF9;color:#0E3F80;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#DDE3EC 0 8px,#D3DAE6 8px 16px)' },
-        { title: 'Marcia J. — photo ID', detail: 'Driving licence · name matches', meta: 'Wants to sell', age: '1 day', tag: 'SELLER ID', tagStyle: 'background:#EDE7F6;color:#5B3FA8;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#E6E1D4 0 8px,#DED8C9 8px 16px)' },
-        { title: "Kari's Bake — Cake Fantasy Day", detail: 'Home slot · 3 days from Wed', meta: 'EC$150 paid', age: '1 day', tag: 'ADVERT', tagStyle: 'background:#FBF0DC;color:#8A5B0E;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#F2E4CB 0 8px,#EBDBBE 8px 16px)' },
+        { title: 'Toyota Hilux, 2016', detail: 'EC$42,000 · Vehicles · 8 photos', meta: 'Denroy A. · Look Out', age: '2 days', aiLabel: 'AI: CHECK', aiStyle: 'background:#F7E4E0;color:#A8483A;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;', aiReason: 'price above others in Vehicles', tag: 'LISTING', tagStyle: 'background:#E4EDF9;color:#0E3F80;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#DDE3EC 0 8px,#D3DAE6 8px 16px)' },
+        { title: 'Marcia J. — photo ID', detail: 'Driving licence · name matches', meta: 'Wants to sell', age: '1 day', aiLabel: 'AI: LOOKS OK', aiStyle: 'background:#E7F1EA;color:#1E6B49;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;', aiReason: 'name matches profile', tag: 'SELLER ID', tagStyle: 'background:#EDE7F6;color:#5B3FA8;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#E6E1D4 0 8px,#DED8C9 8px 16px)' },
+        { title: "Kari's Bake — Cake Fantasy Day", detail: 'Home slot · 3 days from Wed', meta: 'EC$150 paid', age: '1 day', aiLabel: 'AI: LOOKS OK', aiStyle: 'background:#E7F1EA;color:#1E6B49;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;white-space:nowrap;', aiReason: 'slot free, payment cleared', tag: 'ADVERT', tagStyle: 'background:#FBF0DC;color:#8A5B0E;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#F2E4CB 0 8px,#EBDBBE 8px 16px)' },
         { title: 'Room to rent, Salem', detail: 'EC$900/month · Real Estate', meta: 'Alvira R. · new seller', age: '6 hrs', tag: 'LISTING', tagStyle: 'background:#E4EDF9;color:#0E3F80;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;', thumb: 'repeating-linear-gradient(135deg,#DDE6DD 0 8px,#D2DDD3 8px 16px)' },
       ],
       admDeliv: this._admDelivFilter([
@@ -6248,6 +6935,7 @@ class Component extends DCLogic {
       planRadioPresence: this._payRadio((s.shopPlan || 'presence') === 'presence'),
       planRadioBookable: this._payRadio(s.shopPlan === 'bookable'),
       planPrice: s.shopPlan === 'bookable' ? 'EC$200' : 'EC$150',
+      planName: s.shopPlan === 'bookable' ? 'Bookable' : 'Presence',
       isBooking: s.screen === 'booking',
       openBooking: () => this.go('booking'),
       pickSvcInstall: () => this.setState({ svc: 'install' }),
@@ -6317,7 +7005,25 @@ class Component extends DCLogic {
       completeVerify: () => this.go('profile', { _verified: true  }),
       openLogin: () => this.go('login', { wantedGateOpen: false  }),
       stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
-      submitListing: () => this.go('pending'),
+      submitListing: () => this.go('pending', { pendingKind: 'listing' }),
+      submitWanted: () => this.go('pending', { pendingKind: 'wanted' }),
+      pendingTitle: s.pendingKind === 'wanted' ? 'Wanted ad submitted' : 'Submitted for review',
+      pendingBody: s.pendingKind === 'wanted'
+        ? "Your ask goes live once our team approves it — usually within a few hours. We'll let you know as soon as someone can help."
+        : 'Your listing goes live once our team approves it — usually within a few hours. We check photos and pricing to keep the marketplace trustworthy.',
+      sellStep1: (s.sellStep || 1) === 1,
+      sellStep2: s.sellStep === 2,
+      sellStep3: s.sellStep === 3,
+      sellStepNum: s.sellStep || 1,
+      sellStepTitle: ['Photos & category', 'Describe it', 'Delivery & review'][(s.sellStep || 1) - 1],
+      sellStepSub: ['start with a photo', 'the details buyers ask for', 'last step'][(s.sellStep || 1) - 1],
+      sellCta: ['Next — describe it', 'Next — delivery', 'Post listing — free'][(s.sellStep || 1) - 1],
+      sellBackGlyph: (s.sellStep || 1) === 1 ? '✕' : '‹',
+      sellBack: () => { const st = s.sellStep || 1; if (st === 1) this.go('home'); else this.setState({ sellStep: st - 1 }); },
+      sellNext: () => { const st = s.sellStep || 1; if (st === 3) this.go('pending', { sellStep: 1 }); else this.setState({ sellStep: st + 1 }); },
+      sellBar1: this._sellBar((s.sellStep || 1) >= 1),
+      sellBar2: this._sellBar((s.sellStep || 1) >= 2),
+      sellBar3: this._sellBar((s.sellStep || 1) >= 3),
       sellersOn: s.market === 'sellers', shopsOn: s.market === 'shops', wantedOn: s.market === 'wanted', travelOn: s.market === 'travel',
       segSellers: seg(s.market === 'sellers'), segShops: seg(s.market === 'shops'), segWanted: seg(s.market === 'wanted'),
       segSellersL: segL(s.market === 'sellers'), segShopsL: segL(s.market === 'shops'), segWantedL: segL(s.market === 'wanted'),
@@ -6595,6 +7301,8 @@ class Component extends DCLogic {
       deskCartOn: !s._deskDetail && !(s.searchQuery && s.searchQuery.trim()) && s.screen === 'cart',
       deskOrdersOn: !s._deskDetail && !(s.searchQuery && s.searchQuery.trim()) && (s.screen === 'orders' || s.screen === 'orderStatus'),
       deskProfileOn: !s._deskDetail && !(s.searchQuery && s.searchQuery.trim()) && s.screen === 'profile',
+      deskPostPickOn: !s._deskDetail && !(s.searchQuery && s.searchQuery.trim()) && s.screen === 'postPick',
+      openDeskPostPick: () => this.go('postPick'),
       deskSellOn: !s._deskDetail && !(s.searchQuery && s.searchQuery.trim()) && s.screen === 'sell',
       deskMsgTabM: this._msgTab((s.msgTab || 'messages') === 'messages'),
       deskMsgTabN: this._msgTab(s.msgTab === 'notifications'),
@@ -6636,11 +7344,16 @@ class Component extends DCLogic {
       deskShopCount: (() => { const n = this._deskShops(s.shopCat).length; return n + (n === 1 ? ' business' : ' businesses'); })(),
       deskShopsEmpty: this._deskShops(s.shopCat).length === 0,
       deskSimpleOn: !s._deskDetail && ['admin'].indexOf(s.screen) !== -1,
+      deskPostWantedOn: !s._deskDetail && s.screen === 'postWanted',
+      deskPostJobOn: !s._deskDetail && s.screen === 'postJob',
+      deskSetUpShopOn: !s._deskDetail && s.screen === 'setUpShop',
+      deskFallbackOn: !s._deskDetail && ['detail','jobSubmitted','offers','orderConfirmed','shopSubmitted','verify','pending'].indexOf(s.screen) !== -1,
+      deskFallbackTitle: ({ detail: 'Listing', jobSubmitted: 'Job submitted', offers: 'Your offers', orderConfirmed: 'Order confirmed', postWanted: 'Post a Wanted ask', shopSubmitted: 'Business page submitted', verify: 'Verify your identity', pending: 'Listing submitted', postJob: 'Post a job', setUpShop: 'Set up your business page' })[s.screen] || 'Access MNI',
       deskSimpleIcon: { collect: '📦', payments: '▭', settings: '⚙', policies: '🛡️', editProfile: '✎', admin: '▦', victor: '🛒', booking: '📅', jobDetail: '💼', realtyDetail: '🏠' }[s.screen] || '☺',
       deskSimpleTitle: { collect: 'Pickup & pay', payments: 'Payment methods', settings: 'Settings & account', policies: 'Help & policies', editProfile: 'Edit profile', admin: 'Admin tools', victor: "Victor's Supermarket", booking: 'Book an appointment', jobDetail: 'Job details', realtyDetail: 'Real estate agency' }[s.screen] || '',
       deskSimpleBody: 'Open this on the phone view to see the full screen — the web version of this page comes with the build.',
       openLogin: () => this.go('login'),
-      deskListOn: !s._deskDetail && !s._deskSub && !(s.searchQuery && s.searchQuery.trim()) && ['home','login','wantedGate','messages','thread','saved','profile','cart','collect','sell','orders','orderStatus','payments','settings','policies','editProfile','admin','victor','booking','jobDetail','realtyDetail','wantedDetail','yardDetail'].indexOf(s.screen) === -1 && !s.wantedGateOpen,
+      deskListOn: !s._deskDetail && !s._deskSub && !(s.searchQuery && s.searchQuery.trim()) && ['home','login','wantedGate','messages','thread','saved','profile','cart','collect','sell','orders','orderStatus','payments','settings','policies','editProfile','admin','victor','booking','jobDetail','realtyDetail','wantedDetail','yardDetail','postPick','detail','jobSubmitted','offers','orderConfirmed','postWanted','shopSubmitted','verify','pending','postJob','setUpShop'].indexOf(s.screen) === -1 && !s.wantedGateOpen,
       deskAcctOpen: !!s.deskAcct,
       deskToggleAcct: () => this.setState({ deskAcct: !s.deskAcct }),
       deskIsStaff: true,
@@ -6689,8 +7402,13 @@ class Component extends DCLogic {
       toggleQA: () => this.setState({ qaOpen: !s.qaOpen }),
       closeWantedGate: () => this.setState({ wantedGateOpen: false }),
       wantedGateOpen: !!s.wantedGateOpen && s.screen !== 'login',
-      openAiAssist: () => this.setState({ aiAssistOpen: true }),
-      closeAiAssist: () => this.setState({ aiAssistOpen: false }),
+      openAiAssist: () => this.setState({ aiAssistOpen: true, aiStep: 'input' }),
+      closeAiAssist: () => this.setState({ aiAssistOpen: false, aiStep: 'input' }),
+      aiStepInput: (s.aiStep || 'input') === 'input',
+      aiStepResult: s.aiStep === 'result',
+      aiRun: () => this.setState({ aiStep: 'result' }),
+      aiRetry: () => this.setState({ aiStep: 'input' }),
+      aiAccept: () => this.setState({ aiAssistOpen: false, aiStep: 'input' }),
       aiAssistOpen: !!s.aiAssistOpen,
       stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
       openCart: () => this.go('cart'), openSell: () => this.go('sell'), openSaved: () => this.go('saved'),
@@ -7009,7 +7727,7 @@ class Component extends DCLogic {
     '}',
 
     /* An iPhone SE is 320px wide. The badge cluster — message, wishlist, cart,
-       avatar, "+ Sell an item" — carries flex-shrink: 0 and a 20px gap, an
+       avatar, "+ Post an ad" — carries flex-shrink: 0 and a 20px gap, an
        intrinsic 344px that the design's narrow rules never touch. It overflows
        by exactly (360 - viewport width)px down to 320, where it runs 40px past
        the edge. Tightening the gap to 8px reclaims 48px, which is enough at

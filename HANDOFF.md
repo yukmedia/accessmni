@@ -179,12 +179,10 @@ listings match …"*, but it was wired to `searchNoResults`, true only when noth
 **anywhere** in the app matched — so a query hitting a shop or a job but no
 listing (*nails*, *villa*, *flight*) showed neither cards nor a message.
 
-Two things worth fixing in Claude Design rather than here:
-
-- `searchResults` should exist in the design, so this patch can go away.
-- The heading counts across the whole app while the grid below it shows listings
-  only, so *salem* reads "8 results" above two cards. Either scope the count to
-  listings or give the grid the other groups.
+Both things worth fixing in Claude Design have been: `searchResults` exists, and
+the heading no longer over-counts. It used to count across the whole app while
+the grid below showed listings only, so *salem* read "8 results" above two
+cards; the two now agree at every query tested.
 
 ### Photos
 
@@ -192,9 +190,9 @@ A handoff bundle references remote Unsplash URLs, so those pages need a
 connection for imagery. A Standalone export inlines the photos instead and works
 offline. If image reliability matters more than freshness, prefer an export.
 
-**Nine photo slots are dead upstream** and are substituted at build time — the
-vehicle gallery, the dining set, the mango crate, the bed set and the Yaris
-hire. The design marks them itself:
+**Seven photo slots are dead upstream** and are substituted at build time — the
+vehicle gallery, the mango crate, the bed set and the Yaris hire. The design
+marks them itself:
 
 ```html
 <meta name="ext-resource-dependency" id="imgVehicle" content="https://images.unsplash.com/…">
@@ -212,7 +210,9 @@ in full, and `u('photo-…')`, the helper the listing data uses. The build then
 refuses to write a page that still contains a dead ID or references a missing
 `assets/` file — so this fails loudly rather than shipping a broken image. If a
 future design revision fixes the URLs upstream, nothing matches and nothing
-fires.
+fires — which is what happened to the dining set. That slot now points at a
+different photo, so its `DEAD_PHOTOS` entry matches nothing. Entry and image are
+both kept, as a guard in case the old URL comes back.
 
 ## Never commit these
 

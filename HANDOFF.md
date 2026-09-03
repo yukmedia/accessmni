@@ -11,7 +11,7 @@ The Access MNI demo, served by GitHub Pages from `docs/`:
 | `https://yukmedia.github.io/accessmni/` | web app, fills the browser |
 | `https://yukmedia.github.io/accessmni/phone.html` | phone app, fills a handset |
 | `https://yukmedia.github.io/accessmni/phone-and-web.html` | both, as the design draws them |
-| `https://yukmedia.github.io/accessmni/admin.html` | admin dashboard |
+| `https://yukmedia.github.io/accessmni/admin.html` | admin dashboard — loaded *inside* the web app (avatar chevron → Admin tools), not a link to hand out |
 
 Push to `main` and Pages redeploys itself. **Don't rename these files** — the
 phone link has been shared, so the paths need to stay put.

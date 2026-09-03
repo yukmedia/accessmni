@@ -16,14 +16,19 @@ app/     the source — see app/README.md
 docs/    the built demo, served by GitHub Pages
 ```
 
-Four pages are published:
+Two pages are worth sending anyone:
 
 | Page | What it is |
 |---|---|
 | `index.html` | the web app — responsive, desktop down to phone |
 | `phone.html` | the phone app — fills the screen on a real phone |
-| `phone-and-web.html` | both side by side, sharing one state |
-| `admin.html` | the admin dashboard |
+
+Two more are published as moving parts rather than destinations:
+
+| Page | What it is |
+|---|---|
+| `admin.html` | the admin dashboard — **reached from inside the web app**, avatar chevron → Admin tools. Published because the app loads it in an iframe; on its own it has no way back to the marketplace. |
+| `phone-and-web.html` | both mocks side by side, as the design draws them |
 
 ## Building
 

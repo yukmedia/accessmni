@@ -184,6 +184,48 @@ the heading no longer over-counts. It used to count across the whole app while
 the grid below showed listings only, so *salem* read "8 results" above two
 cards; the two now agree at every query tested.
 
+### The admin dashboard had no responsive system at all
+
+`admin.html` comes from a **different design file**, and where the marketplace
+design is responsive and merely under-marked, this one is a fixed artboard: a
+1440×940 flex board with `overflow: hidden`, a 232px sidebar beside a scrolling
+content column, and **not one `data-r` marker in 100 KB**.
+
+On a phone that meant the sidebar took 60% of the screen and the content was a
+sliver. The page did scroll sideways to 1440, but the sidebar is not pinned, so
+scrolling right just panned a desktop board — every column of a six-column
+moderation table was out there somewhere.
+
+`ADMIN_RESPONSIVE` in `dc-transform.js` is therefore a responsive layer written
+from scratch rather than gaps filled in an existing one, and it is the one place
+in this repo making layout decisions the design does not state. Three worth
+knowing, all at a 900px breakpoint:
+
+- **The sidebar becomes a horizontally scrolling strip**, not a stack. Fourteen
+  links and three section headings stacked would be ~700px of navigation before
+  any content — the same complaint the footer drew. The section headings stay:
+  as inline separators they still say which links are owner-only.
+- **Dense tables scroll sideways inside their own card**, with a slim scrollbar
+  re-enabled because the design's head CSS hides every scrollbar in the file and
+  a scroll area with no affordance reads as a clipped table. A six-column
+  moderation queue does not become a phone screen by narrowing — the columns are
+  the content, and squeezing them produces the one-character-per-line collapse
+  seen elsewhere here.
+- **The board's inner scroll region is released** so the page itself scrolls
+  rather than trapping a 940px box inside a 700px screen. For the same reason
+  the iframe that loads the panel inside the web app drops from its 940px
+  artboard height to `82vh` below 900px.
+
+Grid templates are **enumerated**, not pattern-matched, because CSS cannot ask
+"contains a px track". Every `grid-template-columns` in the file is listed —
+fr-only ones collapse to two columns and then one, the seven carrying a px track
+get a `min-width` floor and a scrolling card. A template the design adds later
+simply keeps today's behaviour until it is listed too, which is a visible
+regression rather than a silent one.
+
+All of it belongs in the design. It is here because the demo has to work on the
+phone the client is holding.
+
 ### Photos
 
 A handoff bundle references remote Unsplash URLs, so those pages need a

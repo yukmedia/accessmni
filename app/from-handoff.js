@@ -295,12 +295,17 @@ function resolveImports(html) {
       const slug = /admin/i.test(name) ? 'admin' : name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       // The design's hint-size is the panel's desktop size, not a fixed width:
       // pinned at 1440 the frame hangs 1050px off the side of a phone. It fills
-      // whatever it is given and stops at the design's width; the admin is a
-      // desktop tool, so on a narrow screen it scrolls inside its own frame
-      // rather than dragging the page sideways with it.
+      // whatever it is given and stops at the design's width.
+      //
+      // The height has to bend too. 940px is the artboard, and on a handset
+      // that is a box taller than the screen holding a page that also scrolls
+      // — you lose track of which one you are moving. Below the admin's own
+      // breakpoint it becomes 82vh, so the panel is a region that fits the
+      // screen with the app still visible around it.
       return '<iframe src="./' + slug + '.html" title="' + name
         + '" style="width: 100%; max-width: 1440px; height: 940px; border: 0;'
-        + ' display: block; background: #FBF8F1;"></iframe>';
+        + ' display: block; background: #FBF8F1;"'
+        + ' data-r-frame="admin"></iframe>';
     }
   );
 }
@@ -329,9 +334,9 @@ write('index.html', main, T.WEB);
 write('phone-and-web.html', main, T.BOTH);
 
 if (adminFile) {
-  // The admin design is a full-width dashboard with no phone frame, so it is
-  // published as-is beyond the shared head fixes.
-  write('admin.html', fs.readFileSync(path.join(srcDir, adminFile), 'utf8'), null);
+  // A full-width dashboard with no phone frame, so there is nothing to trim —
+  // T.ADMIN adds the responsive layer the design does not carry and nothing else.
+  write('admin.html', fs.readFileSync(path.join(srcDir, adminFile), 'utf8'), T.ADMIN);
 }
 
 console.log('  docs/support.js, docs/image-slot.js, docs/vendor/react*.js');

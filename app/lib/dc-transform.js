@@ -287,6 +287,172 @@ const FINDERS = `
     '}'
   ].join('\\n');
 
+  /* The admin dashboard is a different design file, and unlike the marketplace
+     it has no responsive system at all — not one data-r marker in 100 KB. It is
+     a fixed artboard: a 1440x940 flex board, overflow: hidden, holding a 232px
+     sidebar beside a scrolling content column.
+
+     On a phone that means the sidebar takes 60% of the screen and the content
+     is a sliver. The page does scroll sideways to 1440, but the sidebar is not
+     pinned, so scrolling right just pans a desktop board — every column of a
+     six-column moderation table is out there somewhere.
+
+     So this is a responsive layer written from scratch rather than gaps filled
+     in an existing one, and it is the one place here making layout decisions
+     the design does not state. Three worth knowing:
+
+     - The sidebar becomes a horizontally scrolling strip rather than stacking.
+       Fourteen links and three section headings stacked would be ~700px of
+       navigation before any content — the same complaint the footer drew.
+     - The dense tables scroll sideways inside their own card. A six-column
+       moderation queue does not become a phone screen by narrowing; the
+       columns are the content. Squeezing them is what produces the
+       one-character-per-line collapse seen elsewhere in this file.
+     - The board's inner scroll region is released so the page itself scrolls,
+       rather than trapping a 940px box inside a 700px screen.
+
+     All of it belongs in the design. It is here because the demo has to work on
+     the phone the client is holding. */
+  var ADMIN_RESPONSIVE = [
+    '@media (max-width: 900px) {',
+    /* The board itself: stop being a 1440x940 artboard. */
+    '  html [style*="width: 1440px"][style*="height: 940px"] {',
+    '    width: 100% !important; height: auto !important;',
+    '    min-height: 100vh !important; flex-direction: column !important;',
+    '    overflow: visible !important;',
+    '    border-radius: 0 !important; box-shadow: none !important;',
+    '  }',
+    /* Sidebar -> a full-width band at the top. */
+    '  html [style*="width: 232px"][style*="flex-shrink: 0"] {',
+    '    width: 100% !important; flex-shrink: 1 !important;',
+    '    padding: 12px 0 0 !important;',
+    '  }',
+    /* Its link list -> one scrolling row. The section headings stay: as inline
+       separators they still say which links are owner-only, and dropping them
+       would be losing information to save 40px. */
+    '  html [style*="width: 232px"] [style*="overflow-y: auto"] {',
+    '    flex: 0 0 auto !important;',
+    '    display: flex !important; flex-direction: row !important;',
+    '    align-items: center !important; gap: 2px !important;',
+    '    overflow-x: auto !important; overflow-y: hidden !important;',
+    '    padding: 0 10px 8px !important;',
+    '  }',
+    '  html [style*="width: 232px"] [style*="overflow-y: auto"] > * {',
+    '    flex-shrink: 0 !important; white-space: nowrap !important;',
+    '    margin: 0 !important;',
+    '  }',
+    /* The topbar is a fixed 62px row of title, date and actions. */
+    '  html [style*="height: 62px"][style*="flex-shrink: 0"] {',
+    '    height: auto !important; min-height: 62px !important;',
+    '    flex-wrap: wrap !important; row-gap: 8px !important;',
+    '    padding: 12px 14px !important;',
+    '  }',
+    /* Release the inner scroller so the page scrolls, not a box inside it. */
+    '  html [style*="overflow-y: auto"][style*="padding: 22px 24px 30px"] {',
+    '    overflow-y: visible !important; min-height: 0 !important;',
+    '    padding: 16px 14px 28px !important;',
+    '  }',
+    /* Stat and summary rows. Every fr-only grid in the file is listed; the
+       ones carrying a px track are tables and are handled separately below. */
+    '  html [style*="grid-template-columns: repeat(4, 1fr)"],',
+    '  html [style*="grid-template-columns: repeat(7, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.25fr 1fr 1fr 1fr"] {',
+    '    grid-template-columns: repeat(2, 1fr) !important;',
+    '  }',
+    '  html [style*="grid-template-columns: repeat(3, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.35fr 1fr"] {',
+    '    grid-template-columns: 1fr !important;',
+    '  }',
+
+    /* Everything below is scoped to the scrolling content region — the sidebar
+       strip and the table cards manage their own overflow and must not wrap.
+       The region is identified by the padding the design gives it; this rule
+       block overrides that padding above, but [style*=] reads the attribute,
+       which still says what the design wrote. */
+
+    /* Screen toolbars — the date range on the dashboard, the sort and filter
+       chips on Approvals and Users — are plain flex rows, so their last chip
+       hangs off the edge: 16px on the dashboard, 40 on Approvals, 73 on Users.
+       Matched as a direct child of a content stack, whatever that stack's gap,
+       so all three are one rule. */
+    '  html [style*="padding: 22px 24px 30px"] [style*="flex-direction: column"]',
+    '    > [style*="display: flex"][style*="align-items: center"][style*="gap: 8px"] {',
+    '    flex-wrap: wrap !important; row-gap: 8px !important;',
+    '  }',
+
+    /* The queue and report rows are a thumbnail, a text column, and a cluster
+       of action buttons. The text column is flex: 1 1 0% with an explicit
+       min-width: 0px, and the button cluster does not shrink — so at 390 the
+       cluster keeps its 225px and the text is left with fifteen. "Denroy A. ·
+       verified seller · Look Out" then renders 43px wide and 112px tall.
+
+       Where the design adds min-width: 0px it is defeating the min-content
+       floor on purpose, which is right on a desktop row and fatal here, so a
+       real floor goes back. The floor is also what makes the row wrap: flex
+       decides on hypothetical main size, which is 0 for a flex: 1 1 0% item,
+       so without it the algorithm always believes everything fits on one line
+       no matter how little room is left. With 150px it does not, and the button
+       cluster drops to its own line instead of the text collapsing.
+
+       Matched on flex: 1 1 0% alone rather than on that pairing — the activity
+       log's rows carry no min-width and collapsed the same way. Spacer divs are
+       written flex: 1 and serialise as written, so they keep their zero floor
+       and go on doing their job.
+
+       150px clears the narrowest case — 320px screen, less content padding,
+       card border, row padding and a 62px thumbnail, leaves 184. */
+    '  html [style*="padding: 22px 24px 30px"] [style*="flex: 1 1 0%"] {',
+    '    min-width: 150px !important;',
+    '  }',
+    // :has() stays welded to its subject — a line break here would turn it
+    // into a descendant combinator and match the wrong element.
+    '  html [style*="padding: 22px 24px 30px"] [style*="display: flex"]:has(> [style*="flex: 1 1 0%"]) {',
+    '    flex-wrap: wrap !important; row-gap: 10px !important;',
+    '  }',
+    '}',
+
+    /* Below 560 even two-up stat tiles start letter-columning their labels. */
+    '@media (max-width: 560px) {',
+    '  html [style*="grid-template-columns: repeat(4, 1fr)"],',
+    '  html [style*="grid-template-columns: repeat(7, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.25fr 1fr 1fr 1fr"],',
+    '  html [style*="grid-template-columns: 1fr 1fr"] {',
+    '    grid-template-columns: 1fr !important;',
+    '  }',
+    '}',
+
+    /* The tables. Every row of a table is its own grid, so the card holding
+       them is the scroller and the rows carry the floor — set on the rows
+       rather than the card so the card's own heading and footer stay put.
+
+       Enumerated rather than matched on "contains px", which CSS cannot ask.
+       Seven shapes across the admin screens; a template the design adds later
+       simply keeps today's behaviour until it is listed here. */
+    '@media (max-width: 900px) {',
+    '  html [style*="grid-template-columns: 28px 1.6fr 1fr 1fr 1fr"],',
+    '  html [style*="grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px"],',
+    '  html [style*="grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px"],',
+    '  html [style*="grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px"],',
+    '  html [style*="grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px"],',
+    '  html [style*="grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px"],',
+    '  html [style*="grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px"] {',
+    '    min-width: 680px !important;',
+    '  }',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]) {',
+    '    overflow-x: auto !important;',
+    '  }',
+    /* The design hides every scrollbar in its own head CSS, which is fine when
+       nothing scrolls sideways. Now something does, and a scroll area with no
+       affordance reads as a clipped table. Give the table cards a slim one. */
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar {',
+    '    height: 6px !important; display: block !important;',
+    '  }',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar-thumb {',
+    '    background: rgba(16,22,33,0.22) !important; border-radius: 3px !important;',
+    '  }',
+    '}'
+  ].join('\\n');
+
   var PHONE_FILL = [
     '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
     '  #emPhoneFrame {',
@@ -474,8 +640,22 @@ const WEB = wrapRuntime(`
       '  overflow: visible !important;',
       '}',
       STICKY_HEADER,
-      PHONE_WIDTH_FIXES
+      PHONE_WIDTH_FIXES,
+      /* The admin panel is loaded in an iframe at its 940px artboard height.
+         On a handset that is a box taller than the screen holding a page that
+         scrolls as well, and the two are indistinguishable under a thumb.
+         Matched to the admin's own 900px breakpoint. */
+      '@media (max-width: 900px) {',
+      '  html #webAppScaleBox iframe[data-r-frame="admin"] { height: 82vh !important; }',
+      '}'
     ].join('\\n'));
+    return true;
+`);
+
+/* The admin dashboard. Nothing to trim — it is a single artboard with no phone
+   mock beside it — so this adds the responsive layer and nothing else. */
+const ADMIN = wrapRuntime(`
+    addCss('emAdminCss', ADMIN_RESPONSIVE);
     return true;
 `);
 
@@ -487,4 +667,4 @@ const BOTH = wrapRuntime(`
     return true;
 `);
 
-module.exports = { META, PHONE, WEB, BOTH, wrapRuntime, patchWebBreakpoints };
+module.exports = { META, PHONE, WEB, BOTH, ADMIN, wrapRuntime, patchWebBreakpoints };

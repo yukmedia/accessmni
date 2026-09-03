@@ -1310,5 +1310,485 @@ class Component extends DCLogic {
   }
 }
 </script>
+
+<script>
+(function () {
+  'use strict';
+
+  function findPhone() {
+    var divs = document.querySelectorAll('section div');
+    for (var i = 0; i < divs.length; i++) {
+      var st = divs[i].getAttribute('style') || '';
+      if (/width:\s*390px/.test(st) && /height:\s*844px/.test(st)) return divs[i];
+    }
+    return null;
+  }
+  function webBox() { return document.getElementById('webAppScaleBox'); }
+  // The caption and the mock share a parent; hiding it removes both.
+  function webWrap() {
+    var b = webBox();
+    return b && b.parentElement ? b.parentElement.parentElement : null;
+  }
+  function stage(el) { return el && el.closest ? el.closest('section') : null; }
+  function addCss(id, css) {
+    if (document.getElementById(id)) return;
+    var s = document.createElement('style');
+    s.id = id; s.textContent = css;
+    document.head.appendChild(s);
+  }
+  var NO_SCROLLBARS =
+    '* { scrollbar-width: none; -ms-overflow-style: none; }' +
+    '*::-webkit-scrollbar { display: none; width: 0; height: 0; }';
+
+  /* Filling a real handset takes overriding the zoom as well as the size:
+     _fitShells() scales the phone shell by (viewport - padding) / 390 so it
+     sits inside the canvas with a margin, which on an actual phone leaves the
+     app letterboxed — 366px of app in a 390px window. */
+  /* The design's fluid rules cover the marked rows — anything carrying
+     data-r="stack", "hdr", "nav", "g3".. — but the home hero is not marked, so
+     at 390px its two columns hold at 140px each. With 24px of padding a side,
+     that leaves about ten pixels for a button label, and the shell's
+     overflow-wrap:anywhere then breaks it one character per line: "Browse
+     Market" rendered 62px wide and 220px tall.
+
+     These rules stack that row and bring its desktop-sized padding and display
+     type down to phone scale. They are matched on inline style the way the
+     design's own narrow rules are, so they travel with it. The nowrap guard is
+     unconditional: a button label broken mid-word is never the right answer at
+     any width, and it is what makes this failure so ugly rather than merely
+     tight. */
+  /* The site header has never been sticky — it is position:static in the
+     design and scrolls away, as it did in every build before this one. Pinning
+     it is the one thing here that changes how the product behaves rather than
+     how it fits, so it is kept separate and belongs upstream in the design.
+
+     Two elements carry data-r="hdrwrap": the navy header and the dark footer
+     (padding: 40px 44px 26px). They are told apart by padding rather than
+     colour, because the runtime rewrites inline colours to rgb(). It also
+     normalises lengths — "0 44px" is re-serialised as "0px 44px" — so both
+     spellings are matched. Desktop only: the phone header stacks to roughly
+     270px tall, and pinning that would eat the screen. */
+  var STICKY_HEADER = [
+    '@media (min-width: 760px) {',
+    '  html #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0 44px"],',
+    '  html #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0px 44px"] {',
+    '    position: sticky !important; top: 0 !important; z-index: 40 !important;',
+    '  }',
+    '}'
+  ].join('\n');
+
+  var PHONE_WIDTH_FIXES = [
+    'html #webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
+    '@media (max-width: 700px) {',
+    /* The home hero, and the "Selling is free to list" band — matched on the
+       padding that identifies each, since neither carries a data-r marker.
+
+       These four rules were written before the re-render race below was
+       understood, and shipped without the html prefix — so they tied the
+       design's own specificity rather than beating it, and lost after the
+       first re-render. Proven at 320px: the hero's text column measured 252px
+       (its unmodified content width) instead of the 288px width:100% should
+       have forced. Every rule in this block now carries the prefix. */
+    '  html #webAppScaleBox [style*="padding: 44px 46px"],',
+    '  html #webAppScaleBox [style*="padding: 32px 36px"] {',
+    '    flex-direction: column !important; align-items: stretch !important;',
+    '    padding: 24px 18px !important; gap: 18px !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] > *,',
+    '  html #webAppScaleBox [style*="padding: 32px 36px"] > * {',
+    // border-box or a padded child at width:100% overflows by its own padding,
+    // which is why the design's stack rule sets it too.
+    '    box-sizing: border-box !important;',
+    '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] [style*="display: flex; gap: 12px"] {',
+    // The two hero buttons keep display:flex inside the now-full-width text
+    // column, so they still sit side by side rather than stacking with it.
+    '    flex-wrap: wrap !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
+
+    /* The footer is the worst offender at phone width. The design's narrow rule
+       gives every column flex-basis:100%, so five stacked blocks run it from
+       335px to 976px — nearly three screenfuls of links under a 6400px page.
+       Two-up for the four link columns (the brand block keeps its full width)
+       and phone-scale padding bring it back under 600.
+
+       The header is the same problem, smaller: desktop gaps and padding wrap it
+       into four rows, 262px of a 844px screen before any content.
+
+       Each is prefixed with html so it outranks the design's own rule on the
+       same element rather than merely tying with it. Source order cannot settle
+       a tie here: the runtime re-inserts its stylesheet on every render, which
+       lands after this one, so an equal-specificity override wins until the
+       first re-render and then quietly stops. */
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="hdr"] {',
+    '    gap: 12px !important; padding: 12px 0 !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="frow"] { gap: 22px 14px !important; }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="fcol"] {',
+    '    flex-basis: calc(50% - 7px) !important; max-width: calc(50% - 7px) !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow="1"] [data-r="hdrwrap"][style*="margin-top: 64px"] {',
+    '    margin-top: 28px !important; padding: 26px 16px 20px !important;',
+    '  }',
+
+    /* The detail pages — a listing, a job, a shop — are built on a two-column
+       shell that carries no data-r marker either, so it never collapses. At
+       390px it splits into a 194px main column and a 130px sidebar, and every
+       row inside starves: the job title "Cashier, part-time" came out 62px wide
+       and 140px tall.
+
+       gap: 34px identifies it. Five elements in the design use that gap: the
+       three detail shells, one more two-column row, and one that is already a
+       column and so unaffected by these rules. */
+    '  html #webAppScaleBox [style*="gap: 34px"] {',
+    '    flex-direction: column !important; align-items: stretch !important;',
+    '    gap: 20px !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="gap: 34px"] > * {',
+    '    box-sizing: border-box !important;',
+    '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
+
+    /* Sidebars are declared 260-380px wide with flex-shrink: 0. The design
+       releases them, but only where they sit directly inside a data-r="stack"
+       row — so the ones on the detail and pickup screens keep a fixed width and
+       hang off the edge of a small handset. Released wherever they appear. */
+    '  html #webAppScaleBox[data-narrow] [data-r~="side"] {',
+    '    box-sizing: border-box !important; position: static !important;',
+    '    width: 100% !important; max-width: 100% !important;',
+    '    min-width: 0 !important; flex-shrink: 1 !important;',
+    '  }',
+
+    /* The account menu is position: absolute; right: 0, anchored to the avatar
+       itself. On a desktop header the avatar is the last thing before the right
+       edge, so a 246px menu hanging left of it lands on screen. Once the header
+       wraps, the avatar moves inboard — its right edge falls to 208px at 390 and
+       181px at 320 — and the menu goes off the left of the screen with it: 8px
+       at 430, 38px at 390, 65px at 320, clipping the name, "Your profile" and
+       "Log out" to half-letters.
+
+       The anchor is the bug, not the offset. The badge cluster it sits in is
+       tagged data-r="hdrpush" and its right edge *is* the header's content edge
+       at every width, so the menu is re-anchored to that: right: 0 now means the
+       right of the header rather than the right of a 48px avatar. Releasing the
+       avatar wrapper's own position: relative is what hands the menu up to it.
+
+       :has() picks the one cluster holding the account control — the marker is
+       used twice — and keeps top: 42px meaningful, since the cluster and the
+       avatar share a top edge to within a few pixels. */
+    '  html #webAppScaleBox[data-narrow] [data-r="hdrpush"]:has(> [style*="gap: 9px"]) {',
+    '    position: relative !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="hdrpush"] > [style*="gap: 9px"] {',
+    '    position: static !important;',
+    '  }',
+    '}',
+
+    /* An iPhone SE is 320px wide. The badge cluster — message, wishlist, cart,
+       avatar, "+ Post an ad" — carries flex-shrink: 0 and a 20px gap, an
+       intrinsic 344px that the design's narrow rules never touch. It overflows
+       by exactly (360 - viewport width)px down to 320, where it runs 40px past
+       the edge. Tightening the gap to 8px reclaims 48px, which is enough at
+       every width down to 320; wrapping hdr's own children means the cluster
+       drops to its own line rather than fighting the logo for room.
+
+       Matched on the full inline style rather than one property, since only
+       "gap: 20px" would also catch other rows the design already handles. */
+    '@media (max-width: 360px) {',
+    '  html #webAppScaleBox[data-narrow] [data-r="hdr"] { flex-wrap: wrap !important; }',
+    /* The detail pages' title row — icon, heading, a status pill — is exactly
+       as wide as its content wants to be at 320px: a 58px icon plus a pill like
+       "PART-TIME" leaves the heading 64px, and it letter-columns.
+
+       flex-wrap alone does not fix this: the heading is flex: 1 1 0%, so its
+       hypothetical main size for the wrap decision is 0 by definition — the
+       algorithm always finds room on one line and never triggers a wrap, no
+       matter how little space is left, and the shell's overflow-wrap: anywhere
+       lets even a single character count as a valid line, so the usual
+       min-width:auto safety net (a flex item won't shrink below its content)
+       never engages either. A real floor is what forces the decision: below
+       120px the heading no longer fits beside the icon, so it wraps, taking
+       the pill down to its own line rather than the heading down to letters. */
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
+    '    flex-wrap: wrap !important; row-gap: 6px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
+    '    min-width: 120px !important;',
+    '  }',
+
+    /* The same shape recurs everywhere a fixed-size thumbnail sits beside
+       growing text — order items, profile rows, the shops list: a 62-96px
+       image, flex-shrink: 0, next to a flex: 1 name-and-price column. At
+       320px the pickup screen's "Cinnamon rolls (box of 4)" collapsed to a
+       46px letter column the same way the job title did, for the same
+       reason — flex: 1 1 0% never triggers a wrap on its own. Ten rows in
+       the design share this exact thumbnail-plus-text opening; all ten get
+       the same floor. */
+    '  html #webAppScaleBox[data-narrow] [style*="display: flex; align-items: center; gap: 16px"] > [style*="flex: 1 1 0%"],',
+    '  html #webAppScaleBox[data-narrow] [style*="display: flex; align-items: center; gap: 16px"] > [style="flex: 1;"] {',
+    '    min-width: 110px !important;',
+    '  }',
+    /* The five home-screen quick-nav tiles (Market/Wanted/Jobs/Shops/Travel)
+       pair a declared 44x44 icon with a text label in one flex row, and the
+       icon has no flex-shrink override — so once the design's own rule drops
+       the row to two columns at 320px, the cell has 96px of content room for
+       icon + gap + label, the label wins the fight, and the icon shrinks to
+       28-33px, non-square. A fixed-size icon should never be the thing that
+       gives; pin it and let the row do what a text label does at the edge —
+       wrap or truncate — instead of visibly deforming the icon. */
+    '  html #webAppScaleBox[data-narrow] [style*="width: 44px; height: 44px; border-radius: 12px"],',
+    // The round, unphotographed-seller placeholder (a hatched circle) squeezes
+    // the same way — same fix, different border-radius.
+    '  html #webAppScaleBox[data-narrow] [style*="width: 44px; height: 44px; border-radius: 50%"] {',
+    '    flex-shrink: 0 !important;',
+    '  }',
+    /* The listing map preview is a fake map graphic with a pin glued on by
+       raw pixel position — left: 280px, calibrated for the roughly 424px map
+       the desktop layout draws. The map itself already shrinks to full width
+       under the responsive treatment above; the pin's absolute left does not
+       scale with it, so at 320px it sits 12px past a container that is now
+       288px, not 424. Anchoring it to the right edge instead keeps it inside
+       the map at any width the container actually reaches — a small, safe
+       change matched by "left: 280px", unique to this one marker. */
+    '  html #webAppScaleBox[data-narrow] [style*="left: 280px"] {',
+    '    left: auto !important; right: 8px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [style*="margin-left: auto; display: flex; align-items: center; gap: 20px; flex-shrink: 0;"] {',
+    '    gap: 8px !important;',
+    '  }',
+    '}',
+
+    /* The pickup screen's QR code is drawn as a 5x5 grid of 18px squares, and
+       it is tagged data-r="g5" — the same marker the design uses for its
+       five-across card rows. So the narrow rule reflows it to two columns and
+       the 25 cells run down the sidebar as a 40x282 smear.
+
+       A QR is not a responsive grid, so it is pinned to five 18px columns at
+       every width. Matched by its cells, so the real g5 card rows keep
+       reflowing. The [data-narrow] in the selector is there purely for weight:
+       the design's rule carries three attribute selectors and would otherwise
+       outrank this one — which is exactly what happened on the first attempt,
+       leaving the code still two columns wide. */
+    'html #webAppScaleBox[data-narrow] [data-r="g5"]:has(> [style*="width: 18px"]) {',
+    '  grid-template-columns: repeat(5, 18px) !important;',
+    '  width: max-content !important; justify-content: center !important;',
+    '}'
+  ].join('\n');
+
+  /* The admin dashboard is a different design file, and unlike the marketplace
+     it has no responsive system at all — not one data-r marker in 100 KB. It is
+     a fixed artboard: a 1440x940 flex board, overflow: hidden, holding a 232px
+     sidebar beside a scrolling content column.
+
+     On a phone that means the sidebar takes 60% of the screen and the content
+     is a sliver. The page does scroll sideways to 1440, but the sidebar is not
+     pinned, so scrolling right just pans a desktop board — every column of a
+     six-column moderation table is out there somewhere.
+
+     So this is a responsive layer written from scratch rather than gaps filled
+     in an existing one, and it is the one place here making layout decisions
+     the design does not state. Three worth knowing:
+
+     - The sidebar becomes a horizontally scrolling strip rather than stacking.
+       Fourteen links and three section headings stacked would be ~700px of
+       navigation before any content — the same complaint the footer drew.
+     - The dense tables scroll sideways inside their own card. A six-column
+       moderation queue does not become a phone screen by narrowing; the
+       columns are the content. Squeezing them is what produces the
+       one-character-per-line collapse seen elsewhere in this file.
+     - The board's inner scroll region is released so the page itself scrolls,
+       rather than trapping a 940px box inside a 700px screen.
+
+     All of it belongs in the design. It is here because the demo has to work on
+     the phone the client is holding. */
+  var ADMIN_RESPONSIVE = [
+    '@media (max-width: 900px) {',
+    /* The board itself: stop being a 1440x940 artboard. */
+    '  html [style*="width: 1440px"][style*="height: 940px"] {',
+    '    width: 100% !important; height: auto !important;',
+    '    min-height: 100vh !important; flex-direction: column !important;',
+    '    overflow: visible !important;',
+    '    border-radius: 0 !important; box-shadow: none !important;',
+    '  }',
+    /* Sidebar -> a full-width band at the top. */
+    '  html [style*="width: 232px"][style*="flex-shrink: 0"] {',
+    '    width: 100% !important; flex-shrink: 1 !important;',
+    '    padding: 12px 0 0 !important;',
+    '  }',
+    /* Its link list -> one scrolling row. The section headings stay: as inline
+       separators they still say which links are owner-only, and dropping them
+       would be losing information to save 40px. */
+    '  html [style*="width: 232px"] [style*="overflow-y: auto"] {',
+    '    flex: 0 0 auto !important;',
+    '    display: flex !important; flex-direction: row !important;',
+    '    align-items: center !important; gap: 2px !important;',
+    '    overflow-x: auto !important; overflow-y: hidden !important;',
+    '    padding: 0 10px 8px !important;',
+    '  }',
+    '  html [style*="width: 232px"] [style*="overflow-y: auto"] > * {',
+    '    flex-shrink: 0 !important; white-space: nowrap !important;',
+    '    margin: 0 !important;',
+    '  }',
+    /* The topbar is a fixed 62px row of title, date and actions. */
+    '  html [style*="height: 62px"][style*="flex-shrink: 0"] {',
+    '    height: auto !important; min-height: 62px !important;',
+    '    flex-wrap: wrap !important; row-gap: 8px !important;',
+    '    padding: 12px 14px !important;',
+    '  }',
+    /* Release the inner scroller so the page scrolls, not a box inside it. */
+    '  html [style*="overflow-y: auto"][style*="padding: 22px 24px 30px"] {',
+    '    overflow-y: visible !important; min-height: 0 !important;',
+    '    padding: 16px 14px 28px !important;',
+    '  }',
+    /* Stat and summary rows. Every fr-only grid in the file is listed; the
+       ones carrying a px track are tables and are handled separately below. */
+    '  html [style*="grid-template-columns: repeat(4, 1fr)"],',
+    '  html [style*="grid-template-columns: repeat(7, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.25fr 1fr 1fr 1fr"] {',
+    '    grid-template-columns: repeat(2, 1fr) !important;',
+    '  }',
+    '  html [style*="grid-template-columns: repeat(3, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.35fr 1fr"] {',
+    '    grid-template-columns: 1fr !important;',
+    '  }',
+
+    /* Everything below is scoped to the scrolling content region — the sidebar
+       strip and the table cards manage their own overflow and must not wrap.
+       The region is identified by the padding the design gives it; this rule
+       block overrides that padding above, but [style*=] reads the attribute,
+       which still says what the design wrote. */
+
+    /* Screen toolbars — the date range on the dashboard, the sort and filter
+       chips on Approvals and Users — are plain flex rows, so their last chip
+       hangs off the edge: 16px on the dashboard, 40 on Approvals, 73 on Users.
+       Matched as a direct child of a content stack, whatever that stack's gap,
+       so all three are one rule. */
+    '  html [style*="padding: 22px 24px 30px"] [style*="flex-direction: column"]',
+    '    > [style*="display: flex"][style*="align-items: center"][style*="gap: 8px"] {',
+    '    flex-wrap: wrap !important; row-gap: 8px !important;',
+    '  }',
+
+    /* The queue and report rows are a thumbnail, a text column, and a cluster
+       of action buttons. The text column is flex: 1 1 0% with an explicit
+       min-width: 0px, and the button cluster does not shrink — so at 390 the
+       cluster keeps its 225px and the text is left with fifteen. "Denroy A. ·
+       verified seller · Look Out" then renders 43px wide and 112px tall.
+
+       Where the design adds min-width: 0px it is defeating the min-content
+       floor on purpose, which is right on a desktop row and fatal here, so a
+       real floor goes back. The floor is also what makes the row wrap: flex
+       decides on hypothetical main size, which is 0 for a flex: 1 1 0% item,
+       so without it the algorithm always believes everything fits on one line
+       no matter how little room is left. With 150px it does not, and the button
+       cluster drops to its own line instead of the text collapsing.
+
+       Matched on flex: 1 1 0% alone rather than on that pairing — the activity
+       log's rows carry no min-width and collapsed the same way. Spacer divs are
+       written flex: 1 and serialise as written, so they keep their zero floor
+       and go on doing their job.
+
+       150px clears the narrowest case — 320px screen, less content padding,
+       card border, row padding and a 62px thumbnail, leaves 184. */
+    '  html [style*="padding: 22px 24px 30px"] [style*="flex: 1 1 0%"] {',
+    '    min-width: 150px !important;',
+    '  }',
+    // :has() stays welded to its subject — a line break here would turn it
+    // into a descendant combinator and match the wrong element.
+    '  html [style*="padding: 22px 24px 30px"] [style*="display: flex"]:has(> [style*="flex: 1 1 0%"]) {',
+    '    flex-wrap: wrap !important; row-gap: 10px !important;',
+    '  }',
+    '}',
+
+    /* Below 560 even two-up stat tiles start letter-columning their labels. */
+    '@media (max-width: 560px) {',
+    '  html [style*="grid-template-columns: repeat(4, 1fr)"],',
+    '  html [style*="grid-template-columns: repeat(7, 1fr)"],',
+    '  html [style*="grid-template-columns: 1.25fr 1fr 1fr 1fr"],',
+    '  html [style*="grid-template-columns: 1fr 1fr"] {',
+    '    grid-template-columns: 1fr !important;',
+    '  }',
+    '}',
+
+    /* The tables. Every row of a table is its own grid, so the card holding
+       them is the scroller and the rows carry the floor — set on the rows
+       rather than the card so the card's own heading and footer stay put.
+
+       Enumerated rather than matched on "contains px", which CSS cannot ask.
+       Seven shapes across the admin screens; a template the design adds later
+       simply keeps today's behaviour until it is listed here. */
+    '@media (max-width: 900px) {',
+    '  html [style*="grid-template-columns: 28px 1.6fr 1fr 1fr 1fr"],',
+    '  html [style*="grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px"],',
+    '  html [style*="grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px"],',
+    '  html [style*="grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px"],',
+    '  html [style*="grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px"],',
+    '  html [style*="grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px"],',
+    '  html [style*="grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px"] {',
+    '    min-width: 680px !important;',
+    '  }',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]) {',
+    '    overflow-x: auto !important;',
+    '  }',
+    /* The design hides every scrollbar in its own head CSS, which is fine when
+       nothing scrolls sideways. Now something does, and a scroll area with no
+       affordance reads as a clipped table. Give the table cards a slim one. */
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar {',
+    '    height: 6px !important; display: block !important;',
+    '  }',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar-thumb {',
+    '    background: rgba(16,22,33,0.22) !important; border-radius: 3px !important;',
+    '  }',
+    '}'
+  ].join('\n');
+
+  var PHONE_FILL = [
+    '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
+    '  #emPhoneFrame {',
+    '    zoom: 1 !important; margin: 0 !important;',
+    '    width: 100vw !important; max-width: none !important;',
+    '    height: 100vh !important; height: 100dvh !important;',
+    '    border-radius: 0 !important; box-shadow: none !important;',
+    '  }'
+  ].join('\n');
+
+  function apply() {
+
+    addCss('emAdminCss', ADMIN_RESPONSIVE);
+    return true;
+
+  }
+
+  /* Never break the page — but say so once. Swallowing this silently is how a
+     reference to a build-time constant from inside this browser script went
+     unnoticed: the ids it had already set made the transform look applied
+     while the stylesheet it never reached was missing. */
+  var told = false;
+  function run() {
+    try { apply(); } catch (e) {
+      if (!told && window.console && console.error) {
+        told = true;
+        console.error('[dc-transform] trim failed, page left untrimmed:', e);
+      }
+    }
+  }
+
+  run();
+
+  // ~20s of polling covers a slow first render on a cold connection.
+  var n = 0;
+  var t = setInterval(function () { run(); if (++n > 130) clearInterval(t); }, 150);
+
+  // childList on body only: a re-render replaces body's children, while
+  // apply()'s own edits are attribute changes further down, so this cannot
+  // feed itself.
+  if (window.MutationObserver && document.body) {
+    new MutationObserver(run).observe(document.body, { childList: true });
+  }
+  document.addEventListener('DOMContentLoaded', run);
+  window.addEventListener('load', run);
+})();
+</script>
 </body>
 </html>

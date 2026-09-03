@@ -80,8 +80,17 @@ design's own narrow rules use, so they sit alongside rather than fight it. The
 `white-space: nowrap` guard on button-shaped elements is unconditional: a label
 broken mid-word is never right at any width.
 
-**If the design tags those rows `data-r="stack"`, delete these rules.** They
-exist only because the markers are missing.
+The detail pages — a listing, a job, a shop — sit on a two-column shell that is
+untagged for the same reason. At 390px it split into a 194px main column and a
+130px sidebar and everything inside starved: the job title "Cashier,
+part-time" came out 62px wide and 140px tall. `gap: 34px` identifies that shell
+(five elements use it — three detail pages, one more two-column row, and one
+already a column).
+
+**If the design tags all of these rows `data-r="stack"`, delete these rules.**
+They exist only because the markers are missing. That is the whole fix upstream:
+the design already knows how to collapse a marked row, and every one of these
+bugs is a row it was not told about.
 
 The footer needed the opposite of stacking. The design's narrow rule gives every
 footer column `flex-basis: 100%`, so five stacked blocks ran it from 335px to

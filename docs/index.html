@@ -6966,6 +6966,24 @@ class Component extends DCLogic {
     '  html #webAppScaleBox[data-narrow="1"] [data-r="hdrwrap"][style*="margin-top: 64px"] {',
     '    margin-top: 28px !important; padding: 26px 16px 20px !important;',
     '  }',
+
+    /* The detail pages — a listing, a job, a shop — are built on a two-column
+       shell that carries no data-r marker either, so it never collapses. At
+       390px it splits into a 194px main column and a 130px sidebar, and every
+       row inside starves: the job title "Cashier, part-time" came out 62px wide
+       and 140px tall.
+
+       gap: 34px identifies it. Five elements in the design use that gap: the
+       three detail shells, one more two-column row, and one that is already a
+       column and so unaffected by these rules. */
+    '  html #webAppScaleBox [style*="gap: 34px"] {',
+    '    flex-direction: column !important; align-items: stretch !important;',
+    '    gap: 20px !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="gap: 34px"] > * {',
+    '    box-sizing: border-box !important;',
+    '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
     '}'
   ].join('\n');
 

@@ -114,8 +114,51 @@ const PHONE = wrapRuntime(`
     return true;
 `);
 
+/* The design is responsive, but its breakpoints are written for the canvas.
+
+   _fitShells() flips the web shell into its fluid mode below 760px, because on
+   the canvas the shell above that is a 1440px layout scaled down to fit beside
+   the phone — so it never needs to reflow. Published full-bleed that is wrong
+   twice over: the shell is given the real viewport width without being told to
+   reflow, and the design's overflow:hidden then *clips* the excess rather than
+   scrolling it, so the loss is silent. Measured at 768px wide, 35 elements sat
+   past the right edge, the worst by 412px.
+
+   So for the web page the two constants are retuned rather than overridden:
+   reflow below 1024 instead of 760, and above it scale the 1440 layout to
+   exactly the viewport instead of capping at 0.625. Nothing else changes — the
+   fluid rules, the 460px single-column breakpoint and the phone shell are the
+   design's own. If either line stops matching, the page still renders and the
+   build says so. */
+const WEB_FIT = [
+  {
+    from: 'const narrow = w < 760;',
+    to: 'const narrow = w < 1024;',
+    what: 'the reflow breakpoint'
+  },
+  {
+    from: 'const z = narrow ? 1 : Math.max(0.4, Math.min(0.625, (w - pad * 2) / 1440));',
+    to: 'const z = narrow ? 1 : Math.min(1, w / 1440);',
+    what: 'the wide-mode scale'
+  }
+];
+
+function patchWebBreakpoints(html, report) {
+  for (const { from, to, what } of WEB_FIT) {
+    const n = html.split(from).length - 1;
+    if (n !== 1) {
+      report('! Could not retune ' + what + ' (' + n + ' matches, expected 1).');
+      report('  The web page will render as the design draws it on its canvas —');
+      report('  scaled down, and clipped between 760px and 1440px wide.');
+      continue;
+    }
+    html = html.replace(from, to);
+  }
+  return html;
+}
+
 // Web only, filling the browser. Drops the drawn browser-window mock and the
-// 0.625 shrink the design uses to fit the web view onto its canvas.
+// canvas furniture around it, and lets the retuned breakpoints do the rest.
 const WEB = wrapRuntime(`
     var box = webBox();
     var phone = findPhone();
@@ -136,9 +179,12 @@ const WEB = wrapRuntime(`
       wrap.style.width = '100%';
       wrap.style.marginTop = '0';
     }
+    // The mock sits in a 900px / 92vw holder sized for the canvas. Widen it,
+    // or the retuned scale has nothing to expand into.
     if (box.parentElement) {
       box.parentElement.style.width = '100%';
       box.parentElement.style.maxWidth = 'none';
+      box.parentElement.style.overflow = 'visible';
     }
 
     // The first child is the drawn browser chrome (title bar + address bar) —
@@ -152,14 +198,13 @@ const WEB = wrapRuntime(`
       if (/#E7E4DD/i.test(st) || bgc === 'rgb(231, 228, 221)') first.style.display = 'none';
     }
 
+    // Width and zoom are left to the design's own _fitShells — retuned at build
+    // time by patchWebBreakpoints — so only the canvas dressing is stripped.
     addCss('emWebCss', [
-      'body { background: #F7F6F2 !important; }',
+      'body { background: #FBF8F1 !important; }',
       '#emStage { padding: 0 !important; display: block !important; min-height: 100vh; }',
       NO_SCROLLBARS,
-      '#webAppScaleBox {',
-      '  zoom: 1 !important; width: 100% !important; max-width: none !important;',
-      '  border-radius: 0 !important; box-shadow: none !important;',
-      '}'
+      '#webAppScaleBox { border-radius: 0 !important; box-shadow: none !important; }'
     ].join('\\n'));
     return true;
 `);
@@ -172,4 +217,4 @@ const BOTH = wrapRuntime(`
     return true;
 `);
 
-module.exports = { META, PHONE, WEB, BOTH, wrapRuntime };
+module.exports = { META, PHONE, WEB, BOTH, wrapRuntime, patchWebBreakpoints };

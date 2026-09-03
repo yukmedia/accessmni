@@ -125,9 +125,17 @@ function copyAssetsFrom(dir) {
   return n;
 }
 
-// Repo copies first, so anything the handoff ships wins over a stale fallback.
-const fromRepo = copyAssetsFrom(REPO_ASSETS);
+/* The handoff copies go down first and the repo's on top, because app/assets/
+   holds right-sized derivatives — the sponsor's flyer ships at 1179px wide and
+   383 KB, which is a quarter of a megabyte of phone data to show it 310px wide.
+   The cost of that order is that a genuinely revised asset gets ignored, so the
+   overlap is reported: if the design changes one of these, re-derive it. */
 const fromHandoff = copyAssetsFrom(HANDOFF_ASSETS);
+const fromRepo = copyAssetsFrom(REPO_ASSETS);
+
+const shadowed = fs.existsSync(HANDOFF_ASSETS)
+  ? fs.readdirSync(HANDOFF_ASSETS).filter(f => MEDIA.test(f) && fs.existsSync(path.join(REPO_ASSETS, f)))
+  : [];
 
 /* ------------------------- dead photo substitutions ----------------------- */
 
@@ -291,11 +299,15 @@ function resolveImports(html) {
   );
 }
 
+const notes = [];
 function write(name, html, inject) {
   html = prepare(html);
   html = resolveImports(html);
   html = replaceDeadPhotos(html);
   html = fixDesktopSearch(html, 'docs/' + name);
+  // Only the full-bleed web page: phone.html hides the shell, and
+  // phone-and-web.html is meant to look exactly like the design's canvas.
+  if (name === 'index.html') html = T.patchWebBreakpoints(html, m => notes.push(m));
   if (inject) html = html.replace(/<\/body>/i, inject + '</body>');
   checkAssets(html, 'docs/' + name);
   const out = path.join(DOCS, name);
@@ -318,8 +330,14 @@ if (adminFile) {
 
 console.log('  docs/support.js, docs/image-slot.js, docs/vendor/react*.js');
 
-console.log('\nAssets: ' + fromRepo + ' from app/assets/, ' + fromHandoff + ' from the handoff'
+notes.forEach(m => console.log(m));
+
+console.log('\nAssets: ' + fromHandoff + ' from the handoff, ' + fromRepo + ' from app/assets/'
   + ' -> docs/assets/');
+if (shadowed.length) {
+  console.log('  app/assets/ overrides the handoff copy of: ' + shadowed.join(', '));
+  console.log('  (right-sized derivatives — re-derive if the design revised one)');
+}
 const subCount = Object.keys(substituted).length;
 if (subCount) {
   console.log('Substituted ' + subCount + ' dead Unsplash photo(s) with local copies:');

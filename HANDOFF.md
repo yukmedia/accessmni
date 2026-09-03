@@ -26,6 +26,13 @@ node app/from-handoff.js <unzipped-handoff-folder>    # a .zip of .dc.html sourc
 node app/from-export.js  <standalone-export.html>     # one self-contained file
 ```
 
+**Point the first one at the folder holding the newest `.dc.html`.** A design
+export can carry both a project root and a `handoff/` subfolder, and they are
+not always the same vintage — in the September bundle `handoff/` was
+byte-identical to the previous export while the root was 156 KB newer and held
+all the responsive work. Check sizes before building, or you will quietly
+republish the old design.
+
 Both write the same set of pages. Shared logic lives in `app/lib/dc-transform.js`.
 
 A design document draws its mocks on one canvas — a 390×844 phone frame with a
@@ -52,7 +59,35 @@ it back into a one-shot.
   its own page — which is why the admin design becomes `docs/admin.html` and the
   desktop panel loads it inline.
 
-### Desktop search returns an empty page
+### The web page's breakpoints are retuned, not overridden
+
+The design is responsive, but its breakpoints are written for the canvas.
+`_fitShells()` flips the web shell into its fluid mode below 760px, because
+above that the shell on the canvas is a 1440px layout scaled down to sit beside
+the phone — so it never needs to reflow.
+
+Published full-bleed, that is wrong twice: the shell gets the real viewport
+width without being told to reflow, and the design's `overflow: hidden` then
+**clips** the excess instead of scrolling it, so the loss is silent. Measured at
+768px wide, 35 elements sat past the right edge, the worst by 412px.
+
+`patchWebBreakpoints()` in `dc-transform.js` retunes two constants for
+`index.html` only — reflow below 1024 instead of 760, and above it scale the
+1440 layout to exactly the viewport rather than capping at 0.625. Everything
+else is the design's own: the fluid rules, the 460px single-column breakpoint,
+the phone shell. `phone-and-web.html` is left alone deliberately — it is meant
+to look like the canvas.
+
+Don't reintroduce a `zoom: 1 !important; width: 100%` override on
+`#webAppScaleBox`. That is what caused the clipping: it takes the sizing away
+from the design without taking over the reflow.
+
+### Desktop search returned an empty page (fixed upstream)
+
+**The design now defines `searchResults` itself**, flattening every result group
+with field fallbacks — a better fix than the one here. `fixDesktopSearch()` sees
+it and stands down, which is why the patch no longer appears in the built pages.
+It is kept only as a guard against a regression; the history below is why.
 
 On the web view, typing a query showed the right heading — *Results for "car" ·
 2 results across the app* — and then nothing. The grid iterates

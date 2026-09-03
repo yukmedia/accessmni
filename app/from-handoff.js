@@ -293,8 +293,14 @@ function resolveImports(html) {
     /<dc-import[^>]*?name="([^"]+)"[^>]*?>\s*<\/dc-import>/g,
     (_, name) => {
       const slug = /admin/i.test(name) ? 'admin' : name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      // The design's hint-size is the panel's desktop size, not a fixed width:
+      // pinned at 1440 the frame hangs 1050px off the side of a phone. It fills
+      // whatever it is given and stops at the design's width; the admin is a
+      // desktop tool, so on a narrow screen it scrolls inside its own frame
+      // rather than dragging the page sideways with it.
       return '<iframe src="./' + slug + '.html" title="' + name
-        + '" style="width: 1440px; height: 940px; border: 0; display: block; background: #FBF8F1;"></iframe>';
+        + '" style="width: 100%; max-width: 1440px; height: 940px; border: 0;'
+        + ' display: block; background: #FBF8F1;"></iframe>';
     }
   );
 }

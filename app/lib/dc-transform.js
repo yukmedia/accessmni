@@ -80,31 +80,43 @@ const FINDERS = `
      270px tall, and pinning that would eat the screen. */
   var STICKY_HEADER = [
     '@media (min-width: 760px) {',
-    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0 44px"],',
-    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0px 44px"] {',
+    '  html #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0 44px"],',
+    '  html #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0px 44px"] {',
     '    position: sticky !important; top: 0 !important; z-index: 40 !important;',
     '  }',
     '}'
   ].join('\\n');
 
   var PHONE_WIDTH_FIXES = [
-    '#webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
+    'html #webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
     '@media (max-width: 700px) {',
-    // The home hero, and the "Selling is free to list" band — matched on the
-    // padding that identifies each, since neither carries a data-r marker.
-    '  #webAppScaleBox [style*="padding: 44px 46px"],',
-    '  #webAppScaleBox [style*="padding: 32px 36px"] {',
+    /* The home hero, and the "Selling is free to list" band — matched on the
+       padding that identifies each, since neither carries a data-r marker.
+
+       These four rules were written before the re-render race below was
+       understood, and shipped without the html prefix — so they tied the
+       design's own specificity rather than beating it, and lost after the
+       first re-render. Proven at 320px: the hero's text column measured 252px
+       (its unmodified content width) instead of the 288px width:100% should
+       have forced. Every rule in this block now carries the prefix. */
+    '  html #webAppScaleBox [style*="padding: 44px 46px"],',
+    '  html #webAppScaleBox [style*="padding: 32px 36px"] {',
     '    flex-direction: column !important; align-items: stretch !important;',
     '    padding: 24px 18px !important; gap: 18px !important;',
     '  }',
-    '  #webAppScaleBox [style*="padding: 44px 46px"] > *,',
-    '  #webAppScaleBox [style*="padding: 32px 36px"] > * {',
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] > *,',
+    '  html #webAppScaleBox [style*="padding: 32px 36px"] > * {',
     // border-box or a padded child at width:100% overflows by its own padding,
     // which is why the design's stack rule sets it too.
     '    box-sizing: border-box !important;',
     '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
     '  }',
-    '  #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] [style*="display: flex; gap: 12px"] {',
+    // The two hero buttons keep display:flex inside the now-full-width text
+    // column, so they still sit side by side rather than stacking with it.
+    '    flex-wrap: wrap !important;',
+    '  }',
+    '  html #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
 
     /* The footer is the worst offender at phone width. The design's narrow rule
        gives every column flex-basis:100%, so five stacked blocks run it from
@@ -148,6 +160,106 @@ const FINDERS = `
     '    box-sizing: border-box !important;',
     '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
     '  }',
+
+    /* Sidebars are declared 260-380px wide with flex-shrink: 0. The design
+       releases them, but only where they sit directly inside a data-r="stack"
+       row — so the ones on the detail and pickup screens keep a fixed width and
+       hang off the edge of a small handset. Released wherever they appear. */
+    '  html #webAppScaleBox[data-narrow] [data-r~="side"] {',
+    '    box-sizing: border-box !important; position: static !important;',
+    '    width: 100% !important; max-width: 100% !important;',
+    '    min-width: 0 !important; flex-shrink: 1 !important;',
+    '  }',
+    '}',
+
+    /* An iPhone SE is 320px wide. The badge cluster — message, wishlist, cart,
+       avatar, "+ Sell an item" — carries flex-shrink: 0 and a 20px gap, an
+       intrinsic 344px that the design's narrow rules never touch. It overflows
+       by exactly (360 - viewport width)px down to 320, where it runs 40px past
+       the edge. Tightening the gap to 8px reclaims 48px, which is enough at
+       every width down to 320; wrapping hdr's own children means the cluster
+       drops to its own line rather than fighting the logo for room.
+
+       Matched on the full inline style rather than one property, since only
+       "gap: 20px" would also catch other rows the design already handles. */
+    '@media (max-width: 360px) {',
+    '  html #webAppScaleBox[data-narrow] [data-r="hdr"] { flex-wrap: wrap !important; }',
+    /* The detail pages' title row — icon, heading, a status pill — is exactly
+       as wide as its content wants to be at 320px: a 58px icon plus a pill like
+       "PART-TIME" leaves the heading 64px, and it letter-columns.
+
+       flex-wrap alone does not fix this: the heading is flex: 1 1 0%, so its
+       hypothetical main size for the wrap decision is 0 by definition — the
+       algorithm always finds room on one line and never triggers a wrap, no
+       matter how little space is left, and the shell's overflow-wrap: anywhere
+       lets even a single character count as a valid line, so the usual
+       min-width:auto safety net (a flex item won't shrink below its content)
+       never engages either. A real floor is what forces the decision: below
+       120px the heading no longer fits beside the icon, so it wraps, taking
+       the pill down to its own line rather than the heading down to letters. */
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
+    '    flex-wrap: wrap !important; row-gap: 6px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
+    '    min-width: 120px !important;',
+    '  }',
+
+    /* The same shape recurs everywhere a fixed-size thumbnail sits beside
+       growing text — order items, profile rows, the shops list: a 62-96px
+       image, flex-shrink: 0, next to a flex: 1 name-and-price column. At
+       320px the pickup screen's "Cinnamon rolls (box of 4)" collapsed to a
+       46px letter column the same way the job title did, for the same
+       reason — flex: 1 1 0% never triggers a wrap on its own. Ten rows in
+       the design share this exact thumbnail-plus-text opening; all ten get
+       the same floor. */
+    '  html #webAppScaleBox[data-narrow] [style*="display: flex; align-items: center; gap: 16px"] > [style*="flex: 1 1 0%"],',
+    '  html #webAppScaleBox[data-narrow] [style*="display: flex; align-items: center; gap: 16px"] > [style="flex: 1;"] {',
+    '    min-width: 110px !important;',
+    '  }',
+    /* The five home-screen quick-nav tiles (Market/Wanted/Jobs/Shops/Travel)
+       pair a declared 44x44 icon with a text label in one flex row, and the
+       icon has no flex-shrink override — so once the design's own rule drops
+       the row to two columns at 320px, the cell has 96px of content room for
+       icon + gap + label, the label wins the fight, and the icon shrinks to
+       28-33px, non-square. A fixed-size icon should never be the thing that
+       gives; pin it and let the row do what a text label does at the edge —
+       wrap or truncate — instead of visibly deforming the icon. */
+    '  html #webAppScaleBox[data-narrow] [style*="width: 44px; height: 44px; border-radius: 12px"],',
+    // The round, unphotographed-seller placeholder (a hatched circle) squeezes
+    // the same way — same fix, different border-radius.
+    '  html #webAppScaleBox[data-narrow] [style*="width: 44px; height: 44px; border-radius: 50%"] {',
+    '    flex-shrink: 0 !important;',
+    '  }',
+    /* The listing map preview is a fake map graphic with a pin glued on by
+       raw pixel position — left: 280px, calibrated for the roughly 424px map
+       the desktop layout draws. The map itself already shrinks to full width
+       under the responsive treatment above; the pin\'s absolute left does not
+       scale with it, so at 320px it sits 12px past a container that is now
+       288px, not 424. Anchoring it to the right edge instead keeps it inside
+       the map at any width the container actually reaches — a small, safe
+       change matched by "left: 280px", unique to this one marker. */
+    '  html #webAppScaleBox[data-narrow] [style*="left: 280px"] {',
+    '    left: auto !important; right: 8px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [style*="margin-left: auto; display: flex; align-items: center; gap: 20px; flex-shrink: 0;"] {',
+    '    gap: 8px !important;',
+    '  }',
+    '}',
+
+    /* The pickup screen's QR code is drawn as a 5x5 grid of 18px squares, and
+       it is tagged data-r="g5" — the same marker the design uses for its
+       five-across card rows. So the narrow rule reflows it to two columns and
+       the 25 cells run down the sidebar as a 40x282 smear.
+
+       A QR is not a responsive grid, so it is pinned to five 18px columns at
+       every width. Matched by its cells, so the real g5 card rows keep
+       reflowing. The [data-narrow] in the selector is there purely for weight:
+       the design's rule carries three attribute selectors and would otherwise
+       outrank this one — which is exactly what happened on the first attempt,
+       leaving the code still two columns wide. */
+    'html #webAppScaleBox[data-narrow] [data-r="g5"]:has(> [style*="width: 18px"]) {',
+    '  grid-template-columns: repeat(5, 18px) !important;',
+    '  width: max-content !important; justify-content: center !important;',
     '}'
   ].join('\\n');
 

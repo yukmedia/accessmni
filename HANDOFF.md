@@ -201,10 +201,23 @@ from scratch rather than gaps filled in an existing one, and it is the one place
 in this repo making layout decisions the design does not state. Three worth
 knowing, all at a 900px breakpoint:
 
-- **The sidebar becomes a horizontally scrolling strip**, not a stack. Fourteen
-  links and three section headings stacked would be ~700px of navigation before
-  any content — the same complaint the footer drew. The section headings stay:
-  as inline separators they still say which links are owner-only.
+- **The sidebar becomes an off-canvas drawer** behind a menu button in the
+  topbar. Stacking it would put ~700px of navigation above every screen — the
+  same complaint the footer drew — and laying it on its side as a scrolling
+  strip, which is what this did first, is worse: it flattens three permission
+  tiers into one cut-off row and hides half the destinations off the right
+  edge. Twelve destinations grouped into DAILY WORK, MANAGE and OWNER ONLY are
+  a menu, and a menu on a phone is a drawer. What slides in is the design's own
+  sidebar, tiers, badges and active state intact; the screen itself now opens
+  straight into the work with no navy chrome above it.
+
+  The drawer needs two elements the design has no reason to contain — the menu
+  button and the scrim — so they are injected. Both are **re-created, not
+  remembered**: a re-render replaces the board's subtree and takes them with
+  it, so each pass rebuilds whatever is missing. They go *inside* the board and
+  never onto `body`, because the MutationObserver watches body's children and
+  appending there would feed itself. The open state lives on `<html>`, which
+  the runtime never rewrites, so the drawer survives a re-render mid-animation.
 - **Dense tables scroll sideways inside their own card**, with a slim scrollbar
   re-enabled because the design's head CSS hides every scrollbar in the file and
   a scroll area with no affordance reads as a clipped table. A six-column

@@ -1591,9 +1591,14 @@ class Component extends DCLogic {
      in an existing one, and it is the one place here making layout decisions
      the design does not state. Three worth knowing:
 
-     - The sidebar becomes a horizontally scrolling strip rather than stacking.
-       Fourteen links and three section headings stacked would be ~700px of
-       navigation before any content — the same complaint the footer drew.
+     - The sidebar becomes an off-canvas drawer behind a menu button in the
+       topbar. Stacking it would put ~700px of navigation above every screen;
+       laying it on its side as a scrolling strip — which is what this did
+       first — is worse, because it flattens three permission tiers into one
+       cut-off row and hides half the destinations off the right edge. Twelve
+       destinations grouped into DAILY WORK, MANAGE and OWNER ONLY are a menu,
+       and a menu on a phone is a drawer. The design's own sidebar is what
+       slides in, tiers and count badges intact.
      - The dense tables scroll sideways inside their own card. A six-column
        moderation queue does not become a phone screen by narrowing; the
        columns are the content. Squeezing them is what produces the
@@ -1604,6 +1609,9 @@ class Component extends DCLogic {
      All of it belongs in the design. It is here because the demo has to work on
      the phone the client is holding. */
   var ADMIN_RESPONSIVE = [
+    /* Both injected elements exist at every width and are simply not shown
+       above the breakpoint, so the desktop dashboard is untouched. */
+    '#admMenuBtn, #admScrim { display: none; }',
     '@media (max-width: 900px) {',
     /* The board itself: stop being a 1440x940 artboard. */
     '  html [style*="width: 1440px"][style*="height: 940px"] {',
@@ -1612,24 +1620,46 @@ class Component extends DCLogic {
     '    overflow: visible !important;',
     '    border-radius: 0 !important; box-shadow: none !important;',
     '  }',
-    /* Sidebar -> a full-width band at the top. */
-    '  html [style*="width: 232px"][style*="flex-shrink: 0"] {',
-    '    width: 100% !important; flex-shrink: 1 !important;',
-    '    padding: 12px 0 0 !important;',
+    /* Sidebar -> an off-canvas drawer. It keeps the design's own contents,
+       spacing and grouping; all that changes is that it is laid over the
+       screen on demand instead of taking a third of it permanently.
+
+       Positioned against the viewport rather than the board, which is safe
+       here because nothing in this file establishes a containing block for
+       fixed elements — no transform, no filter, no zoom on any ancestor. */
+    '  html #admSide {',
+    '    position: fixed !important; top: 0 !important; left: 0 !important;',
+    '    height: 100% !important;',
+    '    width: 84vw !important; max-width: 300px !important;',
+    '    z-index: 60 !important; overflow-y: auto !important;',
+    '    box-shadow: 0 0 44px rgba(16,22,33,0.45) !important;',
+    '    transform: translateX(-101%);',
+    '    visibility: hidden;',
+    '    transition: transform 0.24s ease, visibility 0s linear 0.24s;',
     '  }',
-    /* Its link list -> one scrolling row. The section headings stay: as inline
-       separators they still say which links are owner-only, and dropping them
-       would be losing information to save 40px. */
-    '  html [style*="width: 232px"] [style*="overflow-y: auto"] {',
-    '    flex: 0 0 auto !important;',
-    '    display: flex !important; flex-direction: row !important;',
-    '    align-items: center !important; gap: 2px !important;',
-    '    overflow-x: auto !important; overflow-y: hidden !important;',
-    '    padding: 0 10px 8px !important;',
+    '  html[data-adm-nav="open"] #admSide {',
+    '    transform: translateX(0);',
+    '    visibility: visible;',
+    '    transition: transform 0.24s ease, visibility 0s;',
     '  }',
-    '  html [style*="width: 232px"] [style*="overflow-y: auto"] > * {',
-    '    flex-shrink: 0 !important; white-space: nowrap !important;',
-    '    margin: 0 !important;',
+    '  html #admScrim {',
+    '    display: block !important; position: fixed; inset: 0;',
+    '    background: rgba(16,22,33,0.55);',
+    '    opacity: 0; pointer-events: none;',
+    '    transition: opacity 0.24s ease; z-index: 55;',
+    '  }',
+    '  html[data-adm-nav="open"] #admScrim { opacity: 1; pointer-events: auto; }',
+    /* The button that opens it, sitting at the head of the topbar where the
+       sidebar used to begin. */
+    '  html #admMenuBtn {',
+    '    display: inline-flex !important; align-items: center;',
+    '    justify-content: center; flex-shrink: 0;',
+    '    width: 38px; height: 38px; padding: 0; margin-right: 2px;',
+    '    background: #FFFFFF; color: #16233A; cursor: pointer;',
+    '    border: 1px solid #E4E1D6; border-radius: 10px;',
+    '  }',
+    '  @media (prefers-reduced-motion: reduce) {',
+    '    html #admSide, html #admScrim { transition: none !important; }',
     '  }',
     /* The topbar is a fixed 62px row of title, date and actions. */
     '  html [style*="height: 62px"][style*="flex-shrink: 0"] {',
@@ -1755,7 +1785,66 @@ class Component extends DCLogic {
 
   function apply() {
 
+    var side = null, bar = null, board = null;
+    var divs = document.querySelectorAll('div');
+    for (var i = 0; i < divs.length; i++) {
+      var st = divs[i].getAttribute('style') || '';
+      if (!board && /width:\s*1440px/.test(st) && /height:\s*940px/.test(st)) board = divs[i];
+      if (!side && /width:\s*232px/.test(st) && /flex-shrink:\s*0/.test(st)) side = divs[i];
+      if (!bar && /height:\s*62px/.test(st) && /flex-shrink:\s*0/.test(st)) bar = divs[i];
+    }
+    if (!board || !side || !bar) return false;
+
+    side.id = 'admSide';
     addCss('emAdminCss', ADMIN_RESPONSIVE);
+
+    if (!document.getElementById('admMenuBtn')) {
+      var btn = document.createElement('button');
+      btn.id = 'admMenuBtn';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', 'Open the admin menu');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"'
+        + ' stroke="currentColor" stroke-width="2.2" stroke-linecap="round">'
+        + '<path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+      bar.insertBefore(btn, bar.firstChild);
+    }
+    if (!document.getElementById('admScrim')) {
+      var scrim = document.createElement('div');
+      scrim.id = 'admScrim';
+      board.appendChild(scrim);
+    }
+
+    /* One delegated listener for the life of the page. Capture phase so the
+       button is handled before the runtime sees the click, but propagation is
+       left alone for taps on the nav itself — the design's own handler still
+       has to run and change screen; closing the drawer is the extra. */
+    if (!window.__admNavWired) {
+      window.__admNavWired = true;
+      document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t || !t.closest) return;
+        var root = document.documentElement;
+        var open = root.getAttribute('data-adm-nav') === 'open';
+        if (t.closest('#admMenuBtn')) {
+          e.preventDefault();
+          e.stopPropagation();
+          root.setAttribute('data-adm-nav', open ? 'closed' : 'open');
+        } else if (t.closest('#admScrim') || t.closest('#admSide')) {
+          root.setAttribute('data-adm-nav', 'closed');
+        }
+      }, true);
+      // Escape closes it, as a menu laid over the screen should.
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') document.documentElement.setAttribute('data-adm-nav', 'closed');
+      });
+    }
+
+    var btnNow = document.getElementById('admMenuBtn');
+    if (btnNow) {
+      btnNow.setAttribute('aria-expanded',
+        document.documentElement.getAttribute('data-adm-nav') === 'open' ? 'true' : 'false');
+    }
     return true;
 
   }

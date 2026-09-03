@@ -87,6 +87,31 @@ Filling a handset also means overriding `zoom`, not just width: `_fitShells()`
 scales the phone shell by `(viewport - padding) / 390`, which left 366px of app
 in a 390px window on `phone.html`. That view now pins it to `zoom: 1`.
 
+### The sticky header is added here, not in the design
+
+The site header is `position: static` in the design and always has been — it
+scrolled away in every build before this one, including the previous design
+generation. Nothing regressed; it was simply never pinned.
+
+`STICKY_HEADER` pins it at 760px and up. Three things it needs:
+
+- **Both `overflow`s opened.** `#emStage` and `#webAppScaleBox` clip the mock to
+  its rounded browser frame on the canvas. While they are clipped, `sticky`
+  resolves against those boxes rather than the viewport and nothing can pin.
+  Safe to open because no element overflows the shell at any width — checked
+  every build.
+- **The right one of two.** Both the navy header and the dark footer carry
+  `data-r="hdrwrap"`. They are told apart by padding, not colour, because the
+  runtime rewrites inline colours to `rgb()`. It normalises lengths too —
+  `0 44px` is re-serialised as `0px 44px` — so both spellings are matched. That
+  normalisation has now caused three separate silent misses; assume any
+  `[style*=…]` selector needs the re-serialised form.
+- **Desktop only.** The phone header stacks to roughly 270px tall; pinning that
+  would eat the screen.
+
+This is the one rule here that changes how the product behaves rather than how
+it fits. It belongs in the design.
+
 ### The web page's breakpoints are retuned, not overridden
 
 The design is responsive, but its breakpoints are written for the canvas.

@@ -67,6 +67,26 @@ const FINDERS = `
      unconditional: a button label broken mid-word is never the right answer at
      any width, and it is what makes this failure so ugly rather than merely
      tight. */
+  /* The site header has never been sticky — it is position:static in the
+     design and scrolls away, as it did in every build before this one. Pinning
+     it is the one thing here that changes how the product behaves rather than
+     how it fits, so it is kept separate and belongs upstream in the design.
+
+     Two elements carry data-r="hdrwrap": the navy header and the dark footer
+     (padding: 40px 44px 26px). They are told apart by padding rather than
+     colour, because the runtime rewrites inline colours to rgb(). It also
+     normalises lengths — "0 44px" is re-serialised as "0px 44px" — so both
+     spellings are matched. Desktop only: the phone header stacks to roughly
+     270px tall, and pinning that would eat the screen. */
+  var STICKY_HEADER = [
+    '@media (min-width: 760px) {',
+    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0 44px"],',
+    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0px 44px"] {',
+    '    position: sticky !important; top: 0 !important; z-index: 40 !important;',
+    '  }',
+    '}'
+  ].join('\\n');
+
   var PHONE_WIDTH_FIXES = [
     '#webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
     '@media (max-width: 700px) {',
@@ -255,13 +275,26 @@ const WEB = wrapRuntime(`
       if (/#E7E4DD/i.test(st) || bgc === 'rgb(231, 228, 221)') first.style.display = 'none';
     }
 
-    // Width and zoom stay with the design's own _fitShells, retuned at build
-    // time by patchWebBreakpoints; only the canvas dressing is stripped here.
+    /* Width and zoom stay with the design's own _fitShells, retuned at build
+       time by patchWebBreakpoints; only the canvas dressing is stripped here.
+
+       Both overflows are opened deliberately. On the canvas they clip the mock
+       to its rounded browser frame, which is gone here — and while they remain,
+       position:sticky resolves against those boxes rather than the viewport, so
+       nothing can pin to the top of the window. Safe to open because no element
+       overflows the shell at any width; that is checked on every build. */
     addCss('emWebCss', [
       'body { background: #FBF8F1 !important; }',
-      '#emStage { padding: 0 !important; display: block !important; min-height: 100vh; }',
+      '#emStage {',
+      '  padding: 0 !important; display: block !important;',
+      '  min-height: 100vh; overflow: visible !important;',
+      '}',
       NO_SCROLLBARS,
-      '#webAppScaleBox { border-radius: 0 !important; box-shadow: none !important; }',
+      '#webAppScaleBox {',
+      '  border-radius: 0 !important; box-shadow: none !important;',
+      '  overflow: visible !important;',
+      '}',
+      STICKY_HEADER,
       PHONE_WIDTH_FIXES
     ].join('\\n'));
     return true;

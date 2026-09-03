@@ -6903,6 +6903,26 @@ class Component extends DCLogic {
      unconditional: a button label broken mid-word is never the right answer at
      any width, and it is what makes this failure so ugly rather than merely
      tight. */
+  /* The site header has never been sticky — it is position:static in the
+     design and scrolls away, as it did in every build before this one. Pinning
+     it is the one thing here that changes how the product behaves rather than
+     how it fits, so it is kept separate and belongs upstream in the design.
+
+     Two elements carry data-r="hdrwrap": the navy header and the dark footer
+     (padding: 40px 44px 26px). They are told apart by padding rather than
+     colour, because the runtime rewrites inline colours to rgb(). It also
+     normalises lengths — "0 44px" is re-serialised as "0px 44px" — so both
+     spellings are matched. Desktop only: the phone header stacks to roughly
+     270px tall, and pinning that would eat the screen. */
+  var STICKY_HEADER = [
+    '@media (min-width: 760px) {',
+    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0 44px"],',
+    '  #webAppScaleBox [data-r="hdrwrap"][style*="padding: 0px 44px"] {',
+    '    position: sticky !important; top: 0 !important; z-index: 40 !important;',
+    '  }',
+    '}'
+  ].join('\n');
+
   var PHONE_WIDTH_FIXES = [
     '#webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
     '@media (max-width: 700px) {',

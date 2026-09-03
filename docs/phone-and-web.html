@@ -6890,6 +6890,40 @@ class Component extends DCLogic {
      _fitShells() scales the phone shell by (viewport - padding) / 390 so it
      sits inside the canvas with a margin, which on an actual phone leaves the
      app letterboxed — 366px of app in a 390px window. */
+  /* The design's fluid rules cover the marked rows — anything carrying
+     data-r="stack", "hdr", "nav", "g3".. — but the home hero is not marked, so
+     at 390px its two columns hold at 140px each. With 24px of padding a side,
+     that leaves about ten pixels for a button label, and the shell's
+     overflow-wrap:anywhere then breaks it one character per line: "Browse
+     Market" rendered 62px wide and 220px tall.
+
+     These rules stack that row and bring its desktop-sized padding and display
+     type down to phone scale. They are matched on inline style the way the
+     design's own narrow rules are, so they travel with it. The nowrap guard is
+     unconditional: a button label broken mid-word is never the right answer at
+     any width, and it is what makes this failure so ugly rather than merely
+     tight. */
+  var PHONE_WIDTH_FIXES = [
+    '#webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
+    '@media (max-width: 700px) {',
+    // The home hero, and the "Selling is free to list" band — matched on the
+    // padding that identifies each, since neither carries a data-r marker.
+    '  #webAppScaleBox [style*="padding: 44px 46px"],',
+    '  #webAppScaleBox [style*="padding: 32px 36px"] {',
+    '    flex-direction: column !important; align-items: stretch !important;',
+    '    padding: 24px 18px !important; gap: 18px !important;',
+    '  }',
+    '  #webAppScaleBox [style*="padding: 44px 46px"] > *,',
+    '  #webAppScaleBox [style*="padding: 32px 36px"] > * {',
+    // border-box or a padded child at width:100% overflows by its own padding,
+    // which is why the design's stack rule sets it too.
+    '    box-sizing: border-box !important;',
+    '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
+    '  #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
+    '}'
+  ].join('\n');
+
   var PHONE_FILL = [
     '  #emStage { padding: 0 !important; min-height: 100vh; min-height: 100dvh; }',
     '  #emPhoneFrame {',

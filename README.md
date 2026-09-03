@@ -20,8 +20,8 @@ Four pages are published:
 
 | Page | What it is |
 |---|---|
-| `index.html` | the whole product — phone app under 760px wide, web app above |
-| `phone.html` | the phone app, at any width |
+| `index.html` | the web app — responsive, desktop down to phone |
+| `phone.html` | the phone app — fills the screen on a real phone |
 | `phone-and-web.html` | both side by side, sharing one state |
 | `admin.html` | the admin dashboard |
 

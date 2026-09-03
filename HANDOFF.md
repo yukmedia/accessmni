@@ -59,24 +59,33 @@ it back into a one-shot.
   its own page — which is why the admin design becomes `docs/admin.html` and the
   desktop panel loads it inline.
 
-### index.html carries both shells
+### index.html is the site at every width
 
-`index.html` is the link people open and forward, and on a phone it was serving
-the desktop layout — desktop header, no bottom nav, big half-empty tiles — while
-the mobile app design sat in the same document, hidden.
+`index.html` is the **web app**, reflowing all the way down to a phone. It is
+not the mobile app wearing the site's URL — swapping the phone shell in below a
+breakpoint was tried and reverted; that is what `phone.html` is for.
 
-It now carries both. **Under 760px it is the phone app filling the screen; at
-760 and up it is the web app filling the browser.** Which shell shows is decided
-in CSS, not script, so a rotation is instant and there is no state for a
-re-render to undo. Both shells are the design's own; nothing is redrawn.
+Two untagged rows in the design broke that reflow. The design's fluid rules key
+off `data-r` markers — `stack`, `hdr`, `nav`, `g3`, `cards` and so on — but the
+home hero and the "Selling is free to list" band carry no marker, so they stayed
+side-by-side at 390px. Each hero column held at 140px, and with 24px of padding
+a side that left about ten pixels for a button label, which the shell's
+`overflow-wrap: anywhere` then broke one character per line: "Browse Market"
+rendered 62px wide and 220px tall.
 
-`phone.html` still exists and is unchanged — the link already shared. On a phone
-the two now look the same, which is the point. To see the desktop layout on a
-phone, use `phone-and-web.html`.
+`PHONE_WIDTH_FIXES` stacks those two rows below 700px and brings their
+desktop-sized padding and 40px display type down to phone scale. They are
+matched on inline style — `[style*="padding: 44px 46px"]` — the same idiom the
+design's own narrow rules use, so they sit alongside rather than fight it. The
+`white-space: nowrap` guard on button-shaped elements is unconditional: a label
+broken mid-word is never right at any width.
+
+**If the design tags those rows `data-r="stack"`, delete these rules.** They
+exist only because the markers are missing.
 
 Filling a handset also means overriding `zoom`, not just width: `_fitShells()`
 scales the phone shell by `(viewport - padding) / 390`, which left 366px of app
-in a 390px window. Both phone views pin it to `zoom: 1`.
+in a 390px window on `phone.html`. That view now pins it to `zoom: 1`.
 
 ### The web page's breakpoints are retuned, not overridden
 

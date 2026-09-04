@@ -88,7 +88,22 @@ const FINDERS = `
   ].join('\\n');
 
   var PHONE_WIDTH_FIXES = [
-    'html #webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
+    /* Pills and buttons, marked at runtime rather than enumerated.
+
+       A pill is a flex item like any other, so when a row runs short of room
+       it is shrunk below its own label — and the shell's overflow-wrap:
+       anywhere then breaks that label wherever it likes. The jobs list showed
+       both halves of the failure at 390: a pay pill squeezed to 60px with
+       "EC$18/hr" over two lines, and one reading "Negotia / ble".
+
+       Two properties fix the whole class. flex-shrink: 0 stops a pill being
+       squeezed below its content, and nowrap stops the label breaking if it
+       is. Unconditional, at every width, because a button label broken
+       mid-word is never the right answer — the same reasoning as the padding-
+       matched guard this replaces, applied to every pill instead of one. */
+    'html #webAppScaleBox [data-pill] {',
+    '  white-space: nowrap !important; flex-shrink: 0 !important;',
+    '}',
     '@media (max-width: 700px) {',
     /* The home hero, and the "Selling is free to list" band — matched on the
        padding that identifies each, since neither carries a data-r marker.
@@ -115,6 +130,14 @@ const FINDERS = `
     // The two hero buttons keep display:flex inside the now-full-width text
     // column, so they still sit side by side rather than stacking with it.
     '    flex-wrap: wrap !important;',
+    '  }',
+    /* Side by side they need 319px and the column is 318, so they wrap — and
+       wrapped, each took its own content width: 170px above 137px, left
+       aligned, visibly ragged. A primary and a secondary call to action that
+       have gone to separate lines should be full width, which is both the
+       ordinary phone pattern and a bigger tap target. */
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] [style*="display: flex; gap: 12px"] > * {',
+    '    flex: 1 1 100% !important; text-align: center !important;',
     '  }',
     '  html #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
 
@@ -159,6 +182,26 @@ const FINDERS = `
     '  html #webAppScaleBox [style*="gap: 34px"] > * {',
     '    box-sizing: border-box !important;',
     '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
+
+    /* A detail page's title row is an icon, the heading and a status pill.
+       This used to wrap only below 360, which left the job detail cramped at
+       390: "Cashier, part-time" broken over two lines in a 150px column with
+       PART-TIME still holding the right edge. Wrapping from 700 lets the pill
+       drop below and gives the heading the width instead.
+
+       flex-wrap alone does not do it: the heading is flex: 1 1 0%, so its
+       hypothetical main size for the wrap decision is 0 by definition — the
+       algorithm always finds room on one line no matter how little is left,
+       and the shell's overflow-wrap lets a single character count as a valid
+       line, so min-width: auto never engages either. The floor is what forces
+       the decision. 190px still clears a 320px screen once the icon and the
+       page padding are taken out. */
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
+    '    flex-wrap: wrap !important; row-gap: 6px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
+    '    min-width: 190px !important;',
     '  }',
 
     /* Sidebars are declared 260-380px wide with flex-shrink: 0. The design
@@ -221,12 +264,6 @@ const FINDERS = `
        never engages either. A real floor is what forces the decision: below
        120px the heading no longer fits beside the icon, so it wraps, taking
        the pill down to its own line rather than the heading down to letters. */
-    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
-    '    flex-wrap: wrap !important; row-gap: 6px !important;',
-    '  }',
-    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
-    '    min-width: 120px !important;',
-    '  }',
 
     /* The same shape recurs everywhere a fixed-size thumbnail sits beside
        growing text — order items, profile rows, the shops list: a 62-96px
@@ -698,6 +735,49 @@ const WEB = wrapRuntime(`
       var st = first.getAttribute('style') || '';
       var bgc = window.getComputedStyle ? window.getComputedStyle(first).backgroundColor : '';
       if (/#E7E4DD/i.test(st) || bgc === 'rgb(231, 228, 221)') first.style.display = 'none';
+    }
+
+    /* Mark every pill- and button-shaped element so PHONE_WIDTH_FIXES can stop
+       it being squeezed below its own label.
+
+       Recognised by shape rather than listed, because the design has dozens of
+       them — status pills, category tags, filter chips, sort controls, calls to
+       action — and no marker in common. A pill here is a rounded, padded,
+       filled-or-outlined box holding a short label and no block-level children,
+       which is what tells it apart from a card: a card contains divs.
+
+       Spans are allowed through, since a button often carries a chevron or a
+       price in one ("Sort: Newest ▾", "Buy · EC$68,500"), and 28 characters is
+       what separates a label from a sentence.
+
+       Each element is examined once and stamped data-ps so it is never
+       examined again; the selector then skips it for the life of that node.
+       An existence guard on data-pill would be wrong here — unlike the admin
+       board, this page re-renders in parts, so marked pills survive alongside
+       freshly rendered ones and the guard would leave the new ones bare. That
+       is exactly what happened first time: three pills marked in the whole
+       shell, and none of them the ones that were breaking. */
+    var cand = box.querySelectorAll(
+      'div:not([data-ps]),span:not([data-ps]),a:not([data-ps]),button:not([data-ps])');
+    for (var p = 0; p < cand.length; p++) {
+      var el = cand[p];
+      el.setAttribute('data-ps', '');
+      /* The label is what identifies a pill, not the absence of children: the
+         jobs pay pill wraps its own text in a child element, so a "no block
+         children" test threw away the very case this exists for. Short text is
+         the real discriminator — a card's textContent runs to a title, a
+         subtitle and a price long before 28 characters. */
+      var txt = (el.textContent || '').trim();
+      if (!txt || txt.length > 28) continue;
+      if (el.querySelectorAll('div,span,a,button').length > 4) continue;
+      var cs = window.getComputedStyle(el);
+      if ((parseFloat(cs.borderTopLeftRadius) || 0) < 4) continue;
+      if ((parseFloat(cs.paddingLeft) || 0) < 6) continue;
+      var filled = cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)'
+        && cs.backgroundColor !== 'transparent';
+      var bordered = (parseFloat(cs.borderTopWidth) || 0) > 0;
+      if (!filled && !bordered) continue;
+      el.setAttribute('data-pill', '');
     }
 
     /* Width and zoom stay with the design's own _fitShells, retuned at build

@@ -7642,7 +7642,22 @@ class Component extends DCLogic {
   ].join('\n');
 
   var PHONE_WIDTH_FIXES = [
-    'html #webAppScaleBox [style*="padding: 14px 24px"] { white-space: nowrap; }',
+    /* Pills and buttons, marked at runtime rather than enumerated.
+
+       A pill is a flex item like any other, so when a row runs short of room
+       it is shrunk below its own label — and the shell's overflow-wrap:
+       anywhere then breaks that label wherever it likes. The jobs list showed
+       both halves of the failure at 390: a pay pill squeezed to 60px with
+       "EC$18/hr" over two lines, and one reading "Negotia / ble".
+
+       Two properties fix the whole class. flex-shrink: 0 stops a pill being
+       squeezed below its content, and nowrap stops the label breaking if it
+       is. Unconditional, at every width, because a button label broken
+       mid-word is never the right answer — the same reasoning as the padding-
+       matched guard this replaces, applied to every pill instead of one. */
+    'html #webAppScaleBox [data-pill] {',
+    '  white-space: nowrap !important; flex-shrink: 0 !important;',
+    '}',
     '@media (max-width: 700px) {',
     /* The home hero, and the "Selling is free to list" band — matched on the
        padding that identifies each, since neither carries a data-r marker.
@@ -7669,6 +7684,14 @@ class Component extends DCLogic {
     // The two hero buttons keep display:flex inside the now-full-width text
     // column, so they still sit side by side rather than stacking with it.
     '    flex-wrap: wrap !important;',
+    '  }',
+    /* Side by side they need 319px and the column is 318, so they wrap — and
+       wrapped, each took its own content width: 170px above 137px, left
+       aligned, visibly ragged. A primary and a secondary call to action that
+       have gone to separate lines should be full width, which is both the
+       ordinary phone pattern and a bigger tap target. */
+    '  html #webAppScaleBox [style*="padding: 44px 46px"] [style*="display: flex; gap: 12px"] > * {',
+    '    flex: 1 1 100% !important; text-align: center !important;',
     '  }',
     '  html #webAppScaleBox [style*="font-size: 40px"] { font-size: 27px !important; }',
 
@@ -7713,6 +7736,26 @@ class Component extends DCLogic {
     '  html #webAppScaleBox [style*="gap: 34px"] > * {',
     '    box-sizing: border-box !important;',
     '    width: 100% !important; max-width: 100% !important; min-width: 0 !important;',
+    '  }',
+
+    /* A detail page's title row is an icon, the heading and a status pill.
+       This used to wrap only below 360, which left the job detail cramped at
+       390: "Cashier, part-time" broken over two lines in a 150px column with
+       PART-TIME still holding the right edge. Wrapping from 700 lets the pill
+       drop below and gives the heading the width instead.
+
+       flex-wrap alone does not do it: the heading is flex: 1 1 0%, so its
+       hypothetical main size for the wrap decision is 0 by definition — the
+       algorithm always finds room on one line no matter how little is left,
+       and the shell's overflow-wrap lets a single character count as a valid
+       line, so min-width: auto never engages either. The floor is what forces
+       the decision. 190px still clears a 320px screen once the icon and the
+       page padding are taken out. */
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
+    '    flex-wrap: wrap !important; row-gap: 6px !important;',
+    '  }',
+    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
+    '    min-width: 190px !important;',
     '  }',
 
     /* Sidebars are declared 260-380px wide with flex-shrink: 0. The design
@@ -7775,12 +7818,6 @@ class Component extends DCLogic {
        never engages either. A real floor is what forces the decision: below
        120px the heading no longer fits beside the icon, so it wraps, taking
        the pill down to its own line rather than the heading down to letters. */
-    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] {',
-    '    flex-wrap: wrap !important; row-gap: 6px !important;',
-    '  }',
-    '  html #webAppScaleBox[data-narrow] [data-r="titlerow"] > [style*="flex: 1 1 0%"] {',
-    '    min-width: 120px !important;',
-    '  }',
 
     /* The same shape recurs everywhere a fixed-size thumbnail sits beside
        growing text — order items, profile rows, the shops list: a 62-96px

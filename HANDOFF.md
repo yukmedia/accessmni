@@ -80,6 +80,45 @@ design's own narrow rules use, so they sit alongside rather than fight it. The
 `white-space: nowrap` guard on button-shaped elements is unconditional: a label
 broken mid-word is never right at any width.
 
+### Pills and buttons are marked at runtime, not enumerated
+
+A pill is a flex item like any other, so when a row runs short of room it gets
+shrunk below its own label — and the shell's `overflow-wrap: anywhere` then
+breaks that label wherever it likes. The jobs list showed both halves at 390px:
+a pay pill squeezed to 60px with `EC$18/hr` over two lines, and one reading
+**"Negotia / ble"**. The sort control had gone the same way, a two-line box
+instead of a chip.
+
+Two properties fix the whole class — `flex-shrink: 0` so a pill is never
+squeezed below its content, and `white-space: nowrap` so the label cannot break
+if it is. Unconditional at every width, because a label broken mid-word is never
+right.
+
+They apply to `[data-pill]`, which a pass in the `WEB` transform sets by
+**shape**: a rounded, padded, filled-or-outlined box holding 28 characters or
+less. The design has dozens of these — status pills, category tags, filter
+chips, sort controls, calls to action — with no marker in common, so listing
+them would be endless and would go stale. Short text is the discriminator that
+separates a pill from a card; a card's `textContent` runs past 28 characters
+long before its markup differs.
+
+Two things that made the first attempt mark only three pills in the whole
+shell, neither of them one that was breaking:
+
+- **An existence guard is wrong on this page.** The admin board replaces its
+  whole subtree on re-render, so "is anything marked?" works there. `index.html`
+  re-renders in *parts*, so marked pills survive next to freshly rendered ones
+  and the guard skips the new ones forever. Each element is instead stamped
+  `data-ps` once and skipped by selector thereafter.
+- **"No block-level children" is the wrong test.** The jobs pay pill wraps its
+  own text in a child element, so that test discarded the exact case the rule
+  exists for.
+
+The hero's two calls to action need 319px side by side in a 318px column, so
+they wrap — and wrapped, each took its own content width, 170px above 137px,
+left-aligned and visibly ragged. A primary and a secondary action on separate
+lines are given full width instead.
+
 The detail pages — a listing, a job, a shop — sit on a two-column shell that is
 untagged for the same reason. At 390px it split into a 194px main column and a
 130px sidebar and everything inside starved: the job title "Cashier,

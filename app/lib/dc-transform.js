@@ -451,33 +451,83 @@ const FINDERS = `
     '  }',
     '}',
 
-    /* The tables. Every row of a table is its own grid, so the card holding
-       them is the scroller and the rows carry the floor — set on the rows
-       rather than the card so the card's own heading and footer stay put.
+    /* The tables become cards, one per record.
 
-       Enumerated rather than matched on "contains px", which CSS cannot ask.
-       Seven shapes across the admin screens; a template the design adds later
-       simply keeps today's behaviour until it is listed here. */
+       Panning a six-column table sideways is a fallback, not an answer: the
+       column headings scroll away with the row, so a bare "14" or "Mar 2026"
+       stops meaning anything, records cannot be compared, and the buttons sit
+       off the right edge where nobody finds them.
+
+       So each row is restacked as a card. The labels come from the table's own
+       header row, read at runtime and written onto each cell as data-col, which
+       is why nothing here invents a column name — a table the design adds later
+       is captioned correctly without being listed anywhere. The header row is
+       then redundant and is hidden.
+
+       Four kinds of cell, marked data-cell by the same pass:
+         rank    a "#" column — shares the first line with the title
+         title   the record itself — the card's heading, no label
+         field   everything else — label left, value right
+         actions the column whose heading is blank — buttons, full width
+
+       The label is a ::before floated left rather than a flex item, so a cell
+       holding a bare text node, a pill, or several children all right-align
+       against it without the markup being rewritten. */
     '@media (max-width: 900px) {',
-    '  html [style*="grid-template-columns: 28px 1.6fr 1fr 1fr 1fr"],',
-    '  html [style*="grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px"],',
-    '  html [style*="grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px"],',
-    '  html [style*="grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px"],',
-    '  html [style*="grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px"],',
-    '  html [style*="grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px"],',
-    '  html [style*="grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px"] {',
+    '  html [data-tbl="head"] { display: none !important; }',
+    '  html [data-tbl="row"] {',
+    '    display: flex !important; flex-wrap: wrap !important;',
+    '    align-items: baseline !important;',
+    '    grid-template-columns: none !important;',
+    '    gap: 5px 10px !important; padding: 13px 15px !important;',
+    '    min-width: 0 !important;',
+    '  }',
+    '  html [data-tbl="row"] > * { min-width: 0 !important; }',
+    '  html [data-cell="rank"] { flex: 0 0 auto !important; }',
+    '  html [data-cell="title"] { flex: 1 1 auto !important; }',
+    '  html [data-cell="field"] {',
+    '    flex: 0 0 100% !important;',
+    '    display: block !important; text-align: right !important;',
+    '  }',
+    '  html [data-cell="field"]::before {',
+    '    content: attr(data-col); float: left;',
+    '    text-align: left; padding-right: 12px;',
+    '    font-size: 10px; font-weight: 800; letter-spacing: 0.07em;',
+    '    color: #A8AFBC;',
+    '  }',
+    /* text-align only moves inline content. Where the value is itself a flex
+       row — the delivery driver is an avatar beside a name — its box fills the
+       line and the text inside stays left, hard against the label. This right-
+       aligns those, and is inert on every value that is not a flex container. */
+    '  html [data-cell="field"] > * { justify-content: flex-end !important; }',
+    '  html [data-cell="actions"] {',
+    '    flex: 0 0 100% !important; margin-top: 6px !important;',
+    '    display: flex !important; align-items: center !important;',
+    '    justify-content: flex-end !important; gap: 8px !important;',
+    '  }',
+
+    /* The sideways-scrolling fallback stays for any table the pass above did
+       not reach — a shape it cannot read leaves the rows unmarked, and a table
+       that pans is far better than one that is squeezed to letter columns. The
+       design hides every scrollbar in its own head CSS, so those cards get a
+       slim one back; a scroll area with no affordance reads as a clipped
+       table. */
+    '  html [style*="grid-template-columns: 28px 1.6fr 1fr 1fr 1fr"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 34px 1.5fr 1fr 0.9fr 0.9fr 170px"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 2fr 1.1fr 1.1fr 0.8fr 0.9fr 210px"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 1.7fr 1.3fr 0.8fr 0.9fr 1fr 190px"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 1.6fr 1fr 0.9fr 1fr 1fr 120px"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 1.5fr 1.2fr 1fr 1fr 150px"]:not([data-tbl]),',
+    '  html [style*="grid-template-columns: 1.4fr 1fr 1.5fr 1fr 110px"]:not([data-tbl]) {',
     '    min-width: 680px !important;',
     '  }',
-    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]) {',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]:not([data-tbl])) {',
     '    overflow-x: auto !important;',
     '  }',
-    /* The design hides every scrollbar in its own head CSS, which is fine when
-       nothing scrolls sideways. Now something does, and a scroll area with no
-       affordance reads as a clipped table. Give the table cards a slim one. */
-    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar {',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]:not([data-tbl]))::-webkit-scrollbar {',
     '    height: 6px !important; display: block !important;',
     '  }',
-    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "])::-webkit-scrollbar-thumb {',
+    '  html [style*="border-radius: 13px"]:has([style*="grid-template-columns"][style*="px "]:not([data-tbl]))::-webkit-scrollbar-thumb {',
     '    background: rgba(16,22,33,0.22) !important; border-radius: 3px !important;',
     '  }',
     '}'
@@ -748,6 +798,60 @@ const ADMIN = wrapRuntime(`
       // Escape closes it, as a menu laid over the screen should.
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') document.documentElement.setAttribute('data-adm-nav', 'closed');
+      });
+    }
+
+    /* Caption the tables so they can be restacked as cards.
+
+       Only grids with a px track are tables — the stat tiles are fr-only, and
+       converting those would be wrong. Rows are grouped by their parent card;
+       the first is the header and supplies the labels for the rest.
+
+       Guarded by a single query rather than a stored flag, because a re-render
+       replaces these nodes and strips the attributes: if no marked row is left
+       in the document there is work to do, and if one is, there is not. */
+    if (!document.querySelector('[data-tbl="row"]')) {
+      var groups = new Map();
+      var cells = document.querySelectorAll('[style*="grid-template-columns"]');
+      for (var c = 0; c < cells.length; c++) {
+        var cs = cells[c].getAttribute('style') || '';
+        if (!/grid-template-columns:[^;]*\\d+px/.test(cs)) continue;
+        var par = cells[c].parentElement;
+        if (!par) continue;
+        if (!groups.has(par)) groups.set(par, []);
+        groups.get(par).push(cells[c]);
+      }
+      groups.forEach(function (rows) {
+        if (rows.length < 2) return;
+        var head = rows[0];
+        var labels = [];
+        for (var h = 0; h < head.children.length; h++) {
+          labels.push((head.children[h].textContent || '').trim());
+        }
+        // The record's own name is the first column that is neither a rank nor
+        // an unlabelled button column.
+        var titleAt = -1;
+        for (var t = 0; t < labels.length; t++) {
+          if (labels[t] && labels[t] !== '#') { titleAt = t; break; }
+        }
+        head.setAttribute('data-tbl', 'head');
+        for (var r = 1; r < rows.length; r++) {
+          rows[r].setAttribute('data-tbl', 'row');
+          var kids = rows[r].children;
+          for (var k = 0; k < kids.length; k++) {
+            var label = labels[k] === undefined ? '' : labels[k];
+            /* A blank heading means one of two different things depending on
+               which side of the record's name it falls: before it, a drag
+               handle or a checkbox, which belongs on the title's line; after
+               it, the button column, which belongs at the foot of the card. */
+            var kind = label === '#' ? 'rank'
+              : k === titleAt ? 'title'
+              : label === '' ? (k < titleAt ? 'rank' : 'actions')
+              : 'field';
+            kids[k].setAttribute('data-cell', kind);
+            if (kind === 'field') kids[k].setAttribute('data-col', label);
+          }
+        }
       });
     }
 

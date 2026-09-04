@@ -218,12 +218,37 @@ knowing, all at a 900px breakpoint:
   never onto `body`, because the MutationObserver watches body's children and
   appending there would feed itself. The open state lives on `<html>`, which
   the runtime never rewrites, so the drawer survives a re-render mid-animation.
-- **Dense tables scroll sideways inside their own card**, with a slim scrollbar
-  re-enabled because the design's head CSS hides every scrollbar in the file and
-  a scroll area with no affordance reads as a clipped table. A six-column
-  moderation queue does not become a phone screen by narrowing — the columns are
-  the content, and squeezing them produces the one-character-per-line collapse
-  seen elsewhere here.
+- **Each table row becomes a card.** Panning a six-column table sideways —
+  which is what this did first — is a fallback, not an answer: the column
+  headings scroll away with the row, so a bare `14` or `Mar 2026` stops meaning
+  anything, records cannot be compared, and the buttons sit off the right edge
+  where nobody finds them.
+
+  So a row is restacked: the record's name as the heading, every other column
+  as a label-and-value line, the buttons full-width at the foot. **The labels
+  are read from the table's own header row at runtime** and written onto each
+  cell as `data-col`, which is why no column name is hard-coded anywhere — a
+  table the design adds later is captioned correctly without being listed. The
+  header row is then redundant and hidden.
+
+  Cells are sorted into four kinds by what their heading says: `rank` for a `#`
+  column, `title` for the record itself, `actions` for the column whose heading
+  is blank, `field` for the rest. A blank heading means different things either
+  side of the title — before it a drag handle or checkbox, which belongs on the
+  title's line; after it the button column, which belongs at the foot.
+
+  The label is a `::before` floated left rather than a flex item, so a cell
+  holding bare text, a status pill, or several children all right-align against
+  it without the markup being rewritten. `text-align` only moves inline
+  content, so `justify-content: flex-end` handles values that are themselves
+  flex rows — the delivery driver is an avatar beside a name — and is inert on
+  everything else.
+
+  **The sideways-scrolling fallback is still there** for any table the pass
+  cannot read, selected with `:not([data-tbl])`. A table that pans beats one
+  squeezed into letter columns. Those cards get a slim scrollbar back, since
+  the design's head CSS hides every scrollbar in the file and a scroll area
+  with no affordance reads as clipped.
 - **The board's inner scroll region is released** so the page itself scrolls
   rather than trapping a 940px box inside a 700px screen. For the same reason
   the iframe that loads the panel inside the web app drops from its 940px

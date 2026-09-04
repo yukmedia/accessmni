@@ -80,6 +80,54 @@ design's own narrow rules use, so they sit alongside rather than fight it. The
 `white-space: nowrap` guard on button-shaped elements is unconditional: a label
 broken mid-word is never right at any width.
 
+### Two reorderings that reverse the design, deliberately
+
+Almost everything in this file fills a gap the design left. These two do the
+opposite — they reverse decisions the design states explicitly, at the client's
+request, and they are the first place the demo and the design disagree about
+what a phone should show.
+
+The design pushes the filter sidebar **below** the results on a narrow screen
+(`[data-r~="fside"] { order: 2 }`) and pulls the buy card **above** the gallery
+on a detail page (`[data-r~="dside"] { order: -1 }`). So the market opened with
+412 listings and the filters two thousand pixels underneath, and the car listing
+led with its name and price while the photograph sat below them. The client
+asked for the opposite of both: filters above the listings, picture above the
+name.
+
+The filter one is a plain `order: -1`. The photograph needs more, because it is
+not a child of the row — it is the first thing inside `dmain`, the column that
+also holds the description, the details table and the map. `display: contents`
+drops that column's box so its children join the row directly and can be ordered
+against the buy card, **without moving a single node**. The photo and its
+thumbnail strip go to `-2`, ahead of the buy card at the `-1` the design already
+gives it; the rest of `dmain` keeps the default `0`. Reading order becomes photo,
+thumbnails, name and price, buy, description.
+
+Two consequences worth knowing. `dmain`'s own 18px gap goes with its box, so the
+row's 40px would otherwise apply between every one of those blocks — the row is
+given the tighter gap back. And four thumbnails reflowed to two columns ran
+374px tall, taller than the photograph they belong to and now sitting between it
+and the price, so the gallery strip is pinned four-across; that rule is scoped
+to `dmain` so the design's other four-card rows go on reflowing.
+
+Both are keyed on `[data-narrow="1"]` rather than a width, so they switch
+exactly when the design's own rules do, and both carry extra weight because the
+rules they override are already `!important` at (1,3,1).
+
+**Write the `="1"`.** `[data-narrow]` tests only that the attribute exists, and
+the design sets `data-narrow="0"` at desktop — so the bare form matches at every
+width. That shipped for one build: `display: contents` dissolved `dmain` at
+1440 too, laying the gallery, description and map out horizontally beside the
+buy card. The layout audit passed it, because everything shrank to fit and
+nothing overflowed. Only a check that read the computed `display` at both widths
+caught it. Every other `[data-narrow]` here sits inside a media query, which is
+what has been hiding the difference.
+
+**These belong in the design.** Everything else here is a gap being filled and
+should disappear when the design fills it; these two will keep fighting the
+design until the design changes its mind.
+
 ### Pills and buttons are marked at runtime, not enumerated
 
 A pill is a flex item like any other, so when a row runs short of room it gets
